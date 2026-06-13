@@ -6,22 +6,19 @@
   <title>Six Demon Bag</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
   <!-- NAV -->
-  <nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+  <nav class="nav" id="nav">
     <div class="nav__inner">
-      <a class="nav__logo" href="#hero" aria-label="Six Demon Bag — home">SDB</a>
-      <button class="nav__hamburger" id="hamburger"
-              aria-label="Toggle navigation menu"
-              aria-expanded="false"
-              aria-controls="nav-links">
+      <a class="nav__logo" href="#hero">SDB</a>
+      <button class="nav__hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="nav-links">
         <span></span><span></span><span></span>
       </button>
-      <ul class="nav__links" id="nav-links" role="list">
+      <ul class="nav__links" id="nav-links">
         <li><a href="#music">Music</a></li>
         <li><a href="#releases">Releases</a></li>
         <li><a href="#listen">Listen</a></li>
@@ -30,64 +27,34 @@
   </nav>
 
   <!-- HERO -->
-  <section class="hero" id="hero" aria-label="Hero">
+  <section class="hero" id="hero">
     <div class="hero__bg" aria-hidden="true"></div>
-    <div class="hero__noise-overlay" aria-hidden="true"></div>
     <div class="hero__content">
-      <p class="hero__eyebrow">Est. MMXIX &nbsp;&middot;&nbsp; Independent</p>
-      <h1 class="hero__title">
-        <span>SIX</span>
-        <span>DEMON</span>
-        <span>BAG</span>
-      </h1>
-      <p class="hero__tagline">No face. No name. Only the sound.</p>
-      <a class="hero__cta" href="#music">Hear the Music</a>
-    </div>
-    <div class="hero__scroll-hint" aria-hidden="true">
-      <span class="hero__scroll-line"></span>
+      <h1 class="hero__title">SIX<br/>DEMON<br/>BAG</h1>
+      <a class="hero__cta" href="#music">Listen</a>
     </div>
   </section>
 
-  <!-- PORTRAIT (full-bleed masked figure) -->
-  <section class="portrait" id="about" aria-label="Artist portrait">
-    <div class="portrait__img-wrap">
-      <img class="portrait__img" src="assets/mask.jpg" alt="" aria-hidden="true" />
-      <div class="portrait__veil" aria-hidden="true"></div>
-    </div>
-    <div class="portrait__caption">
-      <span class="section-label">The Artist</span>
-      <p class="portrait__line">No face. No name. Only the sound.</p>
-    </div>
-  </section>
-
-  <!-- MUSIC / PLAYER -->
-  <section class="music" id="music" aria-labelledby="music-heading">
+  <!-- MUSIC -->
+  <section class="music" id="music">
     <div class="container">
-      <div class="section-label" aria-hidden="true">Music</div>
-      <h2 class="section-heading" id="music-heading">Tracks</h2>
 
       <div class="tracklist" id="tracklist">
-
         <div class="track-item" data-index="0">
           <span class="track-num">1</span>
           <span class="track-play-icon" aria-hidden="true">&#9654;</span>
           <div class="track-info">
             <span class="track-name">Dirty Old Town</span>
-            <span class="track-note">Six Demon Bag</span>
           </div>
           <span class="track-duration">--:--</span>
         </div>
-
       </div>
 
       <div class="player-bar" id="player-bar">
-        <div class="player-bar__track-info">
-          <div class="player-bar__title" id="player-title">Dirty Old Town</div>
-          <div class="player-bar__status" id="player-status">Select a track to play</div>
-        </div>
+        <div class="player-bar__title" id="player-title">Dirty Old Town</div>
         <div class="player-bar__controls">
           <button class="player-btn player-btn--play" id="play-btn" aria-label="Play / Pause">
-            <svg id="play-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <svg id="play-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
               <polygon points="5,3 19,12 5,21"/>
             </svg>
           </button>
@@ -98,66 +65,48 @@
             <span class="player-time" id="player-time">--:-- / --:--</span>
           </div>
         </div>
+        <div class="player-bar__status" id="player-status">Select a track</div>
       </div>
 
     </div>
   </section>
 
   <!-- RELEASES -->
-  <section class="releases" id="releases" aria-labelledby="releases-heading">
+  <section class="releases" id="releases">
     <div class="container">
-      <div class="section-label" aria-hidden="true">Discography</div>
-      <h2 class="section-heading" id="releases-heading">Releases</h2>
+      <div class="section-label">Releases</div>
       <div class="releases__grid">
 
         <article class="album-card">
           <div class="album-card__art" style="background-image:url('assets/hellgate.jpg')" aria-hidden="true">
-            <div class="album-card__overlay">
-              <span class="album-card__play">&#9654;</span>
-            </div>
+            <div class="album-card__overlay"><span class="album-card__play">&#9654;</span></div>
           </div>
           <div class="album-card__body">
             <h3 class="album-card__title">Hellmouth Sermons</h3>
-            <p class="album-card__meta">
-              <span class="album-card__type">LP &bull; 11 tracks</span>
-              <span class="album-card__year">2024</span>
-            </p>
-            <p class="album-card__desc">Eleven sermons from the gate. The screaming made audible.</p>
-            <a class="album-card__link" href="#listen">Listen &rarr;</a>
+            <p class="album-card__meta">LP &bull; 2024</p>
+            <a class="album-card__link" href="#">Listen &rarr;</a>
           </div>
         </article>
 
         <article class="album-card">
           <div class="album-card__art" style="background-image:url('assets/skull.png')" aria-hidden="true">
-            <div class="album-card__overlay">
-              <span class="album-card__play">&#9654;</span>
-            </div>
+            <div class="album-card__overlay"><span class="album-card__play">&#9654;</span></div>
           </div>
           <div class="album-card__body">
             <h3 class="album-card__title">Dead Channel Static</h3>
-            <p class="album-card__meta">
-              <span class="album-card__type">EP &bull; 5 tracks</span>
-              <span class="album-card__year">2022</span>
-            </p>
-            <p class="album-card__desc">Five transmissions from behind the mask. You won't recognise the voice.</p>
-            <a class="album-card__link" href="#listen">Listen &rarr;</a>
+            <p class="album-card__meta">EP &bull; 2022</p>
+            <a class="album-card__link" href="#">Listen &rarr;</a>
           </div>
         </article>
 
         <article class="album-card">
           <div class="album-card__art" style="background-image:url('assets/mask.jpg')" aria-hidden="true">
-            <div class="album-card__overlay">
-              <span class="album-card__play">&#9654;</span>
-            </div>
+            <div class="album-card__overlay"><span class="album-card__play">&#9654;</span></div>
           </div>
           <div class="album-card__body">
             <h3 class="album-card__title">The Unmarked Road</h3>
-            <p class="album-card__meta">
-              <span class="album-card__type">LP &bull; 9 tracks</span>
-              <span class="album-card__year">2019</span>
-            </p>
-            <p class="album-card__desc">Where the door was first found. Nine tracks before the name was chosen.</p>
-            <a class="album-card__link" href="#listen">Listen &rarr;</a>
+            <p class="album-card__meta">LP &bull; 2019</p>
+            <a class="album-card__link" href="#">Listen &rarr;</a>
           </div>
         </article>
 
@@ -166,38 +115,28 @@
   </section>
 
   <!-- LISTEN -->
-  <section class="listen" id="listen" aria-labelledby="listen-heading">
+  <section class="listen" id="listen">
     <div class="container">
-      <div class="section-label" aria-hidden="true">Stream &amp; Buy</div>
-      <h2 class="section-heading" id="listen-heading">Listen</h2>
-      <p class="listen__sub">Find Six Demon Bag on your platform of choice.</p>
-      <div class="listen__platforms" role="list">
+      <div class="section-label">Stream</div>
+      <div class="listen__platforms">
 
-        <a class="platform-btn" href="#" role="listitem" aria-label="Listen on Spotify">
-          <svg class="platform-btn__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
-          </svg>
+        <a class="platform-btn" href="#" aria-label="Spotify">
+          <svg class="platform-btn__icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
           Spotify
         </a>
 
-        <a class="platform-btn" href="#" role="listitem" aria-label="Listen on Apple Music">
-          <svg class="platform-btn__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M23.994 6.124a9.23 9.23 0 00-.24-2.19c-.317-1.31-1.062-2.31-2.18-2.99a5.64 5.64 0 00-1.621-.77c-.57-.144-1.174-.2-1.98-.22A50.77 50.77 0 0017.155 0H6.845a50.77 50.77 0 00-.818.01c-.806.02-1.41.076-1.98.22A5.64 5.64 0 002.426.944C1.446 1.624.715 2.624.438 3.934a9.23 9.23 0 00-.24 2.19C.025 7.049 0 7.418 0 12s.025 4.951.198 5.876a9.23 9.23 0 00.24 2.19c.317 1.31 1.048 2.31 2.028 2.99a5.64 5.64 0 001.62.77c.57.144 1.174.2 1.98.22.438.012.818.015.818.015h10.228s.38-.003.818-.015c.806-.02 1.41-.076 1.98-.22a5.64 5.64 0 001.62-.77c.98-.68 1.711-1.68 2.028-2.99a9.23 9.23 0 00.24-2.19C23.975 16.951 24 16.582 24 12s-.025-4.951-.006-5.876zM9.617 16.025l-.006-7.198 6.9 3.604-6.894 3.594z"/>
-          </svg>
+        <a class="platform-btn" href="#" aria-label="Apple Music">
+          <svg class="platform-btn__icon" viewBox="0 0 24 24" fill="currentColor"><path d="M23.994 6.124a9.23 9.23 0 00-.24-2.19c-.317-1.31-1.062-2.31-2.18-2.99a5.64 5.64 0 00-1.621-.77c-.57-.144-1.174-.2-1.98-.22A50.77 50.77 0 0017.155 0H6.845a50.77 50.77 0 00-.818.01c-.806.02-1.41.076-1.98.22A5.64 5.64 0 002.426.944C1.446 1.624.715 2.624.438 3.934a9.23 9.23 0 00-.24 2.19C.025 7.049 0 7.418 0 12s.025 4.951.198 5.876a9.23 9.23 0 00.24 2.19c.317 1.31 1.048 2.31 2.028 2.99a5.64 5.64 0 001.62.77c.57.144 1.174.2 1.98.22.438.012.818.015.818.015h10.228s.38-.003.818-.015c.806-.02 1.41-.076 1.98-.22a5.64 5.64 0 001.62-.77c.98-.68 1.711-1.68 2.028-2.99a9.23 9.23 0 00.24-2.19C23.975 16.951 24 16.582 24 12s-.025-4.951-.006-5.876zM9.617 16.025l-.006-7.198 6.9 3.604-6.894 3.594z"/></svg>
           Apple Music
         </a>
 
-        <a class="platform-btn" href="#" role="listitem" aria-label="Listen on SoundCloud">
-          <svg class="platform-btn__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M1.175 12.225c-.015 0-.03.002-.044.006a.21.21 0 00-.131.197l-.27 1.572.27 1.547a.21.21 0 00.416 0l.307-1.547-.307-1.572a.21.21 0 00-.241-.203zm1.602-.35a.237.237 0 00-.237.213l-.303 1.91.303 1.853a.237.237 0 00.475 0l.344-1.853-.344-1.91a.238.238 0 00-.238-.213zm1.584-.169a.265.265 0 00-.265.237l-.273 2.08.273 2.01a.265.265 0 00.53 0l.31-2.01-.31-2.08a.265.265 0 00-.265-.237zm1.6-.082a.294.294 0 00-.293.265l-.242 2.162.242 2.075a.294.294 0 00.587 0l.274-2.075-.274-2.162a.294.294 0 00-.294-.265zm1.591-.037a.322.322 0 00-.32.293l-.21 2.2.21 2.128a.322.322 0 00.643 0l.238-2.128-.238-2.2a.322.322 0 00-.323-.293zm1.601.009a.35.35 0 00-.35.32l-.18 2.19.18 2.164a.35.35 0 00.7 0l.204-2.164-.204-2.19a.35.35 0 00-.35-.32zm7.466 1.31c-.136 0-.267.013-.394.038-.13-1.51-1.397-2.688-2.939-2.688-.38 0-.744.07-1.074.2a.366.366 0 00-.237.34v5.296c0 .187.152.34.34.355h4.304A1.855 1.855 0 0021 16.27a1.855 1.855 0 00-1.381-1.316z"/>
-          </svg>
+        <a class="platform-btn" href="#" aria-label="SoundCloud">
+          <svg class="platform-btn__icon" viewBox="0 0 24 24" fill="currentColor"><path d="M1.175 12.225c-.015 0-.03.002-.044.006a.21.21 0 00-.131.197l-.27 1.572.27 1.547a.21.21 0 00.416 0l.307-1.547-.307-1.572a.21.21 0 00-.241-.203zm1.602-.35a.237.237 0 00-.237.213l-.303 1.91.303 1.853a.237.237 0 00.475 0l.344-1.853-.344-1.91a.238.238 0 00-.238-.213zm1.584-.169a.265.265 0 00-.265.237l-.273 2.08.273 2.01a.265.265 0 00.53 0l.31-2.01-.31-2.08a.265.265 0 00-.265-.237zm1.6-.082a.294.294 0 00-.293.265l-.242 2.162.242 2.075a.294.294 0 00.587 0l.274-2.075-.274-2.162a.294.294 0 00-.294-.265zm1.591-.037a.322.322 0 00-.32.293l-.21 2.2.21 2.128a.322.322 0 00.643 0l.238-2.128-.238-2.2a.322.322 0 00-.323-.293zm1.601.009a.35.35 0 00-.35.32l-.18 2.19.18 2.164a.35.35 0 00.7 0l.204-2.164-.204-2.19a.35.35 0 00-.35-.32zm7.466 1.31c-.136 0-.267.013-.394.038-.13-1.51-1.397-2.688-2.939-2.688-.38 0-.744.07-1.074.2a.366.366 0 00-.237.34v5.296c0 .187.152.34.34.355h4.304A1.855 1.855 0 0021 16.27a1.855 1.855 0 00-1.381-1.316z"/></svg>
           SoundCloud
         </a>
 
-        <a class="platform-btn" href="#" role="listitem" aria-label="Buy on Bandcamp">
-          <svg class="platform-btn__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M0 18.75l7.437-13.5H24l-7.438 13.5z"/>
-          </svg>
+        <a class="platform-btn" href="#" aria-label="Bandcamp">
+          <svg class="platform-btn__icon" viewBox="0 0 24 24" fill="currentColor"><path d="M0 18.75l7.437-13.5H24l-7.438 13.5z"/></svg>
           Bandcamp
         </a>
 
@@ -206,40 +145,16 @@
   </section>
 
   <!-- FOOTER -->
-  <footer class="footer" role="contentinfo">
+  <footer class="footer">
     <div class="container">
-      <div class="footer__inner">
-        <div class="footer__brand">
-          <span class="footer__logo">SIX DEMON BAG</span>
-          <p class="footer__copy">&copy; 2026 Six Demon Bag. All rights reserved.</p>
-        </div>
-        <nav class="footer__social" aria-label="Social media links">
-          <a class="footer__social-link" href="#" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-            </svg>
-          </a>
-          <a class="footer__social-link" href="#" aria-label="Twitter / X">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-            </svg>
-          </a>
-          <a class="footer__social-link" href="#" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-            </svg>
-          </a>
-        </nav>
-      </div>
+      <span class="footer__logo">SIX DEMON BAG</span>
+      <p class="footer__copy">&copy; 2026</p>
     </div>
   </footer>
 
   <script>
     window.__SDB_TRACKS__ = [
-      {
-        name: "Dirty Old Town",
-        src:  "assets/dirty-old-town.m4a"
-      }
+      { name: "Dirty Old Town", src: "assets/dirty-old-town.m4a" }
     ];
   </script>
   <script src="script.js"></script>
