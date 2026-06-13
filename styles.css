@@ -19,18 +19,22 @@
 }
 
 :root {
-  --bg:          #0d0d0d;
-  --bg-alt:      #0a0a0a;
-  --surface:     #131313;
-  --surface-2:   #1a1a1a;
+  --bg:          #080810;
+  --bg-alt:      #06060e;
+  --surface:     #0f0f1a;
+  --surface-2:   #161625;
   --text:        #e8e8e8;
-  --text-dim:    #888888;
-  --text-faint:  #444444;
+  --text-dim:    #8888aa;
+  --text-faint:  #404055;
   --crimson:     #8b0000;
   --crimson-lit: #b30000;
+  --indigo:      #1a1040;
+  --midnight:    #07071a;
+  --bone:        #d6cfc0;
   --gold:        #c9a84c;
-  --border:      rgba(255, 255, 255, 0.06);
+  --border:      rgba(255, 255, 255, 0.05);
   --border-red:  rgba(139, 0, 0, 0.22);
+  --border-blue: rgba(80, 60, 180, 0.18);
 }
 
 html {
@@ -214,15 +218,16 @@ ul       { list-style: none; }
   overflow: hidden;
 }
 
-/* Layered dark-crimson gradient */
+/* Layered blue-black atmosphere with crimson underbelly — skull painting palette */
 .hero__bg {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 90% 55% at 50% 25%, rgba(100, 0, 0, 0.4) 0%, transparent 65%),
-    radial-gradient(ellipse 55% 75% at 82% 75%, rgba(139, 0, 0, 0.1) 0%, transparent 55%),
-    radial-gradient(ellipse 45% 45% at 18% 82%, rgba(201, 168, 76, 0.04) 0%, transparent 50%),
-    linear-gradient(175deg, #0d0d0d 0%, #140808 50%, #0d0d0d 100%);
+    radial-gradient(ellipse 80% 50% at 50% 15%, rgba(30, 20, 90, 0.65) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 50% 60%, rgba(100, 0, 0, 0.35) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 30% at 15% 80%, rgba(139, 0, 0, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 35% 25% at 85% 20%, rgba(40, 20, 120, 0.2) 0%, transparent 45%),
+    linear-gradient(180deg, #07071a 0%, #0a0612 45%, #080810 100%);
 }
 
 /* SVG fractal-noise grain — inlined as data URI */
@@ -271,14 +276,20 @@ ul       { list-style: none; }
 @keyframes nameGlow {
   0%, 100% {
     text-shadow:
-      0 0 30px rgba(139, 0, 0, 0.12),
-      0 0 60px rgba(139, 0, 0, 0.05);
+      0 0 25px rgba(60, 40, 160, 0.18),
+      0 0 60px rgba(60, 40, 160, 0.08);
   }
-  50% {
+  40% {
     text-shadow:
-      0 0 55px rgba(139, 0, 0, 0.48),
-      0 0 110px rgba(139, 0, 0, 0.22),
-      0 0 200px rgba(139, 0, 0, 0.07);
+      0 0 40px rgba(80, 60, 200, 0.45),
+      0 0 90px rgba(60, 40, 160, 0.25),
+      0 0 160px rgba(30, 20, 90, 0.12);
+  }
+  70% {
+    text-shadow:
+      0 0 45px rgba(139, 0, 0, 0.4),
+      0 0 100px rgba(100, 0, 0, 0.18),
+      0 0 180px rgba(60, 0, 0, 0.07);
   }
 }
 
@@ -430,23 +441,32 @@ ul       { list-style: none; }
   outline: none;
 }
 
-/* Artwork gradients */
+/* Artwork gradients — each card mirrors one of the inspiration pieces */
 .album-card__art {
   position: relative;
   aspect-ratio: 1 / 1;
   overflow: hidden;
 }
 
+/* Card 1 — Screaming Skull: deep cobalt erupting into cold white */
 .album-card__art--1 {
-  background: linear-gradient(135deg, #1a0000 0%, #520000 42%, #8b0000 68%, #3a1010 100%);
+  background:
+    radial-gradient(ellipse 55% 55% at 50% 40%, rgba(180, 200, 255, 0.12) 0%, transparent 55%),
+    linear-gradient(145deg, #02020f 0%, #0c0c3a 35%, #1a1a60 60%, #070720 100%);
 }
 
+/* Card 2 — Masked Figure: ash-grey portrait light against void black */
 .album-card__art--2 {
-  background: linear-gradient(135deg, #07070f 0%, #12122a 42%, #251842 68%, #0d0a18 100%);
+  background:
+    radial-gradient(ellipse 45% 60% at 50% 35%, rgba(210, 205, 195, 0.1) 0%, transparent 55%),
+    linear-gradient(160deg, #0a0a0a 0%, #1c1c1c 40%, #141414 70%, #050505 100%);
 }
 
+/* Card 3 — Hellgate: stone dark, hellfire at the threshold */
 .album-card__art--3 {
-  background: linear-gradient(135deg, #0c0a00 0%, #231c04 42%, #3d320a 65%, #1a1408 100%);
+  background:
+    radial-gradient(ellipse 50% 65% at 50% 70%, rgba(200, 60, 0, 0.35) 0%, rgba(120, 20, 0, 0.15) 45%, transparent 65%),
+    linear-gradient(170deg, #0a0500 0%, #1a0800 35%, #2a0e00 55%, #0d0500 100%);
 }
 
 /* Hover overlay with play icon */
