@@ -1,4 +1,54 @@
 /* =========================================================
+   PORTRAIT — full-bleed masked figure, no bio
+   ========================================================= */
+.portrait {
+  position: relative;
+  height: 80vh;
+  min-height: 500px;
+  overflow: hidden;
+}
+
+.portrait__img-wrap {
+  position: absolute;
+  inset: 0;
+}
+
+.portrait__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 15%;
+  filter: grayscale(100%) contrast(1.1);
+  opacity: 0.55;
+}
+
+.portrait__veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, var(--bg) 0%, transparent 18%, transparent 70%, var(--bg) 100%),
+    linear-gradient(to right, rgba(0,0,0,0.4) 0%, transparent 40%, transparent 60%, rgba(0,0,0,0.4) 100%);
+}
+
+.portrait__caption {
+  position: absolute;
+  bottom: 3.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 1;
+}
+
+.portrait__line {
+  font-family: var(--font-head);
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  letter-spacing: 0.12em;
+  color: var(--bone);
+  margin-top: 0.5rem;
+  opacity: 0.7;
+}
+
+/* =========================================================
    SIX DEMON BAG — styles.css
    Palette:
      bg          #0d0d0d  (near-black)
@@ -441,32 +491,14 @@ ul       { list-style: none; }
   outline: none;
 }
 
-/* Artwork gradients — each card mirrors one of the inspiration pieces */
+/* Album card art — uses actual artwork via inline background-image */
 .album-card__art {
   position: relative;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-}
-
-/* Card 1 — Screaming Skull: deep cobalt erupting into cold white */
-.album-card__art--1 {
-  background:
-    radial-gradient(ellipse 55% 55% at 50% 40%, rgba(180, 200, 255, 0.12) 0%, transparent 55%),
-    linear-gradient(145deg, #02020f 0%, #0c0c3a 35%, #1a1a60 60%, #070720 100%);
-}
-
-/* Card 2 — Masked Figure: ash-grey portrait light against void black */
-.album-card__art--2 {
-  background:
-    radial-gradient(ellipse 45% 60% at 50% 35%, rgba(210, 205, 195, 0.1) 0%, transparent 55%),
-    linear-gradient(160deg, #0a0a0a 0%, #1c1c1c 40%, #141414 70%, #050505 100%);
-}
-
-/* Card 3 — Hellgate: stone dark, hellfire at the threshold */
-.album-card__art--3 {
-  background:
-    radial-gradient(ellipse 50% 65% at 50% 70%, rgba(200, 60, 0, 0.35) 0%, rgba(120, 20, 0, 0.15) 45%, transparent 65%),
-    linear-gradient(170deg, #0a0500 0%, #1a0800 35%, #2a0e00 55%, #0d0500 100%);
+  background-size: cover;
+  background-position: center;
+  background-color: var(--surface);
 }
 
 /* Hover overlay with play icon */
