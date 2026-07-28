@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Boyds Alterations</title>
+  <meta name="theme-color" content="#1c2a3a" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <h1>Boyds Alterations</h1>
+    <button id="new-ticket-btn" class="btn btn--primary">+ New</button>
+  </header>
+
+  <div id="sync-banner" class="sync-banner" hidden>Reconnecting…</div>
+
+  <main id="list" class="list" aria-live="polite"></main>
+
+  <p id="empty-state" class="empty-state" hidden>No alteration tickets yet. Tap "+ New" to add one.</p>
+
+  <!-- Ticket form dialog -->
+  <dialog id="ticket-dialog" class="dialog">
+    <form id="ticket-form" method="dialog" class="ticket-form">
+      <h2 id="dialog-title">New Ticket</h2>
+
+      <label>
+        Customer Name
+        <input type="text" id="f-customer-name" required autocomplete="off" />
+      </label>
+
+      <label>
+        Hanger Tag #
+        <input type="text" id="f-hanger-tag" required autocomplete="off" />
+      </label>
+
+      <label>
+        Destination Store
+        <select id="f-store" required>
+          <option value="" disabled selected>Select store…</option>
+          <option value="Chestnut Street">Chestnut Street</option>
+          <option value="Wayne">Wayne</option>
+        </select>
+      </label>
+
+      <div class="field-row">
+        <label>
+          Date Sold
+          <input type="date" id="f-date-sold" />
+        </label>
+        <label>
+          Date Due
+          <input type="date" id="f-date-due" required />
+        </label>
+      </div>
+
+      <fieldset class="items-fieldset">
+        <legend>Items (up to 4)</legend>
+        <input type="text" id="f-item-1" placeholder="Item 1" autocomplete="off" />
+        <input type="text" id="f-item-2" placeholder="Item 2" autocomplete="off" />
+        <input type="text" id="f-item-3" placeholder="Item 3" autocomplete="off" />
+        <input type="text" id="f-item-4" placeholder="Item 4" autocomplete="off" />
+      </fieldset>
+
+      <div class="dialog-actions">
+        <button type="button" id="delete-btn" class="btn btn--danger" hidden>Delete</button>
+        <div class="dialog-actions__right">
+          <button type="button" id="cancel-btn" class="btn">Cancel</button>
+          <button type="submit" id="save-btn" class="btn btn--primary">Save</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="vendor/supabase.js"></script>
+  <script type="module" src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
