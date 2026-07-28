@@ -68,30 +68,44 @@ function dueDescriptor(dateDue) {
 function render() {
   listEl.innerHTML = "";
 
-  const active = tickets
-    .filter((t) => !t.picked_up)
+  const due = tickets
+    .filter((t) => !t.completed && !t.picked_up)
     .sort((a, b) => (a.date_due || "9999").localeCompare(b.date_due || "9999"));
+  const ready = tickets
+    .filter((t) => t.completed && !t.picked_up)
+    .sort((a, b) => (a.completed_at || "").localeCompare(b.completed_at || ""));
   const done = tickets
     .filter((t) => t.picked_up)
     .sort((a, b) => (b.date_due || "").localeCompare(a.date_due || ""));
 
   emptyStateEl.hidden = tickets.length > 0;
 
-  active.forEach((t) => listEl.appendChild(renderCard(t)));
+  due.forEach((t) => listEl.appendChild(renderCard(t)));
+
+  if (ready.length) {
+    listEl.appendChild(sectionHeading("Ready for Pickup"));
+    ready.forEach((t) => listEl.appendChild(renderCard(t)));
+  }
 
   if (done.length) {
-    const heading = document.createElement("div");
-    heading.className = "section-heading";
-    heading.textContent = "Picked Up";
-    listEl.appendChild(heading);
+    listEl.appendChild(sectionHeading("Picked Up"));
     done.forEach((t) => listEl.appendChild(renderCard(t)));
   }
+}
+
+function sectionHeading(text) {
+  const heading = document.createElement("div");
+  heading.className = "section-heading";
+  heading.textContent = text;
+  return heading;
 }
 
 function renderCard(t) {
   const card = document.createElement("article");
   const descriptor = t.picked_up
     ? { label: "Picked up", cls: "done" }
+    : t.completed
+    ? { label: "Ready for pickup", cls: "ready" }
     : dueDescriptor(t.date_due);
   card.className = `card card--${descriptor.cls}`;
 
@@ -110,10 +124,16 @@ function renderCard(t) {
       ${t.fitter ? `<span>Fit by ${escapeHtml(t.fitter)}</span>` : ""}
     </div>
     ${items.length ? `<div class="card__items">${items.map((i) => `<span class="item-chip"></span>`).join("")}</div>` : ""}
-    <label class="card__pickup-row">
-      <input type="checkbox" ${t.picked_up ? "checked" : ""} />
-      Picked up
-    </label>
+    <div class="card__toggles">
+      <label class="card__toggle">
+        <input type="checkbox" class="js-completed" ${t.completed ? "checked" : ""} />
+        Completed
+      </label>
+      <label class="card__toggle">
+        <input type="checkbox" class="js-picked-up" ${t.picked_up ? "checked" : ""} />
+        Picked up
+      </label>
+    </div>
   `;
 
   card.querySelector(".card__name").textContent = t.customer_name;
@@ -121,10 +141,16 @@ function renderCard(t) {
   const chips = card.querySelectorAll(".item-chip");
   chips.forEach((chip, i) => (chip.textContent = items[i]));
 
-  const checkbox = card.querySelector('input[type="checkbox"]');
-  checkbox.addEventListener("click", (e) => e.stopPropagation());
-  checkbox.addEventListener("change", async (e) => {
-    await togglePickedUp(t.id, e.target.checked);
+  const completedCheckbox = card.querySelector(".js-completed");
+  completedCheckbox.addEventListener("click", (e) => e.stopPropagation());
+  completedCheckbox.addEventListener("change", async (e) => {
+    await toggleField(t.id, "completed", e.target.checked);
+  });
+
+  const pickedUpCheckbox = card.querySelector(".js-picked-up");
+  pickedUpCheckbox.addEventListener("click", (e) => e.stopPropagation());
+  pickedUpCheckbox.addEventListener("change", async (e) => {
+    await toggleField(t.id, "picked_up", e.target.checked);
   });
 
   card.addEventListener("click", () => openDialog(t));
@@ -221,8 +247,8 @@ deleteBtn.addEventListener("click", async () => {
   closeDialog();
 });
 
-async function togglePickedUp(id, pickedUp) {
-  const { error } = await supabase.from("alterations").update({ picked_up: pickedUp }).eq("id", id);
+async function toggleField(id, field, value) {
+  const { error } = await supabase.from("alterations").update({ [field]: value }).eq("id", id);
   if (error) alert(`Could not update ticket: ${error.message}`);
 }
 

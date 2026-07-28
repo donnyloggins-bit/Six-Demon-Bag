@@ -14,6 +14,8 @@ create table if not exists alterations (
   item_2 text,
   item_3 text,
   item_4 text,
+  completed boolean not null default false,
+  completed_at timestamptz,
   picked_up boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -22,6 +24,8 @@ create table if not exists alterations (
 -- Safe to re-run: adds the new columns if this table was created before they existed.
 alter table alterations add column if not exists salesperson text;
 alter table alterations add column if not exists fitter text;
+alter table alterations add column if not exists completed boolean not null default false;
+alter table alterations add column if not exists completed_at timestamptz;
 
 create index if not exists alterations_date_due_idx on alterations (date_due);
 
@@ -38,6 +42,24 @@ create trigger alterations_set_updated_at
   before update on alterations
   for each row
   execute function set_updated_at();
+
+create or replace function set_completed_at()
+returns trigger as $$
+begin
+  if new.completed and not old.completed then
+    new.completed_at = now();
+  elsif not new.completed then
+    new.completed_at = null;
+  end if;
+  return new;
+end;
+$$ language plpgsql;
+
+drop trigger if exists alterations_set_completed_at on alterations;
+create trigger alterations_set_completed_at
+  before update on alterations
+  for each row
+  execute function set_completed_at();
 
 -- This is an internal shop tool with no login: every staff member uses the
 -- same public anon key, so RLS is opened up fully rather than per-user.

@@ -9,6 +9,7 @@
   --danger: #b3261e;
   --warn: #b9772e;
   --ok: #2f6b3a;
+  --ready: #2f6b8f;
   --border: #e1ddd3;
   --radius: 10px;
 }
@@ -35,11 +36,27 @@ body {
   color: #fff;
 }
 
-.topbar h1 {
-  font-size: 1.2rem;
-  margin: 0;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  line-height: 1;
+}
+
+.brand__mark {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 900;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.brand__sub {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .sync-banner {
@@ -112,6 +129,7 @@ body {
 .card--overdue { border-left-color: var(--danger); }
 .card--soon { border-left-color: var(--warn); }
 .card--ok { border-left-color: var(--ok); }
+.card--ready { border-left-color: var(--ready); }
 .card--done {
   border-left-color: var(--border);
   opacity: 0.6;
@@ -138,6 +156,7 @@ body {
 .card--overdue .card__due { color: var(--danger); }
 .card--soon .card__due { color: var(--warn); }
 .card--ok .card__due { color: var(--ok); }
+.card--ready .card__due { color: var(--ready); }
 
 .card__meta {
   display: flex;
@@ -164,11 +183,16 @@ body {
   font-size: 0.8rem;
 }
 
-.card__pickup-row {
+.card__toggles {
   margin-top: 10px;
   display: flex;
+  gap: 16px;
+}
+
+.card__toggle {
+  display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-size: 0.9rem;
 }
 
