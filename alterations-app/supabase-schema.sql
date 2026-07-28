@@ -6,6 +6,8 @@ create table if not exists alterations (
   customer_name text not null,
   hanger_tag_number text not null,
   destination_store text not null check (destination_store in ('Chestnut Street', 'Wayne')),
+  salesperson text,
+  fitter text,
   date_sold date,
   date_due date,
   item_1 text,
@@ -16,6 +18,10 @@ create table if not exists alterations (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- Safe to re-run: adds the new columns if this table was created before they existed.
+alter table alterations add column if not exists salesperson text;
+alter table alterations add column if not exists fitter text;
 
 create index if not exists alterations_date_due_idx on alterations (date_due);
 

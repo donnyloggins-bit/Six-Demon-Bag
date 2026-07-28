@@ -18,6 +18,8 @@ const fields = {
   customerName: document.getElementById("f-customer-name"),
   hangerTag: document.getElementById("f-hanger-tag"),
   store: document.getElementById("f-store"),
+  salesperson: document.getElementById("f-salesperson"),
+  fitter: document.getElementById("f-fitter"),
   dateSold: document.getElementById("f-date-sold"),
   dateDue: document.getElementById("f-date-due"),
   items: [
@@ -104,6 +106,8 @@ function renderCard(t) {
       <span>Tag #${escapeHtml(t.hanger_tag_number)}</span>
       <span>${escapeHtml(t.destination_store)}</span>
       <span>Sold ${formatDate(t.date_sold)}</span>
+      ${t.salesperson ? `<span>Sold by ${escapeHtml(t.salesperson)}</span>` : ""}
+      ${t.fitter ? `<span>Fit by ${escapeHtml(t.fitter)}</span>` : ""}
     </div>
     ${items.length ? `<div class="card__items">${items.map((i) => `<span class="item-chip"></span>`).join("")}</div>` : ""}
     <label class="card__pickup-row">
@@ -143,6 +147,8 @@ function openDialog(ticket) {
   fields.customerName.value = ticket?.customer_name ?? "";
   fields.hangerTag.value = ticket?.hanger_tag_number ?? "";
   fields.store.value = ticket?.destination_store ?? "";
+  fields.salesperson.value = ticket?.salesperson ?? "";
+  fields.fitter.value = ticket?.fitter ?? "";
   fields.dateSold.value = ticket?.date_sold ?? "";
   fields.dateDue.value = ticket?.date_due ?? "";
   fields.items[0].value = ticket?.item_1 ?? "";
@@ -176,6 +182,8 @@ form.addEventListener("submit", async (e) => {
     customer_name: fields.customerName.value.trim(),
     hanger_tag_number: fields.hangerTag.value.trim(),
     destination_store: fields.store.value,
+    salesperson: fields.salesperson.value.trim() || null,
+    fitter: fields.fitter.value.trim() || null,
     date_sold: fields.dateSold.value || null,
     date_due: fields.dateDue.value || null,
     item_1: fields.items[0].value.trim() || null,
