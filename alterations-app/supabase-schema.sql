@@ -73,4 +73,13 @@ create policy "Allow all access" on alterations
   with check (true);
 
 -- Enable realtime so every staff member's changes show up live for everyone else.
-alter publication supabase_realtime add table alterations;
+-- Safe to re-run: ALTER PUBLICATION ... ADD TABLE has no IF NOT EXISTS, so guard it manually.
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and tablename = 'alterations'
+  ) then
+    alter publication supabase_realtime add table alterations;
+  end if;
+end $$;
