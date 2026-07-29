@@ -285,20 +285,3 @@ body {
   margin-left: auto;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #15181d;
-    --card-bg: #1e232a;
-    --text: #e9e7e2;
-    --muted: #9aa1ab;
-    --border: #2c323b;
-  }
-  .ticket-form input,
-  .ticket-form select,
-  .btn {
-    background: #1e232a;
-    color: var(--text);
-  }
-  .btn--primary { color: #1c1204; }
-  .item-chip { background: #262c34; }
-}
