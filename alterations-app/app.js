@@ -77,6 +77,25 @@ const fields = {
 let tickets = [];
 let editingId = null;
 
+const viewTabs = document.getElementById("view-tabs");
+let viewMode = localStorage.getItem("viewMode") === "tailor" ? "tailor" : "all";
+
+function applyViewMode() {
+  viewTabs.querySelectorAll(".view-tab").forEach((btn) => {
+    btn.classList.toggle("view-tab--active", btn.dataset.view === viewMode);
+  });
+  newTicketBtn.hidden = viewMode === "tailor";
+  render();
+}
+
+viewTabs.addEventListener("click", (e) => {
+  const btn = e.target.closest(".view-tab");
+  if (!btn) return;
+  viewMode = btn.dataset.view;
+  localStorage.setItem("viewMode", viewMode);
+  applyViewMode();
+});
+
 function todayISO() {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
@@ -110,6 +129,14 @@ function dueDescriptor(dateDue) {
 }
 
 function render() {
+  if (viewMode === "tailor") {
+    renderTailorView();
+  } else {
+    renderAllView();
+  }
+}
+
+function renderAllView() {
   listEl.innerHTML = "";
 
   const due = tickets
@@ -123,6 +150,7 @@ function render() {
     .sort((a, b) => (b.date_due || "").localeCompare(a.date_due || ""));
 
   emptyStateEl.hidden = tickets.length > 0;
+  emptyStateEl.textContent = 'No alteration tickets yet. Tap "+ New" to add one.';
 
   due.forEach((t) => listEl.appendChild(renderCard(t)));
 
@@ -135,6 +163,52 @@ function render() {
     listEl.appendChild(sectionHeading("Picked Up"));
     done.forEach((t) => listEl.appendChild(renderCard(t)));
   }
+}
+
+function renderTailorView() {
+  listEl.innerHTML = "";
+
+  const pending = tickets
+    .filter((t) => !t.completed)
+    .sort((a, b) => (a.date_due || "9999").localeCompare(b.date_due || "9999"));
+
+  emptyStateEl.hidden = pending.length > 0;
+  emptyStateEl.textContent = "Nothing pending — all caught up.";
+
+  pending.forEach((t) => listEl.appendChild(renderTailorCard(t)));
+}
+
+function renderTailorCard(t) {
+  const card = document.createElement("article");
+  const descriptor = dueDescriptor(t.date_due);
+  card.className = `card card--${descriptor.cls} card--tailor`;
+
+  const items = [t.item_1, t.item_2, t.item_3, t.item_4].filter(Boolean);
+
+  card.innerHTML = `
+    <div class="card__top">
+      <span class="card__name"></span>
+      <span class="card__due"></span>
+    </div>
+    <div class="card__meta">
+      <span>Tag #${escapeHtml(t.hanger_tag_number)}</span>
+      ${t.fitter ? `<span>Fitter: ${escapeHtml(t.fitter)}</span>` : ""}
+    </div>
+    ${items.length ? `<div class="card__items">${items.map(() => `<span class="item-chip"></span>`).join("")}</div>` : ""}
+    <button type="button" class="btn btn--primary btn--block js-mark-completed">Mark Completed</button>
+  `;
+
+  card.querySelector(".card__name").textContent = t.customer_name;
+  card.querySelector(".card__due").textContent = descriptor.label;
+  const chips = card.querySelectorAll(".item-chip");
+  chips.forEach((chip, i) => (chip.textContent = items[i]));
+
+  card.querySelector(".js-mark-completed").addEventListener("click", async (e) => {
+    e.target.disabled = true;
+    await toggleField(t.id, "completed", true);
+  });
+
+  return card;
 }
 
 function sectionHeading(text) {
@@ -337,4 +411,5 @@ supabase
     }
   });
 
+applyViewMode();
 loadTickets();

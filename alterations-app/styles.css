@@ -104,6 +104,48 @@ body {
   font-weight: 600;
 }
 
+.btn--block {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.btn--block:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.view-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 10px 14px 0;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.view-tab {
+  flex: 1;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--muted);
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.view-tab--active {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+
+.card--tailor .card__name {
+  font-size: 1.2rem;
+}
+
 .btn--danger {
   background: #fff;
   border-color: var(--danger);
