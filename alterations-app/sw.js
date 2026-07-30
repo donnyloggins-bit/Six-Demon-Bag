@@ -1,4 +1,4 @@
-const CACHE_NAME = "boyds-alterations-v1";
+const CACHE_NAME = "boyds-alterations-v2";
 const APP_SHELL = [
   "./index.html",
   "./styles.css",
@@ -6,6 +6,7 @@ const APP_SHELL = [
   "./config.js",
   "./manifest.json",
   "./vendor/supabase.js",
+  "./assets/workshop-bg.jpg",
 ];
 
 self.addEventListener("install", (event) => {

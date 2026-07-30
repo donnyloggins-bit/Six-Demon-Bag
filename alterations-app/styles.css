@@ -1,16 +1,16 @@
 :root {
-  --navy: #1c2a3a;
-  --navy-dark: #121c27;
-  --gold: #b98b3e;
-  --bg: #f4f1ea;
+  --navy: #141414;
+  --navy-dark: #000000;
+  --gold: #1f1f1f;
+  --bg: #eeeeee;
   --card-bg: #ffffff;
-  --text: #22262b;
-  --muted: #6b7280;
+  --text: #1a1a1a;
+  --muted: #6b6b6b;
   --danger: #b3261e;
   --warn: #b9772e;
   --ok: #2f6b3a;
   --ready: #2f6b8f;
-  --border: #e1ddd3;
+  --border: #dcdcdc;
   --radius: 10px;
 }
 
@@ -19,9 +19,20 @@
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background: var(--bg);
   color: var(--text);
   padding-bottom: env(safe-area-inset-bottom);
+  position: relative;
+  min-height: 100vh;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url("assets/workshop-bg.jpg") center / cover no-repeat;
+  z-index: -1;
 }
 
 .topbar {
@@ -32,7 +43,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: calc(env(safe-area-inset-top) + 14px) 16px 14px;
-  background: var(--navy);
+  background: rgba(10, 10, 10, 0.88);
   color: #fff;
 }
 
@@ -54,7 +65,7 @@ body {
 .brand__sub {
   font-size: 0.8rem;
   font-weight: 400;
-  color: var(--gold);
+  color: #b8b8b8;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -102,6 +113,12 @@ body {
   border-color: var(--gold);
   color: #fff;
   font-weight: 600;
+}
+
+.topbar .btn--primary {
+  background: #fff;
+  border-color: #fff;
+  color: #111;
 }
 
 .btn--block {
