@@ -13,9 +13,14 @@ const installBtn = document.getElementById("install-btn");
 const installDismiss = document.getElementById("install-dismiss");
 
 const isStandalone =
-  window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  window.matchMedia("(display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui)")
+    .matches || window.navigator.standalone === true;
 const isIos = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
 const dismissedInstall = localStorage.getItem("installBannerDismissed") === "1";
+
+if (isStandalone) {
+  localStorage.setItem("installBannerDismissed", "1");
+}
 
 let deferredInstallPrompt = null;
 
@@ -49,6 +54,7 @@ installDismiss.addEventListener("click", () => {
 
 window.addEventListener("appinstalled", () => {
   installBanner.hidden = true;
+  localStorage.setItem("installBannerDismissed", "1");
 });
 
 const dialog = document.getElementById("ticket-dialog");
