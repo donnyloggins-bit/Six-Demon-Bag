@@ -7,6 +7,50 @@ const listEl = document.getElementById("list");
 const emptyStateEl = document.getElementById("empty-state");
 const syncBanner = document.getElementById("sync-banner");
 
+const installBanner = document.getElementById("install-banner");
+const installBannerText = document.getElementById("install-banner-text");
+const installBtn = document.getElementById("install-btn");
+const installDismiss = document.getElementById("install-dismiss");
+
+const isStandalone =
+  window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+const isIos = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+const dismissedInstall = localStorage.getItem("installBannerDismissed") === "1";
+
+let deferredInstallPrompt = null;
+
+if (!isStandalone && !dismissedInstall) {
+  if (isIos) {
+    installBannerText.textContent = 'Install this app: tap Share, then "Add to Home Screen".';
+    installBanner.hidden = false;
+  } else {
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      installBannerText.textContent = "Install this app for quicker access.";
+      installBtn.hidden = false;
+      installBanner.hidden = false;
+    });
+  }
+}
+
+installBtn.addEventListener("click", async () => {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  installBanner.hidden = true;
+});
+
+installDismiss.addEventListener("click", () => {
+  installBanner.hidden = true;
+  localStorage.setItem("installBannerDismissed", "1");
+});
+
+window.addEventListener("appinstalled", () => {
+  installBanner.hidden = true;
+});
+
 const dialog = document.getElementById("ticket-dialog");
 const form = document.getElementById("ticket-form");
 const dialogTitle = document.getElementById("dialog-title");
