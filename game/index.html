@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Dark World</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@500;700&family=IBM+Plex+Sans+Condensed:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- MAP -->
+  <section class="screen" id="map-screen">
+    <header class="top">
+      <div class="brand">Dark World</div>
+      <div class="me">
+        <span class="lvl" id="lvl">Lv 1</span>
+        <span class="xpbar"><i id="xp"></i></span>
+      </div>
+    </header>
+    <div class="war">
+      <div class="war-row"><span>Kensington war meter</span><span id="war-pct">0%</span></div>
+      <div class="war-bar"><i id="war"></i></div>
+    </div>
+    <div class="map-wrap">
+      <svg id="map" viewBox="0 0 390 600" role="img" aria-label="Map of Kensington and Fishtown with open rifts"></svg>
+    </div>
+    <div class="sheet" id="sheet" hidden>
+      <div class="sheet-head">
+        <div>
+          <div class="sheet-kicker" id="sheet-kicker"></div>
+          <div class="sheet-title" id="sheet-title"></div>
+        </div>
+        <button class="x" id="sheet-close" type="button" aria-label="Close">×</button>
+      </div>
+      <div class="sheet-meta" id="sheet-meta"></div>
+      <button class="cta" id="sheet-go" type="button"></button>
+    </div>
+    <footer class="foot" id="foot">Tap a rift on the map</footer>
+  </section>
+
+  <!-- FIGHT -->
+  <section class="screen" id="fight-screen" hidden>
+    <div class="arena" id="arena">
+      <canvas id="cv"></canvas>
+      <div class="fhud">
+        <div class="frow">
+          <span class="fplace" id="fplace"></span>
+          <span class="ftime" id="ftime">75</span>
+        </div>
+        <div class="bossname" id="bossname"></div>
+        <div class="bossbar"><i id="bosshp"></i></div>
+      </div>
+      <div class="banner" id="banner"></div>
+    </div>
+    <div class="controls">
+      <div class="me-bars">
+        <div class="bar-label"><span>You</span></div>
+        <div class="hpbar"><i id="hp"></i></div>
+        <div class="bar-label"><span>Fury</span></div>
+        <div class="furybar"><i id="fury"></i></div>
+      </div>
+      <div class="abilities">
+        <button class="ab" id="ab-flare" type="button"><b>Flare</b><small>big hit</small><span class="cd"></span></button>
+        <button class="ab" id="ab-ward" type="button"><b>Ward</b><small>shield team</small><span class="cd"></span></button>
+        <button class="ab ult" id="ab-ult" type="button"><b>Last Light</b><small>needs full fury</small><span class="cd"></span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="screen results" id="result-screen" hidden>
+    <div class="res-kicker" id="res-kicker"></div>
+    <h1 class="res-title" id="res-title"></h1>
+    <ul class="res-list" id="res-list"></ul>
+    <div class="loot" id="loot" hidden></div>
+    <button class="cta" id="res-go" type="button">Back to the map</button>
+  </section>
+
+</div>
+<script>
+  // Art paths. The single-file build swaps these for embedded images.
+  window.DW_ART = {
+    gate: '../assets/hellgate.jpg',
+    wraith: '../assets/skull.png',
+    mask: '../assets/mask.jpg'
+  };
+</script>
+<script src="game.js"></script>
+</body>
+</html>
