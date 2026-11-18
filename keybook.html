@@ -152,6 +152,10 @@ h3{font:600 15px/1.3 var(--font-body);margin:0 0 4px}
 .dot.blue text{fill:#fff}
 .dot.dim{opacity:.17}
 .dot.ping circle{stroke:var(--fg);stroke-width:3}
+.dot.held circle{stroke:var(--away);stroke-width:4}
+.sw.held{background:var(--dot);border:3px solid var(--away)}
+.lstart{margin:0 0 14px;padding:12px 14px;border-radius:10px;background:var(--gold-soft);font-size:13px;line-height:1.45}
+.lstart a{color:var(--gold);font-weight:700}
 .k-white{fill:var(--key-white);stroke:var(--key-line);stroke-width:1;cursor:pointer}
 .k-black{fill:var(--key-black);stroke:var(--key-black);cursor:pointer}
 .pdot circle{fill:var(--pdot)}
@@ -408,7 +412,7 @@ pre.tab{margin:0;padding:14px 16px;border-radius:10px;background:var(--bg);borde
   <p>Look up any key on guitar and piano, or learn the theory behind it from scratch. No sheet music needed.</p>
   <nav class="viewtabs" aria-label="App sections">
     <a href="#keybook" data-view="tool">Keys &amp; chords</a>
-    <a href="#lessons" data-view="lessons">Lessons<small>13</small></a>
+    <a href="#lessons" data-view="lessons">Lessons<small>14</small></a>
   </nav>
 </header>
 
@@ -494,6 +498,10 @@ pre.tab{margin:0;padding:14px 16px;border-radius:10px;background:var(--bg);borde
       <span class="lab">Position (frets)</span>
       <div class="seg small" id="posSeg" role="group" aria-label="Scale position"></div>
     </div>
+    <div class="controls" style="margin-bottom:12px">
+      <span class="lab">Around a chord</span>
+      <div class="chips" id="aroundChips" role="group" aria-label="Show scale notes around a chord shape"></div>
+    </div>
     <div class="scroller" id="boardWrap"></div>
     <div class="legend" id="gLegend"></div>
     <details class="help">
@@ -504,7 +512,7 @@ pre.tab{margin:0;padding:14px 16px;border-radius:10px;background:var(--bg);borde
         <div><h4>Note names or scale degrees</h4><p>Switch to <b>scale degrees</b> to see where the 1, 3 and 5 sit. Those are the chord tones, the safest notes to land on at the end of a lick.</p></div>
         <div class="tip"><h4>How to practice it</h4><p>Pick one position. Play it slowly up and down, starting and ending on a root, with a metronome. Then improvise using only that box over a chord. Move on when it feels automatic.</p></div>
       </div>
-      <p class="help-more">Learn more: <a href="#lesson-3">The major scale</a> · <a href="#lesson-10">Soloing with pentatonics</a> · <a href="#lesson-11">Modes made simple</a></p>
+      <p class="help-more">Learn more: <a href="#lesson-3">The major scale</a> · <a href="#lesson-11">Soloing with pentatonics</a> · <a href="#lesson-12">Modes made simple</a></p>
     </details>
   </section>
 
@@ -568,7 +576,7 @@ pre.tab{margin:0;padding:14px 16px;border-radius:10px;background:var(--bg);borde
         <div><h4>Home, Away, Tension</h4><p>Each chord’s job in the key. The “What works together” section below explains them.</p></div>
         <div class="tip"><h4>Tip</h4><p>Learn each chord type with the root on the 6th string and on the 5th string. With those two shapes you can play any chord anywhere on the neck.</p></div>
       </div>
-      <p class="help-more">Learn more: <a href="#lesson-5">How chords are built</a> · <a href="#lesson-6">Chords in a key</a> · <a href="#lesson-9">7th chords and the blues</a> · <a href="#lesson-13">Reading tab and charts</a></p>
+      <p class="help-more">Learn more: <a href="#lesson-6">How chords are built</a> · <a href="#lesson-7">Chords in a key</a> · <a href="#lesson-10">7th chords and the blues</a> · <a href="#lesson-14">Reading tab and charts</a></p>
     </details>
   </section>
 
@@ -588,7 +596,7 @@ pre.tab{margin:0;padding:14px 16px;border-radius:10px;background:var(--bg);borde
         <div><h4>Color chords</h4><p>A <b>secondary dominant</b> is a major or 7th chord from outside the key that points at a chord inside it, like a mini V-to-I. A <b>borrowed</b> chord comes from the parallel major or minor key, like the ♭VI and ♭VII chords all over rock.</p></div>
         <div class="tip"><h4>Songwriting tip</h4><p>Start and end on home, use away chords to travel, and put a tension chord right before the moment you want to feel like an arrival, such as the first beat of a chorus.</p></div>
       </div>
-      <p class="help-more">Learn more: <a href="#lesson-7">Finding the key of a song</a> · <a href="#lesson-8">Why progressions work</a></p>
+      <p class="help-more">Learn more: <a href="#lesson-8">Finding the key of a song</a> · <a href="#lesson-9">Why progressions work</a></p>
     </details>
     <div class="fngrid" id="fnGrid"></div>
 
@@ -633,6 +641,7 @@ pre.tab{margin:0;padding:14px 16px;border-radius:10px;background:var(--bg);borde
       <p class="eyebrow">Music theory from scratch</p>
       <p class="lprog" id="lProg"></p>
       <div class="lbar"><i id="lBar"></i></div>
+      <p class="lstart"><b>Fingerpicker who knows chords but not scales?</b> Start with <a href="#lesson-4">lesson 4</a>. It builds the scale out of the chord shapes you already play. Then go back to lesson 3 for the theory behind it.</p>
       <div class="lsel-wrap"><label class="vh" for="lessonSel">Choose a lesson</label><select class="sel" id="lessonSel"></select></div>
       <ol id="lessonList"></ol>
     </aside>
@@ -1012,16 +1021,21 @@ const fcx=f=>f===0?NUT-25:(fx(f-1)+fx(f))/2;
 const sy=s=>TOP+(5-s)*GAP;
 function renderGuitar(){
   const pos=state.pos>=0?C.positions[state.pos]:null;
-  $('posSeg').innerHTML=`<button type="button" data-act="pos" data-v="-1" aria-pressed="${!pos}">Whole neck</button>`+
+  $('posSeg').innerHTML=`<button type="button" data-act="pos" data-v="-1" aria-pressed="${!pos&&state.around==null}">Whole neck</button>`+
     C.positions.map((p,i)=>`<button type="button" data-act="pos" data-v="${i}" aria-pressed="${state.pos===i}" aria-label="Position ${i+1}, frets ${p.mn} to ${p.mx}">${p.mn}–${p.mx}</button>`).join('');
   const nps=(C.sc.blue!=null?C.notes.length-1:C.notes.length)>=7?3:2;
   $('gSub').textContent=pos?`Position ${state.pos+1} covers frets ${pos.mn}–${pos.mx}, ${nps} notes per string${C.sc.blue!=null?' plus the blue note':''}. Play it low string to high and back.`:
     `Every place the scale lives on a ${FRETS}-fret neck. Pick a numbered position to learn it one box at a time. Tap any dot to hear it.`;
+  const ar=state.around!=null&&C.tri[state.around]?aroundShape(C.tri[state.around]):null;
+  $('aroundChips').innerHTML=`<button type="button" class="chip" data-act="around" data-v="-1" aria-pressed="${!ar}">None</button>`+
+    C.tri.map(c=>`<button type="button" class="chip" data-act="around" data-v="${c.i}" aria-pressed="${!!ar&&state.around===c.i}">${c.name} <small>${c.roman}</small></button>`).join('');
+  if(ar) $('gSub').textContent=`Holding ${ar.ch.name} (${ar.v.frets.map(f=>f===null?'x':f).join('')}). Ringed dots are the chord shape. The other bright dots are scale notes your fingers can reach at frets ${ar.lo}–${ar.hi}, for melody, hammer-ons, pull-offs and fills.`;
+  const win=pos?{mn:pos.mn,mx:pos.mx}:ar?{mn:ar.lo,mx:ar.hi}:null;
   const info=pcInfo(), fc=focusChord(), fset=fc?new Set(fc.tones.map(t=>t.pc)):null, hiRoot=fc?fc.root.pc:C.rootPc;
   const H=TOP+GAP*5+44;
   let s=`<svg class="board" viewBox="0 0 ${BW} ${H}" role="img" aria-label="Guitar fretboard showing ${C.keyName}">`;
   s+=`<rect class="fb-wood" x="${NUT}" y="${TOP-14}" width="${RIGHT-NUT}" height="${GAP*5+28}" rx="2"/>`;
-  if(pos) s+=`<rect class="fb-win" x="${pos.mn===0?NUT-46:fx(pos.mn-1)}" y="${TOP-14}" width="${fx(pos.mx)-(pos.mn===0?NUT-46:fx(pos.mn-1))}" height="${GAP*5+28}" rx="4"/>`;
+  if(win) s+=`<rect class="fb-win" x="${win.mn===0?NUT-46:fx(win.mn-1)}" y="${TOP-14}" width="${fx(win.mx)-(win.mn===0?NUT-46:fx(win.mn-1))}" height="${GAP*5+28}" rx="4"/>`;
   [3,5,7,9,15,17,19].forEach(n=>{ if(n<=FRETS) s+=`<circle class="fb-inlay" cx="${fcx(n)}" cy="${TOP+2.5*GAP}" r="6"/>`; });
   s+=`<circle class="fb-inlay" cx="${fcx(12)}" cy="${TOP+1.5*GAP}" r="6"/><circle class="fb-inlay" cx="${fcx(12)}" cy="${TOP+3.5*GAP}" r="6"/>`;
   for(let n=1;n<=FRETS;n++) s+=`<line class="fb-fret" x1="${fx(n)}" y1="${TOP-14}" x2="${fx(n)}" y2="${TOP+GAP*5+14}"/>`;
@@ -1030,17 +1044,29 @@ function renderGuitar(){
     s+=`<text class="fb-sname" x="14" y="${sy(st)+4}">${SNAMES[st]}</text>`; }
   for(let n=0;n<=FRETS;n++){ const mk=[3,5,7,9,12,15,17,19].includes(n); s+=`<text class="fb-num${mk?' mark':''}" x="${fcx(n)}" y="${H-8}" text-anchor="middle">${n}</text>`; }
   for(let st=0;st<6;st++) for(let f=0;f<=FRETS;f++){
-    const pc=mod(OPEN[st]+f), inf=info.get(pc); if(!inf) continue;
-    if(!inf.inScale&&!(fset&&fset.has(pc))) continue;
+    const pc=mod(OPEN[st]+f), held=!!ar&&ar.held.has(st+':'+f); let inf=info.get(pc);
+    if(held&&!inf){ const t=ar.ch.tones.find(x=>x.pc===pc); inf={name:t?t.name:'',deg:'',inScale:false}; }
+    if(!inf) continue;
+    if(!inf.inScale&&!held&&!(fset&&fset.has(pc))) continue;
     let cls='dot'; if(pc===hiRoot) cls+=' root'; else if(inf.blue&&!fc) cls+=' blue';
-    if((pos&&!pos.set.has(st+':'+f))||(fset&&!fset.has(pc))) cls+=' dim';
+    if(held) cls+=' held';
+    if((pos&&!pos.set.has(st+':'+f))||(fset&&!fset.has(pc))||(ar&&(f<ar.lo||f>ar.hi))) cls+=' dim';
     s+=`<g class="${cls}" data-act="note" data-m="${OPEN[st]+f}" data-inst="guitar"><circle cx="${fcx(f)}" cy="${sy(st)}" r="11.5"/><text x="${fcx(f)}" y="${sy(st)+0.5}">${labelOf(inf)}</text></g>`;
   }
   s+='</svg>';
   $('boardWrap').innerHTML=s;
-  if(pos){ const w=$('boardWrap'),svg=w.querySelector('svg'); const k=svg.getBoundingClientRect().width/BW; const x0=(pos.mn===0?0:fx(pos.mn-1))*k-40;
+  if(win){ const w=$('boardWrap'),svg=w.querySelector('svg'); const k=svg.getBoundingClientRect().width/BW; const x0=(win.mn===0?0:fx(win.mn-1))*k-40;
     if(w.scrollWidth>w.clientWidth) w.scrollTo({left:Math.max(0,x0),behavior:'smooth'}); }
-  $('gLegend').innerHTML=`<span><i class="sw root"></i>${fc?fc.root.name+' (chord root)':'Root ('+C.notes[0].name+')'}</span><span><i class="sw note"></i>${fc?'Other chord tones':'Scale note'}</span>${C.sc.blue!=null&&!fc?'<span><i class="sw blue"></i>Blue note ('+C.notes[C.sc.blue].name+')</span>':''}${pos?'<span><i class="sw win"></i>Current position</span>':''}<span>Fret numbers along the bottom; top line is the thin high e string, as in tab.</span>`;
+  $('gLegend').innerHTML=`<span><i class="sw root"></i>${fc?fc.root.name+' (chord root)':'Root ('+C.notes[0].name+')'}</span><span><i class="sw note"></i>${fc?'Other chord tones':'Scale note'}</span>${C.sc.blue!=null&&!fc?'<span><i class="sw blue"></i>Blue note ('+C.notes[C.sc.blue].name+')</span>':''}${ar?'<span><i class="sw held"></i>Chord shape you hold</span><span><i class="sw win"></i>Notes in reach</span>':''}${pos?'<span><i class="sw win"></i>Current position</span>':''}<span>Fret numbers along the bottom; top line is the thin high e string, as in tab.</span>`;
+}
+
+/* Chord shape plus the scale notes a hand can reach around it. */
+function aroundShape(ch){
+  const v=voicings(ch)[0]; if(!v) return null;
+  const fr=v.frets.filter(f=>f!==null), up=fr.filter(f=>f>0);
+  const maxF=up.length?Math.max(...up):0, minF=up.length?Math.min(...up):0;
+  const lo=(fr.includes(0)&&maxF<=5)?0:Math.max(0,minF-1), hi=Math.max(maxF+1,lo+4);
+  return {ch,v,lo,hi,held:new Set(v.frets.map((f,s)=>f===null?null:s+':'+f).filter(Boolean))};
 }
 
 /* ---------- Piano ---------- */
@@ -1254,7 +1280,7 @@ function render(fromText){
 }
 
 /* =========================== Events =========================== */
-function setKey(root,scale){ state.root=root; if(scale) state.scale=scale; state.focus=null; state.pos=-1; }
+function setKey(root,scale){ state.root=root; if(scale) state.scale=scale; state.focus=null; state.pos=-1; state.around=null; }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-act]'); if(!b) return;
   const act=b.dataset.act, v=b.dataset.v;
@@ -1264,7 +1290,9 @@ document.addEventListener('click',e=>{
     case 'rel': setKey({l:+b.dataset.l,a:+b.dataset.a},b.dataset.s); render(); break;
     case 'labels': state.labels=v; render(); break;
     case 'sound': sound=v; renderOverview(); break;
-    case 'pos': state.pos=+v; renderGuitar(); save(); break;
+    case 'pos': state.pos=+v; state.around=null; renderGuitar(); save(); break;
+    case 'around': { const i=+v; state.around=i<0?null:i; if(i>=0){ state.pos=-1; state.focus=null; const ar=aroundShape(C.tri[i]); if(ar){ stopAll(); const ac=audio(); if(ac){ const t=ac.currentTime+0.02; ar.v.frets.map((f,s)=>f===null?null:OPEN[s]+f).filter(x=>x!==null).forEach((m,k)=>pluck(m,t+k*0.03,0.7)); } } }
+      renderKeybar(); renderGuitar(); renderPiano(); renderChords(); save(); break; }
     case 'hand': state.hand=v; render(); break;
     case 'sev': state.sev=v==='1'; render(); break;
     case 'show': state.show=v; renderChords(); save(); break;
@@ -1280,7 +1308,7 @@ document.addEventListener('click',e=>{
       timers.push(setTimeout(()=>document.querySelectorAll('.cell.on').forEach(x=>x.classList.remove('on')),seq.length*step*1000+200));
       break; }
     case 'playChord': { stopAll(); const ac=audio(); if(!ac) break; const list=b.dataset.tri?C.tri:chordsNow(); playChord(list[+b.dataset.i],ac.currentTime+0.03); break; }
-    case 'focus': { const i=+b.dataset.i; const same=state.focus&&state.focus.i===i&&state.focus.sev===state.sev; state.focus=same?null:{i,sev:state.sev};
+    case 'focus': { const i=+b.dataset.i; const same=state.focus&&state.focus.i===i&&state.focus.sev===state.sev; state.focus=same?null:{i,sev:state.sev}; if(!same) state.around=null;
       if(!same){ stopAll(); const ac=audio(); if(ac) playChord(chordsNow()[i],ac.currentTime+0.03); }
       renderKeybar(); renderGuitar(); renderPiano(); renderChords(); break; }
     case 'clearFocus': state.focus=null; renderKeybar(); renderGuitar(); renderPiano(); renderChords(); break;
@@ -1300,7 +1328,7 @@ document.addEventListener('click',e=>{
     case 'playOut': { const [l,a,q]=b.dataset.n.split(','); stopAll(); const ac=audio(); if(ac) playChord(buildChord({l:+l,a:+a},q),ac.currentTime+0.03); break; }
   }
 });
-$('scaleSel').addEventListener('change',e=>{ state.scale=e.target.value; state.focus=null; state.pos=-1; render(); });
+$('scaleSel').addEventListener('change',e=>{ state.scale=e.target.value; state.focus=null; state.pos=-1; state.around=null; render(); });
 $('picker').addEventListener('submit',e=>e.preventDefault());
 $('keyText').addEventListener('input',e=>{
   const val=e.target.value; if(!val.trim()) return;
@@ -1334,7 +1362,7 @@ function neckSVG(from,to,cells,strings){
     o+=f===0?`<rect class="fb-nut" x="${x-4}" y="${top-12}" width="5" height="${(n-1)*g+24}"/>`:`<line class="fb-fret" x1="${x}" y1="${top-12}" x2="${x}" y2="${top+(n-1)*g+12}"/>`; }
   strings.forEach(s=>{ o+=`<line class="fb-string" x1="${left}" y1="${ys(s)}" x2="${W-6}" y2="${ys(s)}" stroke-width="${(0.9+(5-s)*0.32).toFixed(2)}"/><text class="fb-sname" x="8" y="${ys(s)+4}">${SNAMES[s]}</text>`; });
   for(let f=from;f<=to;f++) o+=`<text class="fb-num${MARKS.includes(f)?' mark':''}" x="${cx(f)}" y="${H-6}" text-anchor="middle">${f}</text>`;
-  cells.forEach(c=>{ o+=`<g class="dot${c.root?' root':''}" data-act="note" data-m="${OPEN[c.s]+c.f}" data-inst="guitar"${c.id!=null?` data-id="${c.id}"`:''}><circle cx="${cx(c.f)}" cy="${ys(c.s)}" r="11"/><text x="${cx(c.f)}" y="${ys(c.s)+0.5}" style="font-size:${(c.t||'').length>1?9.5:10.5}px">${c.t||''}</text></g>`; });
+  cells.forEach(c=>{ o+=`<g class="dot${c.root?' root':''}${c.cls||''}" data-act="note" data-m="${OPEN[c.s]+c.f}" data-inst="guitar"${c.id!=null?` data-id="${c.id}"`:''}><circle cx="${cx(c.f)}" cy="${ys(c.s)}" r="11"/><text x="${cx(c.f)}" y="${ys(c.s)+0.5}" style="font-size:${(c.t||'').length>1?9.5:10.5}px">${c.t||''}</text></g>`; });
   return o+'</svg>';
 }
 const kbd=(start,end,dots,minW)=>`<div style="min-width:${minW||480}px">${pianoSVG({start,end,ww:34,wh:130,bw:21,bh:82,dots,cls:'kb',label:'Piano keyboard'})}</div>`;
@@ -1396,6 +1424,35 @@ W.buildMajor=el=>{ let pc=0;
   onWa(el,(a,v)=>{ if(a==='root'){ pc=+v; draw(); }
     if(a==='play'||a==='root'){ const {notes,s,r}=parts(); const base=sound==='guitar'?OPEN[s]+r:60+pc;
       seq(el,notes.map((n,i)=>({m:base+n.st,id:i})).concat([{m:base+12,id:7}]),0.32); } });
+};
+W.aroundChord=el=>{ let pc=7,ci=0; const KEYS=[0,7,2,9,4];
+  const parts=()=>{ const notes=spell(noteObj(KEYN[pc]),SCALES.major), tri=diatonic(notes,false), pick=[0,3,4,5].map(i=>tri[i]), ch=pick[ci], ar=aroundShape(ch);
+    const inScale=new Set(notes.map(n=>n.pc)), cells=[];
+    for(let s=0;s<6;s++) for(let f=ar.lo;f<=ar.hi;f++){ const p=mod(OPEN[s]+f), held=ar.held.has(s+':'+f); if(!inScale.has(p)&&!held) continue;
+      const n=notes.find(x=>x.pc===p)||ch.tones.find(x=>x.pc===p); cells.push({s,f,t:n?n.name:'',root:p===notes[0].pc,cls:held?' held':'',id:s+'-'+f,held}); }
+    const byPitch=new Map(); cells.forEach(c=>{ const m=OPEN[c.s]+c.f, ex=byPitch.get(m); if(!ex||c.f<ex.f) byPitch.set(m,c); });
+    const run=[...byPitch.entries()].sort((a,b)=>a[0]-b[0]).map(([m,c])=>({m,c}));
+    return {notes,pick,ch,ar,cells,run}; };
+  const draw=()=>{ const {notes,pick,ch,ar,cells,run}=parts();
+    const reach=[...new Set(cells.filter(c=>!c.held).map(c=>c.t))];
+    el.innerHTML=wHead('Scale notes around a chord','Pick a key and a chord. Ringed dots are the shape you already hold. Plain dots are scale notes your fingers can reach without moving your hand.')+
+      chipRow(KEYS.map(k=>KEYN[k]+' major'),KEYS.indexOf(pc),'key')+
+      `<div class="chips">${pick.map((c,i)=>`<button type="button" class="chip" data-wa="ch" data-v="${i}" aria-pressed="${i===ci}">${c.name} <small>${c.roman}</small></button>`).join('')}</div>`+
+      `<div class="wctl">${playBtn('Strum the chord','strum')}${playBtn('Play the scale here','scale')}${playBtn('Hear a fill','fill')}</div>`+
+      scr(neckSVG(ar.lo,ar.hi,cells))+
+      `<p class="wnote"><b>${ch.name}</b> shape: <span class="mono">${ar.v.frets.map(f=>f===null?'x':f).join(' ')}</span> (low E to high e). Extra scale notes in reach: <b>${reach.join(' ')||'none'}</b>.</p>`+
+      `<pre class="tab" aria-label="Scale in this position as tab">${tabText(run.map(r=>[r.c.s,r.c.f]))}</pre><p class="wnote" style="color:var(--muted);font-size:13px">The ${KEYN[pc]} major scale in this spot, low to high, as tab. Every note sits within one or two frets of the chord.</p>`; };
+  draw();
+  onWa(el,(a,v)=>{ if(a==='key'){ pc=KEYS[+v]; draw(); } if(a==='ch'){ ci=+v; draw(); }
+    const {ar,run}=parts(); const heldMs=ar.v.frets.map((f,s)=>f===null?null:OPEN[s]+f).filter(x=>x!==null);
+    if(a==='strum'||a==='ch'||a==='key'){ stopAll(); const ac=audio(); if(!ac) return; const t=ac.currentTime+0.02; heldMs.forEach((m,k)=>pluck(m,t+k*0.03,0.7)); }
+    if(a==='scale'){ const up=run.map(r=>({m:r.m,id:r.c.id,inst:'guitar'})); seq(el,up.concat(up.slice(0,-1).reverse()),0.26); }
+    if(a==='fill'){ const bass=heldMs[0], top=Math.max(...heldMs), idx=run.findIndex(r=>r.m===top);
+      const R=k=>run[Math.max(0,Math.min(run.length-1,k))]; const T=R(idx), up1=R(idx+1), dn1=R(idx-1), dn2=R(idx-2);
+      const mid=heldMs[Math.floor(heldMs.length/2)];
+      seq(el,[{ms:[bass,T.m],id:T.c.id,inst:'guitar'},{m:mid,inst:'guitar'},{m:up1.m,id:up1.c.id,inst:'guitar'},{m:T.m,id:T.c.id,inst:'guitar'},
+        {ms:[bass,dn1.m],id:dn1.c.id,inst:'guitar'},{m:mid,inst:'guitar'},{m:dn2.m,id:dn2.c.id,inst:'guitar'},{m:dn1.m,id:dn1.c.id,inst:'guitar'},{ms:[bass,T.m],id:T.c.id,inst:'guitar'}],0.3); }
+  });
 };
 const IVS=[[1,'Minor 2nd','the “Jaws” theme'],[2,'Major 2nd','“Happy Birthday” (Hap-py)'],[3,'Minor 3rd','“Greensleeves” (A-las)'],[4,'Major 3rd','“When the Saints Go Marching In” (Oh when)'],[5,'Perfect 4th','“Here Comes the Bride” or “Amazing Grace”'],[6,'Tritone','“The Simpsons” theme (The Simp-)'],[7,'Perfect 5th','“Twinkle Twinkle Little Star” or the “Star Wars” theme'],[8,'Minor 6th','“The Entertainer” (opening)'],[9,'Major 6th','“My Bonnie Lies Over the Ocean” (My Bon-)'],[10,'Minor 7th','“Somewhere” from West Side Story (There’s a)'],[11,'Major 7th','“Take On Me” (chorus)'],[12,'Octave','“Somewhere Over the Rainbow” (Some-where)']];
 W.intervals=el=>{ let set='starter',q=null,score={r:0,t:0},msg='';
@@ -1595,6 +1652,12 @@ const LESSONS=[
  guitar:`<p>On one string the pattern is frets <b class="mono">0 2 4 5 7 9 11 12</b> counted from any starting fret. Try it on the A string from fret 3 (C) up to fret 15.</p><p>One string shows the pattern clearly. After that, use the positions on the Keys &amp; chords page to play it across the strings without sliding.</p>`,
  piano:`<p>C major is all white keys, which is why everyone starts there. Every other major scale needs some black keys to keep the same W W H W W W H shape.</p><p>Right hand fingering for C: <b class="mono">1 2 3 1 2 3 4 5</b>. The thumb tucks under after finger 3.</p>`,
  tip:'Sing along in numbers instead of letters: “1 2 3 4 5 6 7 1”. Once your ear knows what each number sounds like, you’ll hear that a melody “starts on 3 and walks down to 1”, and that works in every key.'},
+{tag:'Scales',title:'Scales for fingerpickers',w:'aroundChord',
+ lede:'You don’t have to learn scales as long runs up and down the neck. As a fingerpicker you already hold the most important scale notes: the chord.',
+ idea:`<p>A scale is the chord tones plus the notes in between them. Hold any chord and look one or two frets around it. The scale notes within reach are what folk, country and blues pickers use for melody, hammer-ons, pull-offs and fills, while the thumb keeps the bass going.</p><p>Learning a scale this way means learning it in small pieces, one chord shape at a time. That fits how you already play.</p><ol class="steps"><li><b>Pick a key you play in a lot.</b> G, C and D are the classic fingerpicking keys.</li><li><b>Learn the open-position scale for that key:</b> every scale note between the nut and fret 3 or 4. It’s only about 15 notes, and most are already under your fingers in the 1, 4 and 5 chords.</li><li><b>Hold the chord, move one finger.</b> Pick a pattern you know, then swap one melody note for a neighboring scale note and come back. That’s a fill.</li><li><b>Name what you play.</b> Say “that’s the 2 going to the 3” out loud. Naming the moves is what turns looked-up licks into a scale you know.</li></ol>`,
+ guitar:`<p>In G, hold a G chord (<span class="mono">320003</span>). On the B string, hammer from open B to C at fret 1 and back: that’s the 3 to the 4 of the scale. On the high E string, open E and F♯ at fret 2 sit right below the G at fret 3. On the G string, open G hammers to A at fret 2.</p><p>On the Keys &amp; chords page, the <b>Around a chord</b> buttons above the neck show this for every chord in any key.</p>`,
+ piano:`<p>It works the same way on piano. Keep the root in your left hand and the chord in your right, then let one right-hand finger step to the neighboring scale note and back. That’s how folk and gospel piano players decorate a chord.</p>`,
+ tip:'When you look up a song’s tab, notice which notes aren’t part of the chord shape. Those are scale notes. Over time you’ll see the same few moves around each chord, and that’s the scale sinking in.'},
 {tag:'Ear',title:'Intervals: how distances sound',w:'intervals',
  lede:'An interval is the distance between two notes. Each one has its own sound, and you already know them all from songs.',
  idea:`<p>Intervals are counted in half steps, but they also have names. The number comes from counting letters: C up to E is C, D, E, three letters, so it’s a <b>3rd</b>. The word in front (major, minor, perfect) gives the exact size.</p><p>The quickest way to learn them by ear is to tie each one to the start of a song. When you hear a jump in a melody, ask yourself which song starts like that.</p>`,
@@ -1660,7 +1723,7 @@ let lessonDone=new Set(), curLesson=1;
 try{ lessonDone=new Set(JSON.parse(localStorage.getItem('sdb-keybook-done')||'[]')); curLesson=+localStorage.getItem('sdb-keybook-lesson')||1; }catch(e){}
 function renderLessonNav(){
   let h='';
-  const PARTS={1:'The basics',4:'Hearing and building chords',7:'Songs and harmony',10:'Soloing',12:'Rhythm and reading'};
+  const PARTS={1:'The basics',5:'Hearing and building chords',8:'Songs and harmony',11:'Soloing',13:'Rhythm and reading'};
   LESSONS.forEach((L,i)=>{ const n=i+1; if(PARTS[n]) h+=`<li class="lgroup">${PARTS[n]}</li>`;
     h+=`<li><a href="#lesson-${n}"${n===curLesson?' aria-current="page"':''}><span class="no">${n}</span><span>${L.title}</span><span class="ck" aria-label="${lessonDone.has(n)?'done':''}">${lessonDone.has(n)?'✓':''}</span></a></li>`; });
   $('lessonList').innerHTML=h;
