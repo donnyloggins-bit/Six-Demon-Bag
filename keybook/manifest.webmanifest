@@ -1,0 +1,18 @@
+{
+  "name": "Key Book",
+  "short_name": "Key Book",
+  "description": "Scales, chords and music theory lessons for guitar and piano.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0c0b09",
+  "theme_color": "#0c0b09",
+  "categories": ["music", "education"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
