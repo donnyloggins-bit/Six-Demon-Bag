@@ -3,10 +3,11 @@
    Serves the saved copy right away and refreshes it in the background,
    so an update shows up the next time the app is opened.
    Bump VERSION when files are added or removed. */
-const VERSION = 'keybook-v1';
+const VERSION = 'keybook-v2';
 const FILES = [
   './',
   './index.html',
+  './vendor/vexflow-bravura.js',
   './fonts.css',
   './fonts/BebasNeue-400.woff2',
   './fonts/Inter-400.woff2',

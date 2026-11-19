@@ -48,6 +48,10 @@
 }
 
 *,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+:root{padding-top:env(safe-area-inset-top,0px)}
+img,svg{max-width:100%}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--font-body);-webkit-font-smoothing:antialiased}
@@ -58,10 +62,6 @@ button{cursor:pointer}
 .wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 
 /* ---------- Masthead + picker ---------- */
-.mast{padding-block:28px 8px}
-.brand{font:500 11px/1 var(--font-mono);letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
-.mast h1{font:400 clamp(44px,7vw,72px)/.9 var(--font-display);letter-spacing:.03em;margin:10px 0 6px}
-.mast p{margin:0;color:var(--muted);max-width:60ch}
 
 .picker{display:grid;grid-template-columns:minmax(220px,1.3fr) auto auto minmax(190px,1fr);gap:18px 22px;align-items:end;padding-block:22px 26px}
 @media (max-width:900px){.picker{grid-template-columns:1fr 1fr}}
@@ -84,14 +84,6 @@ button{cursor:pointer}
 .seg.small button{height:34px;font-size:13px;padding:0 11px}
 
 /* ---------- Sticky key bar ---------- */
-.keybar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-block:1px solid var(--line)}
-.keybar .wrap{display:flex;align-items:center;gap:14px;min-height:56px;flex-wrap:wrap;padding-block:8px}
-.kb-name{font:400 28px/1 var(--font-display);letter-spacing:.04em;white-space:nowrap}
-.kb-notes{font:500 12.5px/1 var(--font-mono);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1 1 120px}
-.kb-nav{display:flex;gap:4px}
-.kb-nav a{font:600 11px/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:8px 9px;border-radius:6px}
-.kb-nav a:hover{color:var(--fg);background:var(--surface-2)}
-@media (max-width:860px){.kb-nav{display:none}}
 .btn{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-weight:500;font-size:13.5px;white-space:nowrap}
 .btn:hover{background:var(--surface-2)}
 .btn.gold{background:var(--gold);color:var(--gold-ink);border-color:var(--gold)}
@@ -283,16 +275,9 @@ button.chip:hover{border-color:var(--gold)}
 .cl{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:8px;border:1px dashed var(--line);min-width:96px}
 .cl b{font:700 14px var(--font-mono)}
 .cl span{font-size:11px;color:var(--tension);font-family:var(--font-mono)}
-footer{padding-block:30px 40px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
-footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* ---------- Views, help panels, lessons ---------- */
-.viewtabs{display:flex;gap:2px;margin-top:22px;border-bottom:1px solid var(--line);overflow-x:auto}
-.viewtabs a{font:400 24px/1 var(--font-display);letter-spacing:.05em;color:var(--muted);text-decoration:none;padding:10px 14px 11px;border-bottom:3px solid transparent;margin-bottom:-1px;white-space:nowrap}
-.viewtabs a:hover{color:var(--fg)}
-.viewtabs a[aria-current="page"]{color:var(--fg);border-bottom-color:var(--gold)}
-.viewtabs a small{font:600 10px var(--font-mono);letter-spacing:.1em;color:var(--gold);margin-left:6px;vertical-align:4px}
 
 details.help{margin-top:18px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
 details.help>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:12px 16px;font-weight:600;font-size:14px}
@@ -310,22 +295,9 @@ details.help[open]>summary{border-bottom:1px solid var(--line)}
 .help-more{margin:0;padding:12px 18px 16px;font-size:13px;color:var(--muted)}
 .help-more a{color:var(--gold);font-weight:600}
 
-.lessons{display:grid;grid-template-columns:260px minmax(0,1fr);gap:24px 48px;padding-block:28px 64px;align-items:start}
-@media (max-width:900px){.lessons{grid-template-columns:1fr;padding-block:20px 48px}}
-.lnav{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px)}
-@media (max-width:900px){.lnav{position:static}.lnav ol{display:none}}
-.lsel-wrap{display:none}
-@media (max-width:900px){.lsel-wrap{display:block}}
 .lprog{font-size:12.5px;color:var(--muted);margin:0 0 6px}
 .lbar{height:4px;border-radius:2px;background:var(--line);overflow:hidden;margin-bottom:12px}
 .lbar i{display:block;height:100%;background:var(--gold)}
-.lnav ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
-.lnav ol a{display:grid;grid-template-columns:24px minmax(0,1fr) 16px;gap:8px;align-items:center;padding:7px 10px;border-radius:8px;text-decoration:none;color:var(--fg);font-size:13.5px;line-height:1.3}
-.lnav ol a:hover{background:var(--surface)}
-.lnav ol a[aria-current="page"]{background:var(--surface-2)}
-.lnav .no{font:600 12px var(--font-mono);color:var(--muted);font-variant-numeric:tabular-nums}
-.lnav .ck{color:var(--away);font-weight:700}
-@media (max-width:900px){.lnav ol#lessonList{display:none}}
 .lgroup{font:600 10.5px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--gold);padding:12px 10px 4px}
 .lesson{min-width:0;max-width:860px}
 .ltitle{font:400 clamp(40px,6vw,64px)/.95 var(--font-display);letter-spacing:.03em;margin:0;text-wrap:balance}
@@ -410,59 +382,162 @@ pre.tab{margin:0;padding:14px 16px;border-radius:10px;background:var(--bg);borde
 .pad{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
 .pad .chip{justify-content:center}
 @media (max-width:480px){.pad{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* ---------- App shell: rail on wide screens, tab bar on phones ---------- */
+:root{--rail:96px;--bar:60px;--tabh:60px}
+.appbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:var(--bg);border-bottom:1px solid var(--line)}
+.appbar-in{display:flex;align-items:center;gap:10px;height:var(--bar);max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.logo{display:flex;width:32px;height:32px;flex:none}
+.logo svg,.raillogo svg{width:100%;height:100%}
+.apptitle{font:400 26px/1 var(--font-display);letter-spacing:.05em;margin:0;white-space:nowrap}
+.keybtn{display:flex;align-items:center;gap:8px;min-width:0;height:40px;padding:0 8px 0 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer}
+.keybtn:hover{border-color:var(--gold)}
+.keybtn .kb-name{font:400 22px/1 var(--font-display);letter-spacing:.04em;white-space:nowrap}
+.keybtn .kb-notes{font:500 12px/1 var(--font-mono);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.keybtn svg{width:18px;height:18px;flex:none;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:760px){.keybtn .kb-notes{display:none}}
+@media (max-width:520px){.appbar .apptitle.tool{display:none}}
+.spacer{flex:1}
+.iconbtn{display:inline-grid;place-items:center;width:40px;height:40px;flex:none;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.iconbtn:hover{border-color:var(--gold)}
+.iconbtn.gold{background:var(--gold);border-color:var(--gold);color:var(--gold-ink)}
+.iconbtn svg,.tabbar a svg,.backbtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tabbar{position:fixed;z-index:45;display:flex;background:var(--surface)}
+.tabbar a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted);text-decoration:none;font:600 11px/1.1 var(--font-body);text-align:center}
+.tabbar a:hover{color:var(--fg)}
+.tabbar a[aria-current="page"]{color:var(--gold)}
+.tabbar .raillogo{display:none}
+@media (min-width:900px){
+  .app{padding-left:calc(var(--rail) + env(safe-area-inset-left,0px))}
+  .tabbar{top:0;bottom:0;left:0;width:calc(var(--rail) + env(safe-area-inset-left,0px));flex-direction:column;gap:4px;border-right:1px solid var(--line);padding:calc(env(safe-area-inset-top,0px) + 14px) 10px 14px calc(10px + env(safe-area-inset-left,0px))}
+  .tabbar a{height:68px;border-radius:12px}
+  .tabbar a[aria-current="page"]{background:var(--gold-soft)}
+  .tabbar .raillogo{display:flex;height:44px;width:44px;margin:0 auto 14px}
+  .appbar .logo{display:none}
+}
+@media (max-width:899px){
+  .app{padding-bottom:calc(var(--tabh) + env(safe-area-inset-bottom,0px))}
+  .tabbar{left:0;right:0;bottom:0;border-top:1px solid var(--line);padding:0 env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+  .tabbar a{flex:1;height:var(--tabh);min-width:0}
+}
+.content{padding-block:4px 48px}
+.screen>section.block:first-child,.screen>section.block:first-of-type{border-top:0;padding-top:24px}
+.instswitch{display:flex;justify-content:center;padding-block:4px 8px}
+.instswitch .seg button{min-width:120px;font-weight:600}
+section.block[hidden]{display:none}
+
+/* Sheets (key picker, settings) */
+.sheet-wrap{position:fixed;inset:0;z-index:60;background:rgba(10,8,5,.55);display:flex;align-items:flex-end;justify-content:center}
+@media (min-width:700px){.sheet-wrap{align-items:center;padding:24px}}
+.sheet{background:var(--bg);color:var(--fg);width:100%;max-width:720px;max-height:min(88vh,860px);overflow:auto;border:1px solid var(--line);border-radius:18px 18px 0 0;padding:16px max(18px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+@media (min-width:700px){.sheet{border-radius:18px}}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+.sheet-head h2{font-size:30px}
+.sheet .picker{grid-template-columns:1fr 1fr;padding-block:8px 6px}
+@media (max-width:560px){.sheet .picker{grid-template-columns:1fr}}
+.sheet .picker .field:first-child{grid-column:1/-1}
+.recent{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.recent[hidden]{display:none}
+.block-btn{width:100%;justify-content:center;height:46px;font-size:15px}
+.setrow{display:flex;align-items:center;justify-content:space-between;gap:12px 16px;flex-wrap:wrap;padding-block:14px;border-top:1px solid var(--line)}
+.setrow>div:first-child{display:flex;flex-direction:column;gap:2px;min-width:0}
+.setrow span{font-size:13px;color:var(--muted)}
+.setrow[hidden]{display:none}
+.about{margin:14px 0 0;font-size:12.5px;color:var(--muted)}
+body.locked{overflow:hidden}
+
+/* Course lists */
+.course-head{display:flex;flex-direction:column;gap:6px;padding-block:24px 18px}
+.course-title{font:400 clamp(40px,7vw,64px)/.92 var(--font-display);letter-spacing:.03em;margin:0}
+.prog{display:flex;align-items:center;gap:12px;margin-top:8px;max-width:420px}
+.prog .lbar{flex:1;margin:0}
+.prog .lprog{margin:0;white-space:nowrap}
+.lcards{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.lcards .lgroup{padding:16px 2px 2px}
+.lcard{display:grid;grid-template-columns:40px minmax(0,1fr) 22px;gap:14px;align-items:center;padding:14px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);color:var(--fg);text-decoration:none}
+.lcard:hover{border-color:var(--gold)}
+.lcard .num{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--surface-2);font:700 13px var(--font-mono);color:var(--muted)}
+.lcard.done .num{background:var(--gold);color:var(--gold-ink)}
+.lcard b{display:block;font-size:15px;font-weight:600}
+.lcard small{display:block;font-size:12.5px;color:var(--muted);margin-top:2px;line-height:1.4}
+.lcard svg{width:18px;height:18px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.listhead{font:400 26px/1 var(--font-display);letter-spacing:.04em;margin:26px 0 12px}
+.pcards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:1000px){.pcards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pcard{display:flex;flex-direction:column;gap:6px;padding:16px;border-radius:14px;background:var(--surface);border:1px solid var(--line);color:var(--fg);text-decoration:none;min-height:118px}
+.pcard:hover{border-color:var(--gold)}
+.pcard b{font:400 22px/1 var(--font-display);letter-spacing:.04em;color:var(--gold)}
+.pcard span{font-size:13px;color:var(--muted);line-height:1.45}
+.backbtn{display:inline-flex;align-items:center;gap:4px;margin:18px 0 6px -6px;padding:6px 10px 6px 4px;border-radius:8px;color:var(--muted);text-decoration:none;font-weight:600;font-size:14px}
+.backbtn:hover{color:var(--fg);background:var(--surface)}
+
+/* Sheet music */
+.score{color:var(--fg);width:100%;min-height:40px}
+.score svg{display:block;width:100%;height:auto}
+.score svg text{font-family:var(--font-mono)}
+.score .vf-stavenote,.score .vf-tabnote{transition:color .08s}
+.score .hl{color:var(--gold)}
+.score .ok{color:var(--away)}
+.score .bad{color:var(--tension)}
+.scorebox{margin:16px 0;padding:12px 14px 10px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.scorebox .sctl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px}
+.scorebox .sctl span{font-size:12.5px;color:var(--muted)}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:4px 10px}
+.gallery figure{margin:0;display:flex;flex-direction:column;align-items:center}
+.gallery figcaption{font:600 12.5px var(--font-mono);color:var(--muted);margin-top:-6px}
+.nt-stage{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:16px 24px;align-items:center}
+@media (max-width:700px){.nt-stage{grid-template-columns:1fr}}
+.nt-score{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:6px 10px}
+.nt-msg{font-size:15px;min-height:44px;margin:0}
+.nt-msg b{color:var(--gold)}
+.answers{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.answers .chip{justify-content:center;height:46px;font-size:18px}
+.answers .chip.ok{background:var(--away);border-color:var(--away);color:#fff}
+.answers .chip.bad{background:var(--tension);border-color:var(--tension);color:#fff}
+.stats{display:flex;gap:18px;flex-wrap:wrap;font:600 13px var(--font-mono);color:var(--muted)}
+.stats b{color:var(--fg)}
+.nt-ans .scroller{max-width:600px}
+.nt-score{--score-bg:var(--bg)}
+.dot.blank circle{fill:transparent;stroke:transparent}
+.dot.blank:hover circle{fill:var(--gold-soft);stroke:var(--gold)}
+.tap-pad{display:grid;place-items:center;width:100%;height:120px;border-radius:14px;border:2px dashed var(--line);background:var(--bg);font:400 30px/1 var(--font-display);letter-spacing:.06em;color:var(--muted);cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.tap-pad.live{border-style:solid;border-color:var(--gold);color:var(--fg)}
+.tap-pad.flash{background:var(--gold-soft)}
+.kq-opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.kq-opts .chip{justify-content:center;height:48px;font-size:16px}
+.kq-opts .chip.ok{background:var(--away);border-color:var(--away);color:#fff}
+.kq-opts .chip.bad{background:var(--tension);border-color:var(--tension);color:#fff}
+.songs{display:flex;flex-direction:column;gap:8px}
 </style>
 </head>
 <body>
-<header class="mast wrap">
-  <div class="brand">Six Demon Bag</div>
-  <h1>Key Book</h1>
-  <p>Look up any key on guitar and piano, or learn the theory behind it from scratch. No sheet music needed.</p>
-  <nav class="viewtabs" aria-label="App sections">
-    <a href="#keybook" data-view="tool">Keys &amp; chords</a>
-    <a href="#lessons" data-view="lessons">Lessons<small>14</small></a>
-    <button class="btn sm gold" type="button" id="installBtn" hidden style="margin-left:auto;align-self:center">Install app</button>
-  </nav>
+<div class="app">
+<nav class="tabbar" aria-label="Main">
+  <a class="raillogo" href="#scales" aria-label="Key Book"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#0c0b09"/><rect x="6" y="8" width="20" height="16" rx="1.5" fill="#2b1b13"/><rect x="6" y="8" width="1.6" height="16" fill="#e6dcc4"/><path d="M12.6 8v16M18.6 8v16M24.6 8v16" stroke="#a39b8d" stroke-width=".7"/><path d="M6 9.6h20M6 12.6h20M6 15.6h20M6 18.6h20M6 21.6h20M6 24h0" stroke="#d6cdb9" stroke-width=".6"/><circle cx="21.6" cy="9.6" r="1.9" fill="#c9a84c"/><circle cx="15.6" cy="21.6" r="1.9" fill="#eee6d2"/><circle cx="21.6" cy="24" r="1.9" fill="#c9a84c"/></svg></a>
+  <a href="#scales" data-tab="scales"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h5v-5h5v-5h5V5h3"/></svg><span>Scales</span></a>
+  <a href="#chords" data-tab="chords"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M5 8h14M5 13h14M9.7 3v18M14.3 3v18"/><circle cx="14.3" cy="10.5" r="1.6" fill="currentColor"/></svg><span>Chords</span></a>
+  <a href="#harmony" data-tab="harmony"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 11a8 8 0 0 1 13.7-4.7M19.5 13a8 8 0 0 1-13.7 4.7"/><path d="M18.5 2.5v4h-4M5.5 21.5v-4h4"/></svg><span>Harmony</span></a>
+  <a href="#lessons" data-tab="lessons"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v15H5.5A1.5 1.5 0 0 0 4 19.5z"/><path d="M4 19.5A1.5 1.5 0 0 0 5.5 21H20v-3"/><path d="M8 7h8M8 10.5h6"/></svg><span>Lessons</span></a>
+  <a href="#reading" data-tab="reading"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg><span>Read music</span></a>
+</nav>
+
+<header class="appbar">
+  <div class="appbar-in">
+    <a class="logo" href="#scales" aria-label="Key Book"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#0c0b09"/><rect x="6" y="8" width="20" height="16" rx="1.5" fill="#2b1b13"/><rect x="6" y="8" width="1.6" height="16" fill="#e6dcc4"/><path d="M12.6 8v16M18.6 8v16M24.6 8v16" stroke="#a39b8d" stroke-width=".7"/><path d="M6 9.6h20M6 12.6h20M6 15.6h20M6 18.6h20M6 21.6h20M6 24h0" stroke="#d6cdb9" stroke-width=".6"/><circle cx="21.6" cy="9.6" r="1.9" fill="#c9a84c"/><circle cx="15.6" cy="21.6" r="1.9" fill="#eee6d2"/><circle cx="21.6" cy="24" r="1.9" fill="#c9a84c"/></svg></a>
+    <h1 class="apptitle" id="appTitle">Scales</h1>
+    <button class="keybtn" id="keyBtn" type="button" data-act="keySheet" aria-haspopup="dialog" aria-label="Change key">
+      <span class="kb-name" id="kbName">A minor</span><span class="kb-notes" id="kbNotes"></span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <span id="kbFocus"></span>
+    <span class="spacer"></span>
+    <button class="iconbtn gold" id="playScaleBtn" type="button" data-act="playScale" aria-label="Play scale"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor" stroke="none"/></svg></button>
+    <button class="iconbtn" type="button" data-act="settingsSheet" aria-label="Settings" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></svg></button>
+  </div>
 </header>
 
-<div id="toolView">
-<div class="wrap">
-  <form class="picker" id="picker" autocomplete="off">
-    <div class="field">
-      <label class="lab" for="keyText">Type a key</label>
-      <input class="text-in" id="keyText" type="text" spellcheck="false" placeholder="e.g. F# minor, Bb, D dorian, A blues">
-      <p class="hintline" id="parseMsg">Try “E♭ major”, “C#m”, “G mixolydian” or “A minor pentatonic”.</p>
-    </div>
-    <div class="field">
-      <span class="lab" id="lbl-root">Root note</span>
-      <div class="seg letters" id="letters" role="group" aria-labelledby="lbl-root"></div>
-      <p class="hintline">&nbsp;</p>
-    </div>
-    <div class="field">
-      <span class="lab" id="lbl-acc">Flat / natural / sharp</span>
-      <div class="seg accs" id="accs" role="group" aria-labelledby="lbl-acc"></div>
-      <p class="hintline">&nbsp;</p>
-    </div>
-    <div class="field">
-      <label class="lab" for="scaleSel">Scale</label>
-      <select class="sel" id="scaleSel"></select>
-      <p class="hintline" id="enhMsg">&nbsp;</p>
-    </div>
-  </form>
-</div>
-
-<div class="keybar" id="keybar">
-  <div class="wrap">
-    <span class="kb-name" id="kbName">A minor</span>
-    <span class="kb-notes" id="kbNotes"></span>
-    <nav class="kb-nav" aria-label="Sections">
-      <a href="#guitar">Guitar</a><a href="#piano">Piano</a><a href="#chords">Chords</a><a href="#together">Works together</a>
-    </nav>
-    <span id="kbFocus"></span>
-    <button class="btn gold" type="button" data-act="playScale"><span class="tri"></span>Play scale</button>
-  </div>
-</div>
-
-<main class="wrap">
+<main class="wrap content">
+  <div class="screen" data-screen="scales">
   <section class="block" id="overview" aria-labelledby="ovTitle">
     <div class="ov">
       <div>
@@ -486,7 +561,11 @@ pre.tab{margin:0;padding:14px 16px;border-radius:10px;background:var(--bg);borde
       <p class="help-more">Learn more: <a href="#lesson-1">The 12 notes</a> · <a href="#lesson-2">Half and whole steps</a> · <a href="#lesson-3">The major scale</a></p>
     </details>
   </section>
-
+    <div class="instswitch">
+      <div class="seg" role="group" aria-label="Instrument">
+        <button type="button" data-act="inst" data-v="guitar">Guitar</button><button type="button" data-act="inst" data-v="piano">Piano</button>
+      </div>
+    </div>
   <section class="block" id="guitar" aria-labelledby="gTitle">
     <div class="sec-head">
       <div>
@@ -523,7 +602,6 @@ pre.tab{margin:0;padding:14px 16px;border-radius:10px;background:var(--bg);borde
       <p class="help-more">Learn more: <a href="#lesson-3">The major scale</a> · <a href="#lesson-11">Soloing with pentatonics</a> · <a href="#lesson-12">Modes made simple</a></p>
     </details>
   </section>
-
   <section class="block" id="piano" aria-labelledby="pTitle">
     <div class="sec-head">
       <div>
@@ -552,7 +630,9 @@ pre.tab{margin:0;padding:14px 16px;border-radius:10px;background:var(--bg);borde
       <p class="help-more">Learn more: <a href="#lesson-1">The 12 notes</a> · <a href="#lesson-3">The major scale</a></p>
     </details>
   </section>
+  </div>
 
+  <div class="screen" data-screen="chords" hidden>
   <section class="block" id="chords" aria-labelledby="cTitle">
     <div class="sec-head">
       <div>
@@ -587,7 +667,9 @@ pre.tab{margin:0;padding:14px 16px;border-radius:10px;background:var(--bg);borde
       <p class="help-more">Learn more: <a href="#lesson-6">How chords are built</a> · <a href="#lesson-7">Chords in a key</a> · <a href="#lesson-10">7th chords and the blues</a> · <a href="#lesson-14">Reading tab and charts</a></p>
     </details>
   </section>
+  </div>
 
+  <div class="screen" data-screen="harmony" hidden>
   <section class="block" id="together" aria-labelledby="tTitle">
     <div class="sec-head">
       <div>
@@ -640,27 +722,94 @@ pre.tab{margin:0;padding:14px 16px;border-radius:10px;background:var(--bg);borde
       <div class="outgrid" id="outGrid"></div>
     </div>
   </section>
+  </div>
+
+  <div class="screen" data-screen="lessons" hidden>
+    <div id="lessonHome">
+      <div class="course-head">
+        <p class="eyebrow">Music theory from scratch</p>
+        <h2 class="course-title">Lessons</h2>
+        <p class="sub">Fourteen short lessons for players who learned by ear. Each one has a part for guitar, a part for piano and something to try.</p>
+        <div class="prog"><div class="lbar"><i id="lBar"></i></div><span class="lprog" id="lProg"></span></div>
+      </div>
+      <p class="lstart"><b>Fingerpicker who knows chords but not scales?</b> Start with <a href="#lesson-4">lesson 4</a>. It builds the scale out of the chord shapes you already play. Then go back to lesson 3 for the theory behind it.</p>
+      <ol class="lcards" id="lessonList"></ol>
+    </div>
+    <div id="lessonDetail" hidden>
+      <a class="backbtn" href="#lessons"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>All lessons</a>
+      <article class="lesson" id="lessonBody"></article>
+    </div>
+  </div>
+
+  <div class="screen" data-screen="reading" hidden>
+    <div id="readHome">
+      <div class="course-head">
+        <p class="eyebrow">Sheet music from the first line</p>
+        <h2 class="course-title">Read music</h2>
+        <p class="sub">A complete course in reading standard notation, from the five lines of the staff to key signatures, rhythms and road maps. Every example plays back so you can hear what you see.</p>
+        <div class="prog"><div class="lbar"><i id="rBar"></i></div><span class="lprog" id="rProg"></span></div>
+      </div>
+      <h3 class="listhead">Practice</h3>
+      <div class="pcards">
+        <a class="pcard" href="#practice-notes"><b>Note trainer</b><span>Name notes on the staff. Treble, bass, ledger lines and guitar.</span></a>
+        <a class="pcard" href="#practice-rhythm"><b>Rhythm tap-along</b><span>Read a rhythm, tap it in time and get scored.</span></a>
+        <a class="pcard" href="#practice-keys"><b>Key signatures</b><span>Name the key from its sharps and flats.</span></a>
+        <a class="pcard" href="#songbook"><b>Songbook</b><span>Read real melodies while they play, with tab for guitar.</span></a>
+      </div>
+      <h3 class="listhead">Lessons</h3>
+      <ol class="lcards" id="readList"></ol>
+    </div>
+    <div id="readDetail" hidden>
+      <a class="backbtn" id="readBack" href="#reading"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><span>Read music</span></a>
+      <article class="lesson" id="readBody"></article>
+    </div>
+  </div>
 </main>
 </div>
 
-<div id="lessonView" hidden>
-  <div class="wrap lessons">
-    <aside class="lnav" aria-label="Lessons">
-      <p class="eyebrow">Music theory from scratch</p>
-      <p class="lprog" id="lProg"></p>
-      <div class="lbar"><i id="lBar"></i></div>
-      <p class="lstart"><b>Fingerpicker who knows chords but not scales?</b> Start with <a href="#lesson-4">lesson 4</a>. It builds the scale out of the chord shapes you already play. Then go back to lesson 3 for the theory behind it.</p>
-      <div class="lsel-wrap"><label class="vh" for="lessonSel">Choose a lesson</label><select class="sel" id="lessonSel"></select></div>
-      <ol id="lessonList"></ol>
-    </aside>
-    <article class="lesson" id="lessonBody"></article>
+<div class="sheet-wrap" id="keySheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="keySheetTitle">
+    <div class="sheet-head"><h2 id="keySheetTitle">Choose a key</h2><button class="iconbtn" type="button" data-act="closeSheet" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <form class="picker" id="picker" autocomplete="off">
+    <div class="field">
+      <label class="lab" for="keyText">Type a key</label>
+      <input class="text-in" id="keyText" type="text" spellcheck="false" placeholder="e.g. F# minor, Bb, D dorian, A blues">
+      <p class="hintline" id="parseMsg">Try “E♭ major”, “C#m”, “G mixolydian” or “A minor pentatonic”.</p>
+    </div>
+    <div class="field">
+      <span class="lab" id="lbl-root">Root note</span>
+      <div class="seg letters" id="letters" role="group" aria-labelledby="lbl-root"></div>
+      <p class="hintline">&nbsp;</p>
+    </div>
+    <div class="field">
+      <span class="lab" id="lbl-acc">Flat / natural / sharp</span>
+      <div class="seg accs" id="accs" role="group" aria-labelledby="lbl-acc"></div>
+      <p class="hintline">&nbsp;</p>
+    </div>
+    <div class="field">
+      <label class="lab" for="scaleSel">Scale</label>
+      <select class="sel" id="scaleSel"></select>
+      <p class="hintline" id="enhMsg">&nbsp;</p>
+    </div>
+  </form>
+    <div class="recent" id="recentWrap"><span class="lab">Recent keys</span><div class="chips" id="recentKeys"></div></div>
+    <button class="btn gold block-btn" type="button" data-act="closeSheet">Done</button>
   </div>
 </div>
 
-<footer>
-  <div class="wrap"><span>Six Demon Bag · Key Book</span><span>Install it: on iPhone, tap Share then Add to Home Screen. On Android or a computer, use Install app above or the browser menu. Works offline once installed.</span></div>
-</footer>
+<div class="sheet-wrap" id="settingsSheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="setTitle">
+    <div class="sheet-head"><h2 id="setTitle">Settings</h2><button class="iconbtn" type="button" data-act="closeSheet" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="setrow"><div><b>Sound</b><span>Instrument used for play buttons</span></div><div class="seg small" role="group" aria-label="Sound"><button type="button" data-act="sound" data-v="guitar">Guitar</button><button type="button" data-act="sound" data-v="piano">Piano</button></div></div>
+    <div class="setrow"><div><b>Note labels</b><span>What the dots on the neck and keys show</span></div><div class="seg small" role="group" aria-label="Note labels"><button type="button" data-act="labels" data-v="name">Names</button><button type="button" data-act="labels" data-v="deg">Degrees</button></div></div>
+    <div class="setrow"><div><b>Appearance</b><span>Light, dark, or follow your device</span></div><div class="seg small" role="group" aria-label="Appearance"><button type="button" data-act="theme" data-v="system">Auto</button><button type="button" data-act="theme" data-v="light">Light</button><button type="button" data-act="theme" data-v="dark">Dark</button></div></div>
+    <div class="setrow"><div><b>Lesson progress</b><span id="progSummary"></span></div><button class="btn sm" type="button" data-act="resetProgress">Reset</button></div>
+    <div class="setrow" id="installRow"><div><b>Install</b><span id="installInfo">On iPhone: Share, then Add to Home Screen. On Android or a computer: the Install button here or the browser menu. Works offline once installed.</span></div><button class="btn sm gold" type="button" id="installBtn" hidden>Install app</button></div>
+    <p class="about">Six Demon Bag · Key Book. Sheet music drawn with VexFlow (MIT license). Fingerings and chord shapes are standard teaching versions.</p>
+  </div>
+</div>
 
+<script src="vendor/vexflow-bravura.js"></script>
 <script>
 (function(){
 'use strict';
@@ -860,7 +1009,7 @@ function parseKey(str){
 }
 
 /* =========================== State =========================== */
-const DEF={root:{l:5,a:0},scale:'minor',labels:'name',pos:-1,hand:'rh',sev:false,show:'both',focus:null,from:0,prog:[0,5,2,6]};
+const DEF={root:{l:5,a:0},scale:'minor',labels:'name',pos:-1,hand:'rh',sev:false,show:'both',focus:null,from:0,prog:[0,5,2,6],inst:'guitar',sound:'guitar',recent:[]};
 let state=JSON.parse(JSON.stringify(DEF));
 try{ const s=JSON.parse(localStorage.getItem('sdb-keybook')||'null');
   if(s&&s.root&&SCALES[s.scale]&&s.root.l>=0&&s.root.l<7&&Math.abs(s.root.a)<=1) state=Object.assign(state,s,{focus:null});
@@ -902,7 +1051,7 @@ function audio(){
 }
 function newBus(){ if(bus){ const old=bus; old.gain.setTargetAtTime(0,AC.currentTime,0.03); setTimeout(()=>{try{old.disconnect();}catch(e){}},500);} bus=AC.createGain(); bus.gain.value=0.6; bus.connect(comp); }
 let timers=[];
-function stopAll(){ timers.forEach(clearTimeout); timers=[]; document.querySelectorAll('.cell.on,.blk.on,.widget .on').forEach(e=>e.classList.remove('on')); if(AC) newBus(); }
+function stopAll(){ timers.forEach(clearTimeout); timers=[]; document.querySelectorAll('.cell.on,.blk.on,.widget .on').forEach(e=>e.classList.remove('on')); document.querySelectorAll('.score .hl').forEach(e=>e.classList.remove('hl')); if(AC) newBus(); }
 const freq=m=>440*Math.pow(2,(m-69)/12);
 function pluck(m,t,vel=0.8){
   const ac=audio(); if(!ac) return;
@@ -930,7 +1079,7 @@ function key(m,t,dur=1.5,vel=0.8){
     o.connect(og); og.connect(lp); o.start(t); o.stop(t+dur+0.05); });
   lp.connect(g); g.connect(bus);
 }
-let sound='guitar';
+let sound=state.sound==='piano'?'piano':'guitar';
 function playMidi(m,t,inst){ (inst||sound)==='piano'?key(m,t):pluck(m,t); }
 function chordMidis(ch,inst){
   if(inst==='guitar'){ const v=voicings(ch)[0]; if(v) return v.frets.map((f,s)=>f===null?null:OPEN[s]+f).filter(x=>x!==null); }
@@ -1017,8 +1166,7 @@ function renderOverview(){
   $('ovFacts').innerHTML=`
     <div class="fact"><span class="lab">Key signature</span><p>${keySigText()}</p></div>
     <div class="fact"><span class="lab">Step pattern</span><p class="mono">${C.notes.map((n,i)=>step((i+1<C.notes.length?C.notes[i+1].st:12)-n.st)).join(' – ')}</p><p style="color:var(--muted);font-size:12.5px;margin-top:4px">W = whole step (2 frets), H = half step (1 fret)</p></div>
-    <div class="fact"><span class="lab">Related keys</span><div class="rel">${relatedKeys()}</div></div>
-    <div class="fact"><span class="lab">Sound</span><div class="seg small" role="group" aria-label="Instrument sound"><button type="button" data-act="sound" data-v="guitar" aria-pressed="${sound==='guitar'}">Guitar</button><button type="button" data-act="sound" data-v="piano" aria-pressed="${sound==='piano'}">Piano</button></div></div>`;
+    <div class="fact"><span class="lab">Related keys</span><div class="rel">${relatedKeys()}</div></div>`;
 }
 
 /* ---------- Fretboard ---------- */
@@ -1284,7 +1432,14 @@ function render(fromText){
   renderPicker(fromText); renderKeybar(); renderOverview(); renderGuitar(); renderPiano(); renderChords(); renderTogether();
   pressed('[data-act="labels"]',b=>b.dataset.v===state.labels);
   pressed('[data-act="hand"]',b=>b.dataset.v===state.hand);
+  pressed('[data-act="sound"]',b=>b.dataset.v===sound);
+  applyInst();
   save();
+}
+function applyInst(){
+  if(state.inst!=='piano') state.inst='guitar';
+  $('guitar').hidden=state.inst!=='guitar'; $('piano').hidden=state.inst!=='piano';
+  pressed('[data-act="inst"]',b=>b.dataset.v===state.inst);
 }
 
 /* =========================== Events =========================== */
@@ -1297,7 +1452,14 @@ document.addEventListener('click',e=>{
     case 'acc': setKey({l:state.root.l,a:+v}); render(); break;
     case 'rel': setKey({l:+b.dataset.l,a:+b.dataset.a},b.dataset.s); render(); break;
     case 'labels': state.labels=v; render(); break;
-    case 'sound': sound=v; renderOverview(); break;
+    case 'sound': sound=v==='piano'?'piano':'guitar'; state.sound=sound; pressed('[data-act="sound"]',x=>x.dataset.v===sound); save(); break;
+    case 'inst': state.inst=v; applyInst(); if(v==='guitar') renderGuitar(); save(); break;
+    case 'keySheet': openSheet('keySheet'); break;
+    case 'settingsSheet': openSheet('settingsSheet'); break;
+    case 'closeSheet': closeSheet(); break;
+    case 'theme': setTheme(v); break;
+    case 'resetProgress': if(b.dataset.armed){ Object.values(COURSES).forEach(c=>{ c.done.clear(); try{ localStorage.setItem(c.store,'[]'); }catch(err){} renderCourseList(c); }); delete b.dataset.armed; b.textContent='Reset'; renderSettings(); }
+      else { b.dataset.armed='1'; b.textContent='Tap again to reset'; } break;
     case 'pos': state.pos=+v; state.around=null; renderGuitar(); save(); break;
     case 'around': { const i=+v; state.around=i<0?null:i; if(i>=0){ state.pos=-1; state.focus=null; const ar=aroundShape(C.tri[i]); if(ar){ stopAll(); const ac=audio(); if(ac){ const t=ac.currentTime+0.02; ar.v.frets.map((f,s)=>f===null?null:OPEN[s]+f).filter(x=>x!==null).forEach((m,k)=>pluck(m,t+k*0.03,0.7)); } } }
       renderKeybar(); renderGuitar(); renderPiano(); renderChords(); save(); break; }
@@ -1329,10 +1491,10 @@ document.addEventListener('click',e=>{
       playSeq(chs,1.1,k=>{ document.querySelectorAll('.blk.on').forEach(x=>x.classList.remove('on')); if(k>=0){ const el=document.querySelector(`.blk[data-k="${k}"]`); if(el) el.classList.add('on'); } }); break; }
     case 'playPreset': { const p=progList()[+b.dataset.p]; playSeq(progChords(p),p.d.length>8?0.85:1.1); break; }
     case 'loadPreset': { const p=progList()[+b.dataset.p]; state.prog=p.d.slice(); if(p.sev) state.sev=true; render(); document.getElementById('seq').scrollIntoView({behavior:'smooth',block:'center'}); break; }
-    case 'openKey': setKey({l:+b.dataset.l,a:+b.dataset.a},b.dataset.s); render(); if(location.hash==='#overview') route(); else location.hash='overview'; break;
-    case 'done': { const n=curLesson; if(lessonDone.has(n)) lessonDone.delete(n); else lessonDone.add(n);
-      try{ localStorage.setItem('sdb-keybook-done',JSON.stringify([...lessonDone])); }catch(err){}
-      b.setAttribute('aria-pressed',lessonDone.has(n)); b.textContent=lessonDone.has(n)?'✓ Done':'Mark as done'; renderLessonNav(); break; }
+    case 'openKey': setKey({l:+b.dataset.l,a:+b.dataset.a},b.dataset.s); render(); if(location.hash==='#scales') route(); else location.hash='scales'; window.scrollTo({top:0}); break;
+    case 'done': { const c=curCourse; if(!c) break; const n=c.cur; if(c.done.has(n)) c.done.delete(n); else c.done.add(n);
+      try{ localStorage.setItem(c.store,JSON.stringify([...c.done])); }catch(err){}
+      b.setAttribute('aria-pressed',c.done.has(n)); b.textContent=c.done.has(n)?'✓ Done':'Mark as done'; renderCourseList(c); break; }
     case 'playOut': { const [l,a,q]=b.dataset.n.split(','); stopAll(); const ac=audio(); if(ac) playChord(buildChord({l:+l,a:+a},q),ac.currentTime+0.03); break; }
   }
 });
@@ -1722,65 +1884,687 @@ const LESSONS=[
  tip:'Count the bars in each section of the songs you learn. Verses and choruses are usually 8 or 16 bars long. Knowing that makes song structures easier to remember and tells you when the next change is coming.'},
 {tag:'Reading',title:'Tab, chord charts and a little notation',w:'staff',
  lede:'You don’t need to sight-read to play well. But three formats are worth knowing: guitar tab, chord diagrams and the basics of standard notation.',
- idea:`<h3>Tab</h3><p>Six lines stand for the six strings, with the <b>top line as the thin high E string</b>, as if you were looking down at the guitar in your lap. Numbers say which fret to play. Read left to right; numbers stacked on top of each other are played together.</p><h3>Chord diagrams</h3><p>Vertical lines are strings, low E on the left. Horizontal lines are frets, with the thick bar at the top as the nut. Dots show where your fingers go. <b>O</b> means play the string open; <b>X</b> means don’t play it. “5fr” means the diagram starts at fret 5. A long bar is a barre: one finger flat across several strings.</p><h3>Standard notation</h3><p>Five lines make the <b>staff</b>. Higher on the staff means higher in pitch. Notes sit on a line or in a space, and each line or space is the next letter up. On the treble staff the lines are <b>E G B D F</b> (“Every Good Boy Does Fine”) and the spaces spell <b>F A C E</b>. The shape of each note tells you how long it lasts.</p>`,
+ idea:`<h3>Tab</h3><p>Six lines stand for the six strings, with the <b>top line as the thin high E string</b>, as if you were looking down at the guitar in your lap. Numbers say which fret to play. Read left to right; numbers stacked on top of each other are played together.</p><h3>Chord diagrams</h3><p>Vertical lines are strings, low E on the left. Horizontal lines are frets, with the thick bar at the top as the nut. Dots show where your fingers go. <b>O</b> means play the string open; <b>X</b> means don’t play it. “5fr” means the diagram starts at fret 5. A long bar is a barre: one finger flat across several strings.</p><h3>Standard notation</h3><p>Five lines make the <b>staff</b>. Higher on the staff means higher in pitch. Notes sit on a line or in a space, and each line or space is the next letter up. On the treble staff the lines are <b>E G B D F</b> (“Every Good Boy Does Fine”) and the spaces spell <b>F A C E</b>. The shape of each note tells you how long it lasts.</p><p>This is only a taste. The <a href="#reading">Read music</a> tab has a full course with a note trainer, rhythm practice and a songbook.</p>`,
  guitar:`<p>Most guitar books print tab under the notation. Read the tab for where to play and glance at the notation for the rhythm. Guitar music is written an octave higher than it sounds, to keep it on the staff.</p>`,
  piano:`<p>Piano music uses two staves: treble on top for the right hand and bass below for the left. Middle C sits on a short extra line between them.</p>`,
  tip:'Learn to read with songs you already know by ear. Your ear checks your reading, so the connection builds much faster than with exercises.'},
 ];
-let lessonDone=new Set(), curLesson=1;
-try{ lessonDone=new Set(JSON.parse(localStorage.getItem('sdb-keybook-done')||'[]')); curLesson=+localStorage.getItem('sdb-keybook-lesson')||1; }catch(e){}
-function renderLessonNav(){
-  let h='';
-  const PARTS={1:'The basics',5:'Hearing and building chords',8:'Songs and harmony',11:'Soloing',13:'Rhythm and reading'};
-  LESSONS.forEach((L,i)=>{ const n=i+1; if(PARTS[n]) h+=`<li class="lgroup">${PARTS[n]}</li>`;
-    h+=`<li><a href="#lesson-${n}"${n===curLesson?' aria-current="page"':''}><span class="no">${n}</span><span>${L.title}</span><span class="ck" aria-label="${lessonDone.has(n)?'done':''}">${lessonDone.has(n)?'✓':''}</span></a></li>`; });
-  $('lessonList').innerHTML=h;
-  $('lessonSel').innerHTML=LESSONS.map((L,i)=>`<option value="${i+1}"${i+1===curLesson?' selected':''}>${i+1}. ${L.title}${lessonDone.has(i+1)?' ✓':''}</option>`).join('');
-  $('lProg').textContent=`${lessonDone.size} of ${LESSONS.length} lessons done`;
-  $('lBar').style.width=(lessonDone.size/LESSONS.length*100)+'%';
+/* =========================== Sheet music engine =========================== */
+/* Music is written as text: "c4/q d#4/8 (c4,e4,g4)/h r/q" with bars split by "|".
+   Suffixes: d = dotted (q d), ~ = tie to next, ^. ^> ^- ^f = staccato, accent, tenuto, fermata, !text = text mark. */
+const VFX=()=>(window.Vex&&window.Vex.Flow)||null;
+const DURB={w:4,h:2,q:1,'8':0.5,'16':0.25};
+const LIDX={c:0,d:1,e:2,f:3,g:4,a:5,b:6};
+const ACCS={'':0,n:0,'#':1,b:-1,'##':2,bb:-2};
+function parsePitch(s){
+  const m=s.match(/^([a-g])(##|bb|#|b|n)?(\d)$/); if(!m) throw new Error('Bad note '+s);
+  const l=LIDX[m[1]], a=ACCS[m[2]||''], oct=+m[3];
+  return {l,a,oct,midi:12*(oct+1)+LPC[l]+a,key:m[1]+(a>0?'#'.repeat(a):a<0?'b'.repeat(-a):'')+'/'+oct,name:LETTERS[l]+accStr(a)};
 }
-function openLesson(n){
-  metroStop(); stopAll(); curLesson=n; try{ localStorage.setItem('sdb-keybook-lesson',n); }catch(e){}
-  const L=LESSONS[n-1];
-  $('lessonBody').innerHTML=`<p class="eyebrow">Lesson ${n} of ${LESSONS.length} · ${L.tag}</p><h2 class="ltitle">${L.title}</h2><p class="lede">${L.lede}</p>
+function parseTok(t){
+  let text=null; const bang=t.indexOf('!'); if(bang>=0){ text=t.slice(bang+1); t=t.slice(0,bang); }
+  const arts=[]; while(/\^[.>\-f]$/.test(t)){ arts.unshift(t.slice(-1)); t=t.slice(0,-2); }
+  let tie=false; if(t.endsWith('~')){ tie=true; t=t.slice(0,-1); }
+  const [p,dr]=t.split('/'); const dot=dr.endsWith('d'), dur=dot?dr.slice(0,-1):dr, rest=p==='r';
+  return {rest,dur,dot,tie,arts,text,beats:DURB[dur]*(dot?1.5:1),pitches:rest?[]:p.replace(/[()]/g,'').split(',').map(parsePitch)};
+}
+const parseMusic=s=>s.split('|').map(b=>b.trim()).filter(Boolean).map(b=>b.split(/\s+/).map(parseTok));
+function keyAccMap(key){
+  const m=key.match(/^([A-G])(#|b)?(m?)$/), root={l:LETTERS.indexOf(m[1]),a:m[2]==='#'?1:m[2]==='b'?-1:0}, map={};
+  spell(root,m[3]?SCALES.minor:SCALES.major).forEach(n=>map[n.l]=n.a); return map;
+}
+function guitarSpot(m){ let best=null;
+  for(let s=0;s<6;s++){ const f=m-OPEN[s]; if(f<0||f>15) continue; const sc=(f<=4?0:100)+f*2-s*0.1; if(!best||sc<best.sc) best={s,f,sc}; }
+  return best; }
+function countLabel(pb,td){ const e=1e-6;
+  if(td===8){ const x=pb*2; return Math.abs(x-Math.round(x))<e?String(Math.round(x)+1):''; }
+  const b=Math.floor(pb+e), f=pb-b; return f<e?String(b+1):Math.abs(f-.5)<e?'&':Math.abs(f-.25)<e?'e':Math.abs(f-.75)<e?'a':''; }
+function finishSVG(el){
+  const svg=el.querySelector('svg'); if(!svg) return;
+  svg.setAttribute('fill','currentColor'); svg.setAttribute('stroke','currentColor');
+  svg.querySelectorAll('[fill="#999999"],[stroke="#999999"]').forEach(g=>{ g.setAttribute('fill','currentColor'); g.setAttribute('stroke','currentColor'); g.setAttribute('opacity','0.5'); });
+  svg.querySelectorAll('[fill="black"]').forEach(e=>e.setAttribute('fill','currentColor'));
+  svg.querySelectorAll('[stroke="black"]').forEach(e=>e.setAttribute('stroke','currentColor'));
+  svg.querySelectorAll('[fill="white"]').forEach(e=>{ e.removeAttribute('fill'); e.style.fill='var(--score-bg, var(--surface))'; });
+  svg.style.width='100%'; svg.style.height='auto'; svg.setAttribute('role','img'); svg.setAttribute('aria-label','Sheet music');
+  /* Trim empty space above and below so every score fits its content exactly. */
+  try{ if(el.offsetParent!==null){ const bb=svg.getBBox(); if(bb.height>0){ const w=svg.viewBox.baseVal.width||+svg.getAttribute('width'), y=Math.max(0,bb.y-8), h=bb.y+bb.height+10-y;
+    svg.setAttribute('viewBox',`0 ${y} ${w} ${h}`); svg.setAttribute('height',h); } } }catch(e){}
+}
+const LIVE_SCORES=new Set();
+function drawScore(el,spec){
+  const VF=VFX();
+  if(!VF){ el.innerHTML='<p class="empty">The sheet music needs an internet connection the first time you open this page.</p>'; return null; }
+  LIVE_SCORES.add(el); el.__spec=spec; el.innerHTML='';
+  const W=Math.max(240,Math.floor(el.clientWidth||300)); el.__w=W;
+  const time=spec.time||'4/4', [tn,td]=time.split('/').map(Number), barBeats=tn*4/td;
+  const clef=spec.clef||'treble', key=spec.key||'C', kmap=keyAccMap(key), nAcc=Object.values(kmap).filter(Boolean).length;
+  const R=new VF.Renderer(el,VF.Renderer.Backends.SVG), ctx=R.getContext();
+  const clefArgs=cl=>[cl==='guitar'?'treble':cl,'default',cl==='guitar'?'8vb':undefined];
+  if(!spec.music){
+    const w=Math.min(W,96+nAcc*12); R.resize(w,104);
+    const st=new VF.Stave(2,6,w-6); st.addClef(...clefArgs(clef)); st.addKeySignature(key); st.setContext(ctx).draw();
+    finishSVG(el); el.__score=null; return null;
+  }
+  const tb=parseMusic(spec.music), bb=spec.bass?parseMusic(spec.bass):null, grand=!!bb, tab=!!spec.tab, below=!!(spec.names||spec.counts);
+  const marks=spec.marks||{};
+  const barW=i=>{ let n=tb[i].length; if(bb&&bb[i]) n=Math.max(n,bb[i].length); const acc=tb[i].filter(t=>t.pitches.some(p=>p.a)).length; return 40+n*(below?38:31)+acc*9; };
+  const headW=first=>(spec.rhythm?6:40)+(spec.rhythm?0:nAcc*11)+(first&&!spec.noTime?30:0)+8;
+  const avail=W-8, lines=[]; let cur=[],used=0;
+  for(let i=0;i<tb.length;i++){ const w=barW(i)+(cur.length?0:headW(lines.length===0));
+    if(cur.length&&used+w>avail){ lines.push(cur); cur=[]; used=0; i--; continue; } cur.push(i); used+=w; }
+  if(cur.length) lines.push(cur);
+  /* A VexFlow stave's five lines sit 40px to 80px below its y; tab lines start 52px down. */
+  const lowX=(clef==='guitar'||tb.some(b=>b.some(t=>t.pitches.some(p=>p.midi<(clef==='bass'?40:57)))))?26:0;
+  const annH=below?22:0, top=Object.values(marks).some(m=>m.volta)?14:0;
+  const offB=90+annH+lowX, offTab=(grand?offB+100+annH:100+annH+lowX)-28;
+  const sysH=top+(tab?offTab+128:grand?offB+104+annH:100+annH+lowX)+8;
+  R.resize(W,sysH*lines.length+10);
+  const barLen=tb.map(b=>b.reduce((s,t)=>s+t.beats,0)), byBar=[], seqNotes={t:[],b:[]};
+  lines.forEach((line,li)=>{
+    const y0=6+li*sysH+top, natural=line.map((bi,k)=>barW(bi)+(k===0?headW(li===0):0)), sum=natural.reduce((a,b)=>a+b,0);
+    const stretch=(li<lines.length-1||sum>avail*0.72||spec.noTime)?avail/sum:1;
+    let x=4;
+    line.forEach((bi,k)=>{
+      const w=natural[k]*stretch, first=k===0, lastBar=bi===tb.length-1, mk=marks[bi]||{};
+      const decorate=(s,isTab,cl)=>{
+        if(!isTab&&first&&!spec.rhythm){ s.addClef(...clefArgs(cl)); s.addKeySignature(key); }
+        if(isTab&&first) s.addClef('tab');
+        if(!isTab&&bi===0&&!spec.noTime) s.addTimeSignature(time);
+        if(mk.begin) s.setBegBarType(VF.Barline.type.REPEAT_BEGIN);
+        if(mk.end) s.setEndBarType(VF.Barline.type.REPEAT_END); else if(lastBar) s.setEndBarType(VF.Barline.type.END);
+        return s; };
+      const sT=decorate(new VF.Stave(x,y0,w),false,clef); if(mk.volta) sT.setVoltaType(VF.Volta.type.BEGIN_END,mk.volta,-6);
+      const staves=[sT]; let sB=null,sTab=null;
+      if(grand){ sB=decorate(new VF.Stave(x,y0+offB,w),false,'bass'); staves.push(sB); }
+      if(tab){ sTab=decorate(new VF.TabStave(x,y0+offTab,w),true); staves.push(sTab); }
+      const pickOff=(bi===0&&barLen[0]<barBeats-1e-6)?barBeats-barLen[0]:0;
+      const mkVoice=(toks,cl,sk)=>{
+        const bs={}, notes=[], evs=[]; let pos=0;
+        toks.forEach(tok=>{
+          const durStr=tok.dur+(tok.dot?'d':'')+(tok.rest?'r':'');
+          const keys=tok.rest?[cl==='bass'?'d/3':'b/4']:tok.pitches.map(p=>p.key);
+          const n=new VF.StaveNote({keys,duration:durStr,clef:cl==='guitar'?'treble':cl,auto_stem:true});
+          if(tok.dot) VF.Dot.buildAndAttach([n],{all:true});
+          tok.pitches.forEach((p,j)=>{ const key2=p.l+'_'+p.oct, exp=(key2 in bs)?bs[key2]:(kmap[p.l]||0);
+            if(p.a!==exp) n.addModifier(new VF.Accidental(p.a===0?'n':p.a>0?'#'.repeat(p.a):'b'.repeat(-p.a)),j); bs[key2]=p.a; });
+          tok.arts.forEach(a=>{ const art=new VF.Articulation({'.':'a.','>':'a>','-':'a-','f':'a@a'}[a]); if(a==='f') art.setPosition(VF.Modifier.Position.ABOVE); n.addModifier(art,0); });
+          const label=spec.names?(tok.rest?'':tok.pitches.map(p=>p.name).join(' ')):spec.counts?countLabel(pos+pickOff,td):'';
+          if(label) n.addModifier(new VF.Annotation(label).setFont('JetBrains Mono, monospace',10).setVerticalJustification(VF.Annotation.VerticalJustify.BOTTOM),0);
+          if(tok.text) n.addModifier(new VF.Annotation(tok.text).setFont('Georgia, serif',14,'bold italic').setVerticalJustification(below?VF.Annotation.VerticalJustify.TOP:VF.Annotation.VerticalJustify.BOTTOM),0);
+          const ev={pb:pos,beats:tok.beats,midis:tok.pitches.map(p=>p.midi),note:n,tok,els:[]};
+          notes.push(n); evs.push(ev); seqNotes[sk].push({n,li,tok,ev}); pos+=tok.beats;
+        });
+        const v=new VF.Voice({num_beats:tn,beat_value:td}).setMode(VF.Voice.Mode.SOFT); v.addTickables(notes);
+        const beams=VF.Beam.generateBeams(notes,td===8?{groups:[new VF.Fraction(3,8)]}:{});
+        return {v,notes,evs,beams};
+      };
+      const vT=mkVoice(tb[bi],clef,'t'), vB=grand?mkVoice(bb[bi]||[],'bass','b'):null;
+      let vTab=null,tabNotes=[];
+      if(tab){
+        tabNotes=tb[bi].map(tok=>{ const ds=tok.dur+(tok.dot?'d':'');
+          if(tok.rest) return new VF.GhostNote({duration:ds});
+          return new VF.TabNote({positions:tok.pitches.map(p=>{ const g=guitarSpot(p.midi-12); return {str:6-g.s,fret:g.f}; }),duration:ds}); });
+        vTab=new VF.Voice({num_beats:tn,beat_value:td}).setMode(VF.Voice.Mode.SOFT); vTab.addTickables(tabNotes);
+      }
+      const ns=Math.max(...staves.map(s=>s.getNoteStartX())); staves.forEach(s=>s.setNoteStartX(ns));
+      staves.forEach(s=>s.setContext(ctx).draw());
+      if(grand){
+        if(first){ new VF.StaveConnector(sT,sB).setType(VF.StaveConnector.type.BRACE).setContext(ctx).draw(); new VF.StaveConnector(sT,sB).setType(VF.StaveConnector.type.SINGLE_LEFT).setContext(ctx).draw(); }
+        new VF.StaveConnector(sT,sB).setType(lastBar?VF.StaveConnector.type.BOLD_DOUBLE_RIGHT:VF.StaveConnector.type.SINGLE_RIGHT).setContext(ctx).draw();
+      }
+      const voices=[vT.v]; if(vB) voices.push(vB.v); if(vTab) voices.push(vTab);
+      const fmt=new VF.Formatter(); voices.forEach(v=>fmt.joinVoices([v])); fmt.format(voices,Math.max(30,sT.getNoteEndX()-ns-12));
+      vT.v.draw(ctx,sT); vT.beams.forEach(b=>b.setContext(ctx).draw());
+      if(vB){ vB.v.draw(ctx,sB); vB.beams.forEach(b=>b.setContext(ctx).draw()); }
+      if(vTab) vTab.draw(ctx,sTab);
+      vT.evs.forEach((ev,j)=>{ ev.els=[ev.note.getSVGElement()]; const tnn=tabNotes[j]; if(tnn&&tnn.getSVGElement) ev.els.push(tnn.getSVGElement()); });
+      if(vB) vB.evs.forEach(ev=>{ ev.els=[ev.note.getSVGElement()]; });
+      byBar[bi]=vT.evs.concat(vB?vB.evs:[]);
+      x+=w;
+    });
+  });
+  ['t','b'].forEach(k=>{ const sq=seqNotes[k];
+    sq.forEach((it,i)=>{ if(!it.tok.tie) return; const nx=sq[i+1]; if(!nx) return; const idx=it.tok.pitches.map((_,j)=>j);
+      nx.ev.tiedFrom=true; it.ev.tieTo=nx.ev;
+      if(nx.li===it.li) new VF.StaveTie({first_note:it.n,last_note:nx.n,first_indices:idx,last_indices:idx}).setContext(ctx).draw();
+      else { new VF.StaveTie({first_note:it.n,last_note:null,first_indices:idx,last_indices:idx}).setContext(ctx).draw(); new VF.StaveTie({first_note:null,last_note:nx.n,first_indices:idx,last_indices:idx}).setContext(ctx).draw(); }
+    }); });
+  finishSVG(el);
+  const score={el,byBar,barLen,marks,nBars:tb.length,barBeats,countBeats:td===8?tn/3*2:tn};
+  el.__score=score; return score;
+}
+function expandOrder(n,marks){
+  const order=[], passed=new Set(); let i=0,start=0,guard=0;
+  while(i<n&&guard++<500){ const mk=marks[i]||{};
+    if(mk.begin) start=i;
+    if(mk.volta==='1.'&&passed.has(start)){ i++; continue; }
+    order.push(i);
+    if(mk.end&&!passed.has(start)){ passed.add(start); i=start; continue; }
+    i++; }
+  return order;
+}
+function clickAt(t,lvl,wood){
+  const ac=audio(); if(!ac) return; const o=ac.createOscillator(), g=ac.createGain();
+  o.type=wood?'triangle':'sine'; o.frequency.value=wood?2100:(lvl===2?1760:lvl===1?1240:880);
+  g.gain.setValueAtTime(wood?0.4:(lvl===0?0.1:0.26),t); g.gain.exponentialRampToValueAtTime(0.0001,t+(wood?0.045:0.05));
+  o.connect(g); g.connect(bus); o.start(t); o.stop(t+0.08);
+}
+function playScore(score,opts){
+  stopAll(); const ac=audio(); if(!ac||!score) return 0;
+  const spb=60/(opts.bpm||90), inst=opts.inst||'piano', shift=opts.shift||0; let t=ac.currentTime+0.12;
+  if(opts.countIn){ const n=Math.round(score.countBeats||4); for(let k=0;k<n;k++) clickAt(t+k*spb,k===0?2:1); t+=n*spb; }
+  const order=expandOrder(score.nBars,score.marks); let cur=0;
+  order.forEach(bi=>{ (score.byBar[bi]||[]).forEach(ev=>{
+    const at=t+(cur+ev.pb)*spb;
+    if(ev.midis.length&&!ev.tiedFrom){ let beats=ev.beats,x=ev; while(x.tieTo){ x=x.tieTo; beats+=x.beats; }
+      if(inst==='wood') clickAt(at,0,true);
+      else ev.midis.forEach(m=>inst==='guitar'?pluck(m+shift,at,0.75):key(m+shift,at,Math.max(0.35,beats*spb+0.15),0.7)); }
+    const els=ev.els.filter(Boolean);
+    timers.push(setTimeout(()=>els.forEach(e=>e.classList.add('hl')),Math.max(0,(at-ac.currentTime)*1000)));
+    timers.push(setTimeout(()=>els.forEach(e=>e.classList.remove('hl')),Math.max(0,(at+ev.beats*spb-ac.currentTime)*1000-40)));
+  }); cur+=score.barLen[bi]; });
+  const endAt=t+cur*spb;
+  if(opts.onEnd) timers.push(setTimeout(opts.onEnd,(endAt-ac.currentTime)*1000+150));
+  return endAt;
+}
+let rsTimer=null;
+window.addEventListener('resize',()=>{ clearTimeout(rsTimer); rsTimer=setTimeout(()=>{
+  LIVE_SCORES.forEach(el=>{ if(!el.isConnected){ LIVE_SCORES.delete(el); return; } if(el.offsetParent===null) return;
+    const w=Math.floor(el.clientWidth); if(Math.abs(w-(el.__w||0))>8) drawScore(el,el.__spec); });
+},200); });
+
+const keyLabel=k=>{ const n=k.replace('#','♯').replace('b','♭'); return `${n} major · ${spell(noteObj(n),SCALES.major)[5].name} minor`; };
+function scoreInst(spec){ return spec.rhythm?'wood':(spec.tab||spec.clef==='guitar')?'guitar':'piano'; }
+function mountScores(root){
+  root.querySelectorAll('[data-score]').forEach(box=>{
+    const id=box.dataset.score, spec=SC[id]||songSpec(id); if(!spec) return;
+    box.classList.add('scorebox');
+    if(spec.gallery){
+      box.innerHTML=`<div class="gallery">${spec.gallery.map(k=>`<figure><div class="score" data-k="${k}"></div><figcaption>${keyLabel(k)}</figcaption></figure>`).join('')}</div>`;
+      box.querySelectorAll('.score').forEach(s=>drawScore(s,{clef:'treble',key:s.dataset.k}));
+      return;
+    }
+    box.innerHTML=`<div class="score"></div><div class="sctl"><button class="btn sm gold" type="button"><span class="tri"></span>Play</button>${spec.caption?`<span>${spec.caption}</span>`:''}</div>`;
+    const sEl=box.querySelector('.score'); drawScore(sEl,spec);
+    box.querySelector('button').addEventListener('click',()=>{ const inst=scoreInst(spec);
+      playScore(sEl.__score,{bpm:spec.bpm||(spec.rhythm?76:92),inst,shift:inst==='guitar'?-12:0,countIn:!!(spec.counts||spec.rhythm)}); });
+  });
+}
+
+/* ---------- Songbook (public-domain melodies) ---------- */
+const ODE='e4/q e4/q f4/q g4/q | g4/q f4/q e4/q d4/q | c4/q c4/q d4/q e4/q | e4/qd d4/8 d4/h | e4/q e4/q f4/q g4/q | g4/q f4/q e4/q d4/q | c4/q c4/q d4/q e4/q | d4/qd c4/8 c4/h';
+const SONGS=[
+  {id:'mary',title:'Mary Had a Little Lamb',level:'Treble clef · C major · quarter and half notes',key:'C',time:'4/4',bpm:100,
+   music:'e4/q d4/q c4/q d4/q | e4/q e4/q e4/h | d4/q d4/q d4/h | e4/q g4/q g4/h | e4/q d4/q c4/q d4/q | e4/q e4/q e4/q e4/q | d4/q d4/q e4/q d4/q | c4/w'},
+  {id:'twinkle',title:'Twinkle, Twinkle, Little Star',level:'Treble clef · C major · steps and a leap of a 5th',key:'C',time:'4/4',bpm:100,
+   music:'c4/q c4/q g4/q g4/q | a4/q a4/q g4/h | f4/q f4/q e4/q e4/q | d4/q d4/q c4/h | g4/q g4/q f4/q f4/q | e4/q e4/q d4/h | g4/q g4/q f4/q f4/q | e4/q e4/q d4/h | c4/q c4/q g4/q g4/q | a4/q a4/q g4/h | f4/q f4/q e4/q e4/q | d4/q d4/q c4/h'},
+  {id:'ode',title:'Ode to Joy',level:'Treble clef · C major · dotted quarter notes',key:'C',time:'4/4',bpm:96,music:ODE},
+  {id:'frere',title:'Frère Jacques',level:'Treble clef · C major · eighth notes and a ledger line below',key:'C',time:'4/4',bpm:96,
+   music:'c4/q d4/q e4/q c4/q | c4/q d4/q e4/q c4/q | e4/q f4/q g4/h | e4/q f4/q g4/h | g4/8 a4/8 g4/8 f4/8 e4/q c4/q | g4/8 a4/8 g4/8 f4/8 e4/q c4/q | c4/q g3/q c4/h | c4/q g3/q c4/h'},
+  {id:'jingle',title:'Jingle Bells (chorus)',level:'Treble clef · C major · dotted rhythms and repeated notes',key:'C',time:'4/4',bpm:112,
+   music:'e4/q e4/q e4/h | e4/q e4/q e4/h | e4/q g4/q c4/qd d4/8 | e4/w | f4/q f4/q f4/qd f4/8 | f4/q e4/q e4/q e4/8 e4/8 | e4/q d4/q d4/q e4/q | d4/h g4/h | e4/q e4/q e4/h | e4/q e4/q e4/h | e4/q g4/q c4/qd d4/8 | e4/w | f4/q f4/q f4/q f4/q | f4/q e4/q e4/q e4/8 e4/8 | g4/q g4/q f4/q d4/q | c4/w'},
+  {id:'amazing',title:'Amazing Grace (first line)',level:'Treble clef · G major · 3/4 time with a pickup',key:'G',time:'3/4',bpm:84,
+   music:'d4/q | g4/h b4/8 g4/8 | b4/h a4/q | g4/h e4/q | d4/h d4/q | g4/h b4/8 g4/8 | b4/h a4/q | d5/hd'},
+  {id:'ode-bass',title:'Ode to Joy, left hand',level:'Bass clef · C major · same tune, two octaves lower',clef:'bass',key:'C',time:'4/4',bpm:96,
+   music:ODE.replace(/([a-g])4/g,'$13')},
+  {id:'ode-grand',title:'Ode to Joy, both hands',level:'Grand staff · melody on top, chords in the left hand',key:'C',time:'4/4',bpm:88,music:ODE,
+   bass:'(c3,g3)/w | (g2,d3)/w | (c3,g3)/w | (g2,d3)/w | (c3,g3)/w | (g2,d3)/w | (c3,g3)/w | (g2,d3)/h (c3,g3)/h'},
+];
+const songSpec=id=>{ const s=SONGS.find(x=>x.id===id); return s?{clef:s.clef||'treble',key:s.key,time:s.time,music:s.music,bass:s.bass,bpm:s.bpm}:null; };
+
+/* ---------- Lesson scores ---------- */
+const SC={
+  'r1-steps':{music:'c4/q d4/q e4/q f4/q | g4/q a4/q b4/q c5/q',names:true,caption:'Steps: each note moves to the very next line or space.'},
+  'r1-skips':{music:'e4/q g4/q b4/q d5/q | f4/q a4/q c5/q e5/q',names:true,caption:'Skips: line to line, then space to space.'},
+  'r2-lines':{music:'e4/q g4/q b4/q d5/q | f5/w',names:true,caption:'Treble lines: E G B D F.'},
+  'r2-spaces':{music:'f4/q a4/q c5/q e5/q',names:true,caption:'Treble spaces: F A C E.'},
+  'r2-landmarks':{music:'c4/h g4/h | g5/w',names:true,caption:'Landmarks: middle C, G on line 2, high G.'},
+  'r3-lines':{clef:'bass',music:'g2/q b2/q d3/q f3/q | a3/w',names:true,caption:'Bass lines: G B D F A.'},
+  'r3-spaces':{clef:'bass',music:'a2/q c3/q e3/q g3/q',names:true,caption:'Bass spaces: A C E G.'},
+  'r3-landmarks':{clef:'bass',music:'g2/h f3/h | c4/w',names:true,caption:'Landmarks: low G, F between the dots, middle C.'},
+  'r4-ledger':{music:'a3/q b3/q c4/q d4/q | g5/q a5/q b5/q c6/q',names:true,caption:'Ledger lines below and above the treble staff.'},
+  'r4-grand':{music:'c4/w | e4/h g4/h',bass:'c4/w | c3/h g2/h',names:true,caption:'Middle C written in both staves is the same note.'},
+  'r5-values':{rhythm:true,counts:true,music:'b4/w | b4/h b4/h | b4/q b4/q b4/q b4/q | b4/8 b4/8 b4/8 b4/8 b4/8 b4/8 b4/8 b4/8 | b4/16 b4/16 b4/16 b4/16 b4/16 b4/16 b4/16 b4/16 b4/16 b4/16 b4/16 b4/16 b4/16 b4/16 b4/16 b4/16',caption:'Whole, half, quarter, eighth and sixteenth notes, one bar each.'},
+  'r5-mix':{rhythm:true,counts:true,music:'b4/q b4/8 b4/8 b4/h | b4/8 b4/8 b4/q b4/16 b4/16 b4/16 b4/16 b4/q',caption:'Mixed values. Count out loud with the clicks.'},
+  'r6-rests':{rhythm:true,counts:true,music:'r/w | r/h b4/h | b4/q r/q b4/q r/q | b4/8 r/8 b4/8 r/8 r/q b4/q | r/16 b4/16 b4/16 b4/16 r/8 b4/8 b4/h',caption:'Whole, half, quarter, eighth and sixteenth rests.'},
+  'r7-34':{time:'3/4',counts:true,music:'c4/q e4/q g4/q | c5/hd | g4/q e4/q c4/q | c4/hd',caption:'3/4: three beats in every bar.'},
+  'r7-68':{time:'6/8',counts:true,music:'c4/8 d4/8 e4/8 f4/8 g4/8 a4/8 | g4/qd e4/qd | f4/q d4/8 e4/q c4/8 | c4/hd',caption:'6/8: six eighth notes, felt as two big beats.'},
+  'r7-pickup':{key:'G',time:'3/4',counts:true,bpm:84,music:'d4/q | g4/h b4/8 g4/8 | b4/h a4/q | g4/h e4/q | d4/h',caption:'A pickup: the tune starts on beat 3.'},
+  'r8-dots':{counts:true,music:'c4/hd e4/q | g4/qd f4/8 e4/h | d4/qd e4/8 f4/qd d4/8 | c4/w',caption:'Dotted half (3 beats) and dotted quarter (1½ beats).'},
+  'r8-ties':{counts:true,music:'c4/h e4/h~ | e4/q d4/q c4/h~ | c4/w',caption:'Ties hold a note across the bar line.'},
+  'r9-acc':{names:true,music:'f4/q f#4/q f4/q g4/q | bb4/q a4/q bb4/q b4/q | c5/w',caption:'Accidentals last until the bar line. The natural sign cancels them.'},
+  'keys-sharp':{gallery:['G','D','A','E','B','F#','C#']},
+  'keys-flat':{gallery:['F','Bb','Eb','Ab','Db','Gb','Cb']},
+  'r11-intervals':{music:'c4/q d4/q e4/q c4/q | e4/q g4/q c5/h | c5/q a4/q f4/q d4/q | c4/w',caption:'Steps, skips and leaps. Read the shape, then the notes.'},
+  'r13-first':{clef:'guitar',tab:true,names:true,bpm:84,music:'e3/q f3/q g3/q a3/q | b3/q c4/q d4/q e4/q | f4/q g4/q a4/q b4/q | c5/q d5/q e5/q f5/q | g5/w',caption:'Every natural note in first position, low E string to high E string.'},
+  'r14-signs':{music:'c4/q!mf d4/q e4/q^. f4/q^. | g4/h^> e4/h | d4/w | c4/w^f',marks:{0:{begin:true},2:{volta:'1.',end:true},3:{volta:'2.'}},caption:'Repeat signs with 1st and 2nd endings, a dynamic, staccato, an accent and a fermata. It plays bars 1, 2, 3, then 1, 2, 4.'},
+};
+
+/* ---------- Reading widgets ---------- */
+W.stepSkip=el=>{
+  const NAT=['e4','f4','g4','a4','b4','c5','d5','e5','f5'], CATS=[['same','Same note'],['step','Step'],['skip','Skip'],['leap','Leap']];
+  let q=null,sc={r:0,t:0},msg='';
+  const fresh=()=>{ const i=Math.floor(Math.random()*NAT.length), ds=[0,1,1,2,2,3,4], d=ds[Math.floor(Math.random()*ds.length)]*(Math.random()<.5?-1:1);
+    const j=Math.max(0,Math.min(NAT.length-1,i+d)), g=Math.abs(j-i); q={a:NAT[i],b:NAT[j],ans:g===0?'same':g===1?'step':g===2?'skip':'leap',done:false,pick:null}; };
+  const DESC={same:'Same line or space: the same note.',step:'From a line to the next space, or a space to the next line: a step.',skip:'Line to line, or space to space: a skip.',leap:'More than a skip: a leap. Count the lines and spaces between them.'};
+  fresh();
+  const draw=()=>{ el.innerHTML=wHead('Step, skip or leap?','Judge the distance between the two notes by their shape alone. No letter names needed yet.')+
+    `<div class="nt-stage"><div class="nt-score"><div class="score"></div></div><div><div class="kq-opts">${CATS.map(([k,l])=>`<button type="button" class="chip${q.done?(k===q.ans?' ok':q.pick===k?' bad':''):''}" data-wa="ans" data-v="${k}"${q.done?' disabled':''}>${l}</button>`).join('')}</div>
+     <p class="nt-msg" aria-live="polite">${msg}</p><div class="wctl">${playBtn('Hear them','hear')}<button class="btn sm" type="button" data-wa="next">Next</button><span class="stats"><span>Score <b>${sc.r}/${sc.t}</b></span></span></div></div></div>`;
+    drawScore(el.querySelector('.score'),{noTime:true,music:`${q.a}/h ${q.b}/h`}); };
+  draw();
+  onWa(el,(a,v)=>{ const play=()=>playScore(el.querySelector('.score').__score,{bpm:110});
+    if(a==='hear') play();
+    if(a==='next'){ fresh(); msg=''; draw(); }
+    if(a==='ans'&&!q.done){ q.done=true; q.pick=v; sc.t++; const ok=v===q.ans; if(ok) sc.r++; msg=(ok?'<b>Right.</b> ':'<b>Not quite.</b> ')+DESC[q.ans]; draw(); play(); }
+  });
+};
+
+const NT_RANGE={treble:{staff:['e4','f5'],ledger:['a3','c6']},bass:{staff:['g2','a3'],ledger:['c2','e4']},guitar:{staff:['e4','f5'],ledger:['e3','g5']}};
+function naturalsBetween(lo,hi){ const a=parsePitch(lo),b=parsePitch(hi),out=[]; let l=a.l,o=a.oct;
+  for(let g=0;g<60;g++){ out.push({l,oct:o}); if(l===b.l&&o===b.oct) break; l++; if(l>6){ l=0; o++; } } return out; }
+function staffSpot(p,cl){
+  const base=cl==='bass'?2*7+4:4*7+2, d=p.oct*7+p.l-base, staff=cl==='bass'?'bass':'treble';
+  let where;
+  if(d>=0&&d<=8) where=`${d%2===0?'Line':'Space'} ${Math.floor(d/2)+1} of the ${staff} staff, counting from the bottom.`;
+  else if(d<0){ const n=Math.floor(-d/2); where=n?`${n} ledger line${n>1?'s':''} below the ${staff} staff${d%2?', just under the last one':''}.`:`Just below the ${staff} staff.`; }
+  else { const n=Math.floor((d-8)/2); where=n?`${n} ledger line${n>1?'s':''} above the ${staff} staff${(d-8)%2?', just over the last one':''}.`:`Just above the ${staff} staff.`; }
+  if(p.midi===60) where+=' This is middle C.';
+  if(cl==='guitar'){ const g=guitarSpot(p.midi-12); if(g) where+=` On guitar: ${['low E','A','D','G','B','high E'][g.s]} string, ${g.f?'fret '+g.f:'open'}.`; }
+  return where;
+}
+W.noteTrainer=(el,arg)=>{
+  const [c0,r0]=(arg||'treble-staff').split('-');
+  let clef=c0, range=r0==='ledger'?'ledger':'staff', acc=r0==='acc', mode=c0==='guitar'?'neck':acc?'piano':'letters';
+  let q=null,prev=null,sc={r:0,t:0,streak:0,best:0},msg='',t0=0,times=[],nextT=null;
+  const pick=()=>{ const cl=clef==='both'?(Math.random()<.5?'treble':'bass'):clef, R=NT_RANGE[cl][range], pool=naturalsBetween(R[0],R[1]);
+    let n; do{ n=pool[Math.floor(Math.random()*pool.length)]; }while(prev&&n.l===prev.l&&n.oct===prev.oct&&pool.length>1);
+    let a=0; if(acc&&Math.random()<.55){ a=Math.random()<.5?1:-1; if((a>0&&(n.l===2||n.l===6))||(a<0&&(n.l===3||n.l===0))) a=0; }
+    prev=n; q={cl,p:parsePitch(LETTERS[n.l].toLowerCase()+(a>0?'#':a<0?'b':'')+n.oct),done:false}; t0=performance.now(); };
+  const answerUI=()=>{
+    if(mode==='letters') return `<div class="answers">${['C','D','E','F','G','A','B'].map(L=>`<button type="button" class="chip" data-wa="ans" data-v="${LETTERS.indexOf(L)}"${q.done?' disabled':''}>${L}</button>`).join('')}</div>`;
+    if(mode==='piano') return scr(kbd(48,84,[],620));
+    const cells=[]; for(let s=0;s<6;s++) for(let f=0;f<=5;f++) cells.push({s,f,t:'',cls:' blank'}); return scr(neckSVG(0,5,cells)); };
+  const draw=()=>{
+    const avg=times.length?(times.reduce((x,y)=>x+y,0)/times.length/1000).toFixed(1):null;
+    el.innerHTML=wHead('Note trainer','Name the note on the staff. Get accurate first; the speed comes on its own.')+
+     `<div class="wctl"><div class="seg small" role="group" aria-label="Clef">${[['treble','Treble'],['bass','Bass'],['both','Both'],['guitar','Guitar']].map(([k,l])=>`<button type="button" data-wa="clef" data-v="${k}" aria-pressed="${clef===k}">${l}</button>`).join('')}</div>
+      <div class="seg small" role="group" aria-label="Range"><button type="button" data-wa="range" data-v="staff" aria-pressed="${range==='staff'}">On the staff</button><button type="button" data-wa="range" data-v="ledger" aria-pressed="${range==='ledger'}">With ledger lines</button></div>
+      <button type="button" class="btn sm" data-wa="acc" aria-pressed="${acc}">Sharps &amp; flats</button></div>
+     <div class="wctl"><span class="lab">Answer on</span><div class="seg small" role="group" aria-label="Answer with"><button type="button" data-wa="mode" data-v="letters" aria-pressed="${mode==='letters'}"${acc?' disabled':''}>Letters</button><button type="button" data-wa="mode" data-v="piano" aria-pressed="${mode==='piano'}">Piano keys</button><button type="button" data-wa="mode" data-v="neck" aria-pressed="${mode==='neck'}">Guitar neck</button></div></div>
+     <div class="nt-stage"><div class="nt-score"><div class="score"></div></div><div><p class="nt-msg" aria-live="polite">${msg||'Which note is this?'}</p>
+      <div class="stats"><span>Score <b>${sc.r}/${sc.t}</b></span><span>Streak <b>${sc.streak}</b></span><span>Best <b>${sc.best}</b></span>${avg?`<span>Average <b>${avg}s</b></span>`:''}</div></div></div>
+     <div class="nt-ans">${answerUI()}</div>
+     ${mode==='neck'?'<p class="wnote" style="color:var(--muted);font-size:13px">Tap the fret where you’d play it.'+(q.cl==='guitar'?' Guitar notation: the exact note.':' Any octave counts.')+'</p>':''}`;
+    drawScore(el.querySelector('.score'),{clef:q.cl,noTime:true,music:`${q.p.key.split('/')[0]}${q.p.oct}/w`});
+  };
+  const check=(kind,val)=>{
+    if(q.done) return; q.done=true; const p=q.p; let ok;
+    if(kind==='letter') ok=+val===p.l;
+    else if(kind==='neck'&&q.cl==='guitar') ok=+val===p.midi-12;
+    else ok=mod(+val)===mod(p.midi);
+    sc.t++; if(ok){ sc.r++; sc.streak++; sc.best=Math.max(sc.best,sc.streak); times.push(performance.now()-t0); if(times.length>20) times.shift(); } else sc.streak=0;
+    msg=(ok?`<b>${p.name}</b>, right. `:`That one is <b>${p.name}</b>. `)+staffSpot(p,q.cl);
+    draw(); const n=el.querySelector('.score .vf-stavenote'); if(n) n.classList.add(ok?'ok':'bad');
+    if(kind==='letter'||!ok){ const ac=audio(); if(ac){ const t=ac.currentTime+(ok?0.02:0.35); q.cl==='guitar'?pluck(p.midi-12,t):key(p.midi,t,1.2,0.8); } }
+    clearTimeout(nextT); nextT=setTimeout(()=>{ if(el.isConnected){ pick(); msg=''; draw(); } },ok?1000:2400);
+  };
+  pick(); draw();
+  onWa(el,(a,v)=>{
+    if(a==='ans') return check('letter',v);
+    clearTimeout(nextT);
+    if(a==='clef'){ clef=v; if(v==='guitar') mode='neck'; }
+    if(a==='range') range=v;
+    if(a==='acc'){ acc=!acc; if(acc&&mode==='letters') mode='piano'; }
+    if(a==='mode') mode=v;
+    pick(); msg=''; draw();
+  });
+  el.addEventListener('click',e=>{ const k=e.target.closest('[data-act="note"]'); const box=el.querySelector('.nt-ans'); if(k&&box&&box.contains(k)) check(mode==='piano'?'piano':'neck',k.dataset.m); });
+};
+
+const RCELLS={1:[[1,['q']],[2,['h']],[4,['w']]],2:[[1,['8','8']]],3:[[1,['qr']],[1,['8r','8']],[2,['hr']]],4:[[2,['qd','8']],[3,['hd']]],5:[[1,['16','16','16','16']],[1,['8','16','16']],[1,['16','16','8']]]};
+function rhythmBar(level){
+  let cells=[]; for(let l=1;l<=level;l++) cells=cells.concat(RCELLS[l]); if(level>1) cells=cells.concat(RCELLS[level]);
+  const out=[]; let rem=4,g=0;
+  while(rem>0&&g++<80){ const c=cells[Math.floor(Math.random()*cells.length)]; if(c[0]>rem||(c[0]===4&&rem!==4)) continue; out.push(...c[1]); rem-=c[0]; }
+  return out;
+}
+let activeTap=null;
+document.addEventListener('keydown',e=>{ if(!activeTap) return; if((e.code==='Space'||e.key===' ')&&(e.target.id==='tapPad'||!e.target.closest('input,select,textarea,button,a'))){ e.preventDefault(); if(!e.repeat) activeTap(); } });
+W.rhythmTap=(el,arg)=>{
+  let level=+arg||2,bpm=72,music='',phase='idle',taps=[],exp=[],msg='';
+  const LV=['Whole, half, quarter','+ Eighths','+ Rests','+ Dotted notes','+ Sixteenths'];
+  const gen=()=>{ let bars; do{ bars=[rhythmBar(level),rhythmBar(level)]; }while(bars.flat().every(d=>d.endsWith('r')));
+    music=bars.map(b=>b.map(d=>d.endsWith('r')?'r/'+d.slice(0,-1):'b4/'+d).join(' ')).join(' | '); };
+  const setMsg=h=>{ msg=h; const m=el.querySelector('.nt-msg'); if(m) m.innerHTML=h; };
+  const pad=()=>el.querySelector('#tapPad');
+  const draw=()=>{ el.innerHTML=wHead('Rhythm tap-along','Read the rhythm, press Tap it, then tap each note in time after four count-in clicks. Use the pad or the space bar.')+
+    `<div class="wctl"><div class="seg small" role="group" aria-label="Level">${LV.map((l,i)=>`<button type="button" data-wa="lv" data-v="${i+1}" aria-pressed="${level===i+1}">${l}</button>`).join('')}</div></div>
+     <div class="wctl"><label class="range" for="rtBpm"><span class="lab">Tempo</span><input id="rtBpm" type="range" min="50" max="140" value="${bpm}"><output id="rtOut">${bpm} BPM</output></label></div>
+     <div class="nt-score"><div class="score"></div></div>
+     <div class="wctl">${playBtn('Listen','listen')}${playBtn('Tap it','tap')}<button class="btn sm" type="button" data-wa="new">New rhythm</button></div>
+     <button type="button" class="tap-pad" id="tapPad">Tap here or press space</button>
+     <p class="nt-msg" aria-live="polite">${msg}</p>`;
+    drawScore(el.querySelector('.score'),{rhythm:true,counts:true,music}); };
+  const run=tapMode=>{
+    stopAll(); const ac=audio(), sc=el.querySelector('.score').__score; if(!ac||!sc) return;
+    el.querySelectorAll('.score .ok,.score .bad').forEach(x=>x.classList.remove('ok','bad'));
+    const spb=60/bpm, t0=ac.currentTime+0.2; for(let k=0;k<4;k++) clickAt(t0+k*spb,k===0?2:1);
+    const start=t0+4*spb; exp=[]; let cur=0;
+    sc.byBar.forEach((evs,bi)=>{ evs.forEach(ev=>{ const at=start+(cur+ev.pb)*spb;
+      if(ev.midis.length){ exp.push({at,ev}); if(!tapMode) clickAt(at,0,true); }
+      const els=ev.els.filter(Boolean);
+      timers.push(setTimeout(()=>els.forEach(x=>x.classList.add('hl')),(at-ac.currentTime)*1000));
+      timers.push(setTimeout(()=>els.forEach(x=>x.classList.remove('hl')),(at+ev.beats*spb-ac.currentTime)*1000-40)); });
+      cur+=sc.barLen[bi]; });
+    for(let k=0;k<cur;k++) clickAt(start+k*spb,k%4===0?1:0);
+    const end=start+cur*spb;
+    if(tapMode){ taps=[]; phase='count'; activeTap=tap; const p=pad(); p.classList.add('live'); p.textContent='Get ready… 1 2 3 4'; p.focus({preventScroll:true});
+      timers.push(setTimeout(()=>{ phase='tap'; p.textContent='Tap!'; },(start-ac.currentTime)*1000-120));
+      timers.push(setTimeout(finish,(end-ac.currentTime)*1000+450)); setMsg(''); }
+  };
+  const tap=()=>{ if(phase!=='tap'&&phase!=='count') return; taps.push(AC.currentTime); clickAt(AC.currentTime,0,true);
+    const p=pad(); if(p){ p.classList.add('flash'); setTimeout(()=>p.classList.remove('flash'),90); } };
+  const finish=()=>{
+    phase='idle'; activeTap=null; const p=pad(); if(p){ p.classList.remove('live'); p.textContent='Tap here or press space'; }
+    const spb=60/bpm, tol=Math.min(0.16,spb*0.3), used=new Set(), offs=[]; let hits=0;
+    exp.forEach(e=>{ let bi=-1,bd=1e9; taps.forEach((t,i)=>{ if(used.has(i)) return; const d=Math.abs(t-e.at); if(d<bd){ bd=d; bi=i; } });
+      const ok=bi>=0&&bd<=tol; if(ok){ used.add(bi); hits++; offs.push(taps[bi]-e.at); } e.ev.els.forEach(x=>x&&x.classList.add(ok?'ok':'bad')); });
+    const extra=taps.length-used.size, avg=offs.length?offs.reduce((a,b)=>a+b,0)/offs.length:0;
+    let tipTxt=hits===exp.length&&!extra?'Perfect. Try a new rhythm, the next level or a faster tempo.':Math.abs(avg)>0.045?(avg>0?'You’re a little late on average. Feel the click coming and tap with it.':'You’re rushing a little. Let the beat come to you.'):'Red notes show where to look again.';
+    setMsg(`<b>${hits} of ${exp.length}</b> notes on time${extra?`, plus ${extra} extra tap${extra>1?'s':''}`:''}. ${tipTxt}`);
+  };
+  gen(); draw();
+  onWa(el,(a,v)=>{
+    if(a==='lv'){ level=+v; gen(); msg=''; draw(); }
+    if(a==='new'){ gen(); msg=''; draw(); }
+    if(a==='listen'){ activeTap=null; phase='idle'; run(false); }
+    if(a==='tap') run(true);
+  });
+  el.addEventListener('pointerdown',e=>{ if(e.target.closest('#tapPad')){ e.preventDefault(); if(phase==='idle'){ activeTap=null; } tap(); } });
+  el.addEventListener('input',e=>{ if(e.target.id==='rtBpm'){ bpm=+e.target.value; el.querySelector('#rtOut').textContent=bpm+' BPM'; } });
+};
+
+W.keyQuiz=el=>{
+  const KEYS=['C','G','D','A','E','B','F#','F','Bb','Eb','Ab','Db','Gb'];
+  let mode='major',clef='treble',q=null,prev=null,sc={r:0,t:0},msg='';
+  const kname=k=>k.replace('#','♯').replace('b','♭');
+  const relMinor=k=>spell(noteObj(kname(k)),SCALES.major)[5].name;
+  const label=k=>mode==='major'?kname(k)+' major':relMinor(k)+' minor';
+  const explain=k=>{ const m=keyAccMap(k), sh=[],fl=[];
+    'FCGDAEB'.split('').forEach(L=>{ const l=LETTERS.indexOf(L); if(m[l]>0) sh.push(L+'♯'); });
+    'BEADGCF'.split('').forEach(L=>{ const l=LETTERS.indexOf(L); if(m[l]<0) fl.push(L+'♭'); });
+    let t;
+    if(!sh.length&&!fl.length) t='No sharps or flats: C major.';
+    else if(sh.length) t=`${sh.length} sharp${sh.length>1?'s':''}: ${sh.join(' ')}. The last sharp is ${sh[sh.length-1]}; a half step up from it is ${kname(k)}.`;
+    else if(fl.length===1) t='One flat, B♭, is always F major.';
+    else t=`${fl.length} flats: ${fl.join(' ')}. The second-to-last flat, ${fl[fl.length-2]}, names the key.`;
+    return t+` Its relative minor is ${relMinor(k)} minor.`; };
+  const fresh=()=>{ let k; do{ k=KEYS[Math.floor(Math.random()*KEYS.length)]; }while(k===prev); prev=k;
+    const others=KEYS.filter(x=>x!==k).sort(()=>Math.random()-.5).slice(0,3); q={k,opts:[k,...others].sort(()=>Math.random()-.5),done:false,pick:null}; };
+  const draw=()=>{ el.innerHTML=wHead('Name the key','Look at the sharps or flats after the clef and pick the key they belong to.')+
+    `<div class="wctl"><div class="seg small" role="group" aria-label="Answer as"><button type="button" data-wa="mode" data-v="major" aria-pressed="${mode==='major'}">Major keys</button><button type="button" data-wa="mode" data-v="minor" aria-pressed="${mode==='minor'}">Minor keys</button></div>
+      <div class="seg small" role="group" aria-label="Clef"><button type="button" data-wa="clef" data-v="treble" aria-pressed="${clef==='treble'}">Treble</button><button type="button" data-wa="clef" data-v="bass" aria-pressed="${clef==='bass'}">Bass</button></div></div>
+     <div class="nt-stage"><div class="nt-score"><div class="score"></div></div><div><div class="kq-opts">${q.opts.map(k=>`<button type="button" class="chip${q.done?(k===q.k?' ok':q.pick===k?' bad':''):''}" data-wa="ans" data-v="${k}"${q.done?' disabled':''}>${label(k)}</button>`).join('')}</div>
+      <p class="nt-msg" aria-live="polite">${msg}</p><div class="wctl"><button class="btn sm" type="button" data-wa="next">Next key</button><span class="stats"><span>Score <b>${sc.r}/${sc.t}</b></span></span></div></div></div>`;
+    drawScore(el.querySelector('.score'),{clef,key:q.k}); };
+  fresh(); draw();
+  onWa(el,(a,v)=>{
+    if(a==='ans'&&!q.done){ q.done=true; q.pick=v; sc.t++; const ok=v===q.k; if(ok) sc.r++; msg=(ok?'<b>Right.</b> ':`<b>It’s ${label(q.k)}.</b> `)+explain(q.k); draw(); return; }
+    if(a==='mode') mode=v; if(a==='clef') clef=v;
+    if(a==='next'||a==='mode'||a==='clef'){ if(a==='next') fresh(); msg=''; if(a!=='next'){ q.done=false; q.pick=null; } draw(); }
+  });
+};
+
+W.songPlayer=(el,id)=>{
+  const s=SONGS.find(x=>x.id===id)||SONGS[0], canTab=!s.bass&&(s.clef||'treble')==='treble';
+  let names=false,counts=false,tab=false,bpm=s.bpm,playing=false;
+  const spec=()=>({clef:tab?'guitar':(s.clef||'treble'),key:s.key,time:s.time,music:s.music,bass:s.bass,names,counts:counts&&!names,tab});
+  const btnLabel=()=>playing?'Stop':'<span class="tri"></span>Play';
+  const draw=()=>{ el.innerHTML=`<p class="wt">Songbook</p><h4 class="wh">${s.title}</h4><p class="ws">${s.level}</p>
+    <div class="wctl"><button class="btn gold sm" type="button" data-wa="play">${btnLabel()}</button>
+      <label class="range" for="spBpm"><span class="lab">Tempo</span><input id="spBpm" type="range" min="40" max="160" value="${bpm}"><output id="spOut">${bpm} BPM</output></label></div>
+    <div class="wctl"><button type="button" class="btn sm" data-wa="names" aria-pressed="${names}">Note names</button><button type="button" class="btn sm" data-wa="counts" aria-pressed="${counts}">Counting</button>${canTab?`<button type="button" class="btn sm" data-wa="tab" aria-pressed="${tab}">Guitar with tab</button>`:''}</div>
+    <div class="score" style="--score-bg:var(--surface)"></div>`;
+    drawScore(el.querySelector('.score'),spec()); };
+  draw();
+  onWa(el,(a,v,b)=>{
+    if(a==='play'){ if(playing){ playing=false; stopAll(); b.innerHTML=btnLabel(); return; }
+      playing=true; b.innerHTML=btnLabel(); const inst=tab?'guitar':'piano';
+      playScore(el.querySelector('.score').__score,{bpm,inst,shift:tab?-12:0,countIn:true,onEnd:()=>{ playing=false; const pb=el.querySelector('[data-wa="play"]'); if(pb) pb.innerHTML=btnLabel(); }}); return; }
+    if(a==='names'){ names=!names; if(names) counts=false; }
+    if(a==='counts'){ counts=!counts; if(counts) names=false; }
+    if(a==='tab') tab=!tab;
+    playing=false; stopAll(); draw();
+  });
+  el.addEventListener('input',e=>{ if(e.target.id==='spBpm'){ bpm=+e.target.value; el.querySelector('#spOut').textContent=bpm+' BPM'; } });
+};
+
+/* =========================== Reading course =========================== */
+const S=id=>`<div data-score="${id}"></div>`;
+const RLESSONS=[
+{tag:'Staff',title:'The staff',w:'stepSkip',
+ lede:'Sheet music is a graph: left to right is time, up and down is pitch. Once that clicks, the rest is detail.',
+ idea:`<p>Music is written on a <b>staff</b>: five lines and the four spaces between them. Count them from the bottom: line 1 is the bottom line, space 1 is just above it.</p><p>Every line and every space stands for one letter of the musical alphabet. Going up, notes alternate line, space, line, space, and the letters go A B C D E F G, then start over.</p>${S('r1-steps')}<p>Moving to the very next line or space is a <b>step</b>: the next letter. Line to line, or space to space, is a <b>skip</b>: one letter left out. Anything bigger is a <b>leap</b>.</p>${S('r1-skips')}<p>Vertical <b>bar lines</b> divide music into <b>bars</b> (also called measures) of equal length. A thin line followed by a thick one marks the end.</p><p>The symbol at the start of the staff is a <b>clef</b>. It tells you which letters the lines stand for. The next two lessons cover the two you need.</p>`,
+ guitar:`<p>On one string, a step is usually 1 or 2 frets and a skip is 3 or 4 frets. The shape of the notes on the page already tells you roughly how far your fingers move.</p>`,
+ piano:`<p>A step is the next white key. A skip jumps over one white key. Piano players learn to read these shapes first and letter names second.</p>`,
+ tip:'Before naming any notes, scan a line of music and just follow the shape: up, down, step, skip. Good readers see the shape first.'},
+{tag:'Staff',title:'Treble clef notes',w:'noteTrainer:treble-staff',
+ lede:'The treble clef covers the right hand on piano, the guitar, and most melodies. Learn a few landmarks and the rest falls into place.',
+ idea:`<p>The treble clef is also called the <b>G clef</b>. Its curl wraps around line 2, and that line is G: the G just above middle C.</p><p>The lines, bottom to top, are <b>E G B D F</b>: “Every Good Boy Does Fine”.</p>${S('r2-lines')}<p>The spaces, bottom to top, spell <b>F A C E</b>.</p>${S('r2-spaces')}<p>Don’t lean on the sayings forever. Learn three landmarks and read everything else as steps and skips from them: <b>middle C</b> on one short line below the staff, <b>G</b> on line 2, and <b>high G</b> just above the top line.</p>${S('r2-landmarks')}`,
+ guitar:`<p>Guitar music uses the treble clef too, with a small 8 underneath because the guitar sounds an octave lower than written. The open strings are written as E (below three ledger lines), A (on the second ledger line below), D (just under the staff), G (line 2), B (the middle line) and E (the top space).</p>`,
+ piano:`<p>The treble staff is usually for your right hand. Middle C is the C nearest the middle of the keyboard, and the notes move up the keyboard as they move up the staff.</p>`,
+ tip:'Five minutes with the note trainer every day beats an hour once a week. Aim for accuracy first; you want to know a note the way you know a word.'},
+{tag:'Staff',title:'Bass clef notes',w:'noteTrainer:bass-staff',
+ lede:'The bass clef covers the low notes: the left hand on piano and the bass guitar.',
+ idea:`<p>The bass clef is also called the <b>F clef</b>. Its two dots sit either side of line 4, and that line is F: the F below middle C.</p><p>The lines, bottom to top, are <b>G B D F A</b>: “Good Boys Do Fine Always”.</p>${S('r3-lines')}<p>The spaces spell <b>A C E G</b>: “All Cows Eat Grass”.</p>${S('r3-spaces')}<p>Landmarks: <b>low G</b> on the bottom line, <b>F</b> between the two dots, and <b>middle C</b> on one short line above the staff.</p>${S('r3-landmarks')}<p>A shortcut if you already know treble: each line or space in bass clef is two letters higher than the same spot in treble. The bottom line is E in treble and G in bass.</p>`,
+ guitar:`<p>Bass guitar music uses the bass clef, sounding an octave lower than written. On regular guitar you’ll mostly meet bass clef in piano music you want to borrow bass lines from.</p>`,
+ piano:`<p>The bass staff is usually your left hand. Most left-hand parts sit between low G and middle C, so learn that range first.</p>`,
+ tip:'Learn bass clef as its own thing rather than translating from treble every time, the way you’d learn a second set of street names.'},
+{tag:'Staff',title:'Ledger lines and the grand staff',w:'noteTrainer:both-ledger',
+ lede:'Notes can go above and below the staff on short extra lines. Join a treble and a bass staff and you can show the whole piano.',
+ idea:`<p><b>Ledger lines</b> are short lines added above or below the staff for notes that don’t fit. Read them like normal lines and spaces: keep stepping through the alphabet.</p>${S('r4-ledger')}<p>The <b>grand staff</b> joins a treble staff and a bass staff with a brace. Middle C sits on one ledger line between them, and it can be written in either staff. Either way it’s the same key on the piano.</p>${S('r4-grand')}<p>When notes go very high or low, you may see <b>8va</b> over them (play an octave higher than written) or <b>8vb</b> under them (an octave lower). It saves stacking up ledger lines.</p>`,
+ guitar:`<p>Guitar music uses ledger lines below the staff all the time. The open low E is written below three ledger lines and the open A sits on the second. Learning those few notes covers the bass strings.</p>`,
+ piano:`<p>Notes just above and below middle C cross between the two staves. If a note looks oddly far from its staff, count ledger lines from middle C.</p>`,
+ tip:'In the treble clef, the first ledger line above the staff and the second ledger line below it are both A. Middle C is the first ledger line below. Those three landmarks make ledger lines much faster.'},
+{tag:'Rhythm',title:'Note lengths and counting',w:'rhythmTap:2',
+ lede:'Where a note sits tells you which note to play. Its shape tells you how long to hold it.',
+ idea:`<p>Each note length is half of the one before it:</p><table class="lt"><tr><th>Note</th><th>Looks like</th><th>Beats in 4/4</th><th>Counted</th></tr><tr><td>Whole</td><td>Hollow oval, no stem</td><td>4</td><td>1 2 3 4</td></tr><tr><td>Half</td><td>Hollow with a stem</td><td>2</td><td>1 2</td></tr><tr><td>Quarter</td><td>Filled with a stem</td><td>1</td><td>1</td></tr><tr><td>Eighth</td><td>Filled, stem with one flag or beam</td><td>½</td><td>1 &amp;</td></tr><tr><td>Sixteenth</td><td>Two flags or beams</td><td>¼</td><td>1 e &amp; a</td></tr></table><p>Single eighth notes have flags. In groups, the flags become <b>beams</b>, usually one beat at a time, so you can see where each beat starts.</p>${S('r5-values')}<p>Count out loud while you play. Numbers land on the beats, “&amp;” is halfway through the beat, and “e” and “a” split it into four.</p>${S('r5-mix')}`,
+ guitar:`<p>Strumming makes this easy to feel: your hand goes down on the numbers and up on the “&amp;”s. Quarter notes are down strums; eighth notes are down-up.</p>`,
+ piano:`<p>Play a steady low C with your left hand on every beat while your right hand taps out the rhythm. Your left hand becomes the metronome.</p>`,
+ tip:'Tap your foot on every beat and never stop it, even through long notes. The foot is the clock; the notes hang off it.'},
+{tag:'Rhythm',title:'Rests',w:'rhythmTap:3',
+ lede:'Silence is written too. Every note length has a matching rest.',
+ idea:`<p>A rest means “don’t play, but keep counting”. It lasts exactly as long as the matching note.</p><table class="lt"><tr><th>Rest</th><th>Looks like</th><th>Length</th></tr><tr><td>Whole</td><td>A block hanging under line 4</td><td>A whole bar</td></tr><tr><td>Half</td><td>A block sitting on line 3, like a hat</td><td>2 beats</td></tr><tr><td>Quarter</td><td>A tall squiggle</td><td>1 beat</td></tr><tr><td>Eighth</td><td>A slanted 7 with one dot</td><td>½ beat</td></tr><tr><td>Sixteenth</td><td>The same with two dots</td><td>¼ beat</td></tr></table>${S('r6-rests')}<p>To tell whole and half rests apart: the whole rest is “heavier”, so it hangs down from its line; the half rest is lighter and sits on top of its line.</p>`,
+ guitar:`<p>On guitar, a rest usually means stopping the strings from ringing: ease off the fretting fingers or lay your picking-hand palm on the strings.</p>`,
+ piano:`<p>Lift your hand at the rest so the note really stops. Holding through rests is the most common way beginners blur a rhythm.</p>`,
+ tip:'Whisper the counts during rests. Counting through silence is the actual skill.'},
+{tag:'Rhythm',title:'Time signatures and bars',w:'metronome',
+ lede:'The two numbers at the start of the music tell you how to count every bar.',
+ idea:`<p>The <b>top number</b> is how many beats are in each bar. The <b>bottom number</b> says which note gets one beat: 4 is a quarter note, 8 is an eighth note, 2 is a half note.</p><table class="lt"><tr><th>Time</th><th>How it counts</th><th>Where you hear it</th></tr><tr><td>4/4</td><td>Four quarter-note beats. Also written as C, “common time”.</td><td>Most rock, pop and country</td></tr><tr><td>3/4</td><td>Three beats</td><td>Waltzes, many ballads</td></tr><tr><td>2/4</td><td>Two beats</td><td>Marches, polkas</td></tr><tr><td>6/8</td><td>Six eighth notes, felt as two big beats of three</td><td>Jigs, slow ballads, “House of the Rising Sun”</td></tr><tr><td>2/2</td><td>Two half-note beats. Also written as ¢, “cut time”.</td><td>Fast marches, bluegrass, show tunes</td></tr></table>${S('r7-34')}${S('r7-68')}<p>A <b>pickup</b> is an incomplete first bar: the tune starts before beat 1. The missing beats are taken from the last bar. “Amazing Grace” starts on beat 3.</p>${S('r7-pickup')}`,
+ guitar:`<p>In 6/8, a common fingerpicking pattern puts the thumb on beats 1 and 4 with the fingers filling in the eighth notes between.</p>`,
+ piano:`<p>In 3/4, a waltz left hand plays a bass note on beat 1 and a chord on beats 2 and 3: “oom-pah-pah”.</p>`,
+ tip:'To find the time signature of a song, find beat 1 where the chords change and the drums hit hardest, then count to the next beat 1. That number is the top of the time signature.'},
+{tag:'Rhythm',title:'Dots and ties',w:'rhythmTap:4',
+ lede:'Two ways to make a note longer than its shape says.',
+ idea:`<p>A <b>dot</b> after a note adds half its value again. A dotted half note is 2 + 1 = 3 beats. A dotted quarter is 1 + ½ = 1½ beats, and it’s usually followed by an eighth note to finish the beat.</p>${S('r8-dots')}<p>A <b>tie</b> is a curved line joining two notes of the <i>same pitch</i>. Play the first one and hold it through the second. Ties let a note last across a bar line.</p>${S('r8-ties')}<p>A curved line over <i>different</i> pitches is a <b>slur</b>: play them smoothly connected. On guitar that usually means a hammer-on, pull-off or slide.</p>`,
+ guitar:`<p>The dotted quarter followed by an eighth (“one… two-and”) turns up in countless folk melodies. Once you can see it, you’ll spot it everywhere.</p>`,
+ piano:`<p>With a tie, keep the key held down and don’t play it again. Re-striking a tied note is the most common rhythm mistake in piano music.</p>`,
+ tip:'For dotted rhythms, count the halves of the beat out loud (“1 & 2 &”) until the long-short feel sits in your body. Then stop counting the “&”s.'},
+{tag:'Accidentals',title:'Sharps, flats and naturals',w:'noteTrainer:treble-acc',
+ lede:'Signs in front of notes move them up or down a half step.',
+ idea:`<p>A <b>sharp</b> (♯) raises a note one half step: one fret, or the next key to the right. A <b>flat</b> (♭) lowers it one half step. A <b>natural</b> (♮) cancels a sharp or flat.</p><p>These signs are called <b>accidentals</b>. They’re written before the note, but you say them after it: “F sharp”.</p><p>An accidental lasts until the end of the bar, for notes on that same line or space. The next bar starts fresh.</p>${S('r9-acc')}<p>In the first bar, the third note needs a natural sign because the sharp would otherwise still apply. In the second bar, the second B♭ needs no sign at all.</p>`,
+ guitar:`<p>Sharp: one fret up. Flat: one fret down. A flatted open string moves to the string below: B♭ is the 3rd fret of the G string.</p>`,
+ piano:`<p>Sharps and flats are usually the black keys, but not always: E♯ is the same key as F, and C♭ is the same key as B.</p>`,
+ tip:'Circle accidentals in pencil the first few times you read a piece. Forgetting that an accidental still applies later in the bar is the most common reading mistake.'},
+{tag:'Accidentals',title:'Key signatures',w:'keyQuiz',
+ lede:'Instead of writing the same sharps and flats over and over, music puts them once at the start of every line.',
+ idea:`<p>The <b>key signature</b> is the group of sharps or flats right after the clef. They apply to every note with that letter, in every octave, for the whole piece, unless an accidental changes one for a bar.</p><p>Sharps always appear in the same order: <b>F C G D A E B</b> (“Father Charles Goes Down And Ends Battle”). Flats come in the reverse order: <b>B E A D G C F</b>.</p>${S('keys-sharp')}${S('keys-flat')}<p><b>To name the major key:</b></p><ul><li>No sharps or flats: C major.</li><li>Sharps: go up a half step from the last sharp. Last sharp F♯ means G major; last sharp C♯ means D major.</li><li>One flat: F major. Two or more flats: the second-to-last flat is the key. B♭ E♭ A♭ means E♭ major.</li></ul><p>Every key signature also belongs to a minor key, the <b>relative minor</b>, three half steps below the major key. G major and E minor share one sharp. If the music starts and ends on the minor chord, it’s probably in the minor key.</p>`,
+ guitar:`<p>Guitar-friendly keys use sharps: G (one sharp), D (two), A (three) and E (four). Four sharps tells you straight away to expect open E-shape chords.</p>`,
+ piano:`<p>Flat keys such as F, B♭ and E♭ are common in piano, jazz and horn music. On piano, more sharps or flats just means more black keys under your fingers.</p>`,
+ tip:'Before you play a note of something new, say the key out loud and play its scale once. Your fingers will be ready for the sharps and flats before you meet them.'},
+{tag:'Reading',title:'Reading melodies',w:'songPlayer:mary',
+ lede:'Fluent readers don’t name every note. They read shapes, distances and patterns.',
+ idea:`<p>Read by <b>intervals</b>: find the first note, then read each next note as a step, a skip or a leap from the last one.</p>${S('r11-intervals')}<p>Habits of good readers:</p><ul><li><b>Look ahead.</b> Keep your eyes a beat or two in front of what you’re playing.</li><li><b>Read in chunks.</b> A run of steps going up is one idea, not five separate notes.</li><li><b>Keep the beat going.</b> A wrong note in time beats a right note late. Never stop to fix a mistake while sight-reading.</li><li><b>Start slow.</b> Pick a tempo where you can play the whole thing without stopping.</li></ul><p>Try it with the song below. Turn on note names at first, then turn them off. The Songbook in Practice has more.</p>`,
+ guitar:`<p>Read in first position, with fingers 1 to 4 on frets 1 to 4. Then every note on the staff has one home on the neck, and step-by-step lines are easy to follow.</p>`,
+ piano:`<p>Put your right hand in a five-finger position (C D E F G under fingers 1 to 5). Many beginner melodies stay inside it, so you can read without looking down.</p>`,
+ tip:'Sight-read something easy every day: hymn books, folk song collections, beginner method books. Easy and often beats hard and seldom.'},
+{tag:'Reading',title:'Reading piano music',w:'songPlayer:ode-grand',
+ lede:'Piano music puts both hands on the grand staff. Read each hand alone, then put them together.',
+ idea:`<p>The top staff is usually the right hand and the bottom staff the left. Notes stacked vertically are played together as a chord. Read stacked notes from the bottom up and look for shapes: three notes on three neighboring lines, or three neighboring spaces, is a triad.</p>${S('ode-grand')}<p>Other marks you’ll see in piano music:</p><ul><li>Small numbers by the notes are <b>finger numbers</b> (1 is the thumb).</li><li><b>Ped.</b> with a line means hold down the sustain pedal.</li><li>Chord symbols above the staff, like G7, name the harmony. Handy if you like to fill in your own part.</li></ul>`,
+ guitar:`<p>Guitarists can borrow from piano music: the chord symbols tell you what to strum, and the treble-staff melody can usually be played as written.</p>`,
+ piano:`<p>Practice hands separately until each one is easy, then together very slowly. Notes at the same left-to-right position are played at the same moment.</p>`,
+ tip:'Read the left hand as chord shapes, not single notes. Once you see “C chord, G chord”, the left hand stops being something you decode note by note.'},
+{tag:'Reading',title:'Reading guitar music',w:'noteTrainer:guitar',
+ lede:'Guitar music is written in the treble clef, sounds an octave lower, and usually comes with tab underneath.',
+ idea:`<p>The small <b>8</b> under the treble clef means the guitar sounds an octave lower than written. You don’t have to do anything about it; it keeps guitar music on the staff instead of buried under ledger lines.</p><p>Here is every natural note in <b>first position</b> (frets 0 to 3), from the low E string to the high E string, with tab underneath:</p>${S('r13-first')}<p>Other guitar markings:</p><ul><li>A number in a circle is a <b>string</b> number: 1 is the high E, 6 the low E.</li><li>A Roman numeral like V is a <b>position</b>: put your first finger at fret 5. “C V” or “B V” means barre at fret 5.</li><li><b>p i m a</b> are picking-hand fingers: thumb, index, middle and ring. You’ll see them in fingerstyle and classical music.</li><li><b>H</b>, <b>P</b> and <b>sl.</b> mean hammer-on, pull-off and slide.</li></ul>`,
+ guitar:`<p>As a fingerpicker, read the parts by stem direction. In fingerstyle music, stems pointing down are usually the thumb’s bass line and stems pointing up are the melody on the fingers.</p>`,
+ piano:`<p>To play guitar music on piano, play everything an octave lower than written to match the guitar’s real sound, or as written if that suits the music better.</p>`,
+ tip:'Use tab for where and notation for when. Reading both together is how most guitarists work up to reading notation on its own.'},
+{tag:'Reading',title:'Signs, symbols and road maps',w:'songPlayer:jingle',
+ lede:'The last piece: the words and symbols that say how loud, how fast and where to go next.',
+ idea:`<h3>How loud: dynamics</h3><table class="lt"><tr><td><b><i>pp</i></b></td><td>pianissimo</td><td>very soft</td></tr><tr><td><b><i>p</i></b></td><td>piano</td><td>soft</td></tr><tr><td><b><i>mp</i></b></td><td>mezzo-piano</td><td>medium soft</td></tr><tr><td><b><i>mf</i></b></td><td>mezzo-forte</td><td>medium loud</td></tr><tr><td><b><i>f</i></b></td><td>forte</td><td>loud</td></tr><tr><td><b><i>ff</i></b></td><td>fortissimo</td><td>very loud</td></tr><tr><td><i>cresc.</i> or an opening wedge</td><td>crescendo</td><td>get louder</td></tr><tr><td><i>dim.</i> or a closing wedge</td><td>diminuendo</td><td>get softer</td></tr></table>
+ <h3>How to play each note: articulation</h3><table class="lt"><tr><td>Dot above or below</td><td>staccato</td><td>short and detached</td></tr><tr><td>&gt; sign</td><td>accent</td><td>play it stronger</td></tr><tr><td>Short line</td><td>tenuto</td><td>hold for the full value</td></tr><tr><td>Curve over different notes</td><td>slur</td><td>smooth and connected</td></tr><tr><td>Arc with a dot</td><td>fermata</td><td>hold as long as feels right</td></tr></table>
+ <h3>How fast: tempo</h3><table class="lt"><tr><td>Largo, Adagio</td><td>slow</td></tr><tr><td>Andante</td><td>walking pace</td></tr><tr><td>Moderato</td><td>moderate</td></tr><tr><td>Allegro</td><td>fast and lively</td></tr><tr><td>Presto</td><td>very fast</td></tr><tr><td>rit. or rall.</td><td>gradually slow down</td></tr><tr><td>accel.</td><td>gradually speed up</td></tr><tr><td>a tempo</td><td>back to the original speed</td></tr></table>
+ <h3>Where to go: road maps</h3><p><b>Repeat signs</b>, thick and thin bar lines with two dots, mean play that section again. With <b>1st and 2nd endings</b>, play the bracket marked 1 the first time, and on the repeat skip it and play the one marked 2.</p>${S('r14-signs')}<table class="lt"><tr><td>D.C. al Fine</td><td>Go back to the beginning and stop at <i>Fine</i>.</td></tr><tr><td>D.S. al Coda</td><td>Go back to the sign (an S with a slash and two dots). At “To Coda”, jump to the coda, marked with a circle and cross.</td></tr><tr><td>Fine</td><td>The end.</td></tr></table>`,
+ guitar:`<p>Guitar songbooks use repeats and endings constantly to fit a whole song on one page. Before playing, trace the road map with your finger so you know where every jump goes.</p>`,
+ piano:`<p>Dynamics matter more on piano than anywhere: its full name, pianoforte, means “soft-loud”.</p>`,
+ tip:'Before you play anything new, take thirty seconds to scan it: clef, key signature, time signature, tempo word, repeats and endings, and anything unusual. Professionals do this every time.'},
+];
+
+/* =========================== Courses =========================== */
+const CHEV='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+const COURSES={
+  theory:{lessons:LESSONS,store:'sdb-keybook-done',last:'sdb-keybook-lesson',prefix:'lesson-',homeEl:'lessonHome',detailEl:'lessonDetail',bodyEl:'lessonBody',listEl:'lessonList',progEl:'lProg',barEl:'lBar',tip:'Ear player tip',
+    parts:{1:'The basics',5:'Hearing and building chords',8:'Songs and harmony',11:'Soloing',13:'Rhythm and reading'},end:['#reading','Next: learn to read music']},
+  reading:{lessons:RLESSONS,store:'sdb-keybook-read-done',last:'sdb-keybook-read',prefix:'read-',homeEl:'readHome',detailEl:'readDetail',bodyEl:'readBody',listEl:'readList',progEl:'rProg',barEl:'rBar',tip:'Practice tip',
+    parts:{1:'Notes on the staff',5:'Rhythm',9:'Keys and accidentals',11:'Reading real music'},end:['#songbook','Open the songbook']},
+};
+Object.values(COURSES).forEach(c=>{ c.done=new Set(); c.cur=1;
+  try{ c.done=new Set(JSON.parse(localStorage.getItem(c.store)||'[]').filter(n=>n>=1&&n<=c.lessons.length)); c.cur=+localStorage.getItem(c.last)||1; }catch(e){} });
+let curCourse=null;
+function renderCourseList(c){
+  let h='';
+  c.lessons.forEach((L,i)=>{ const n=i+1; if(c.parts[n]) h+=`<li class="lgroup">${c.parts[n]}</li>`;
+    h+=`<li><a class="lcard${c.done.has(n)?' done':''}" href="#${c.prefix}${n}"><span class="num">${c.done.has(n)?'✓':n}</span><span><b>${L.title}</b><small>${L.lede}</small></span>${CHEV}</a></li>`; });
+  $(c.listEl).innerHTML=h;
+  $(c.progEl).textContent=`${c.done.size} of ${c.lessons.length} done`;
+  $(c.barEl).style.width=(c.done.size/c.lessons.length*100)+'%';
+}
+function showCourseHome(c){ curCourse=null; $(c.detailEl).hidden=true; $(c.homeEl).hidden=false; renderCourseList(c); }
+function openCourseLesson(c,n){
+  n=Math.min(c.lessons.length,Math.max(1,n)); c.cur=n; curCourse=c; try{ localStorage.setItem(c.last,n); }catch(e){}
+  const L=c.lessons[n-1], N=c.lessons.length;
+  $(c.homeEl).hidden=true; $(c.detailEl).hidden=false;
+  if(c===COURSES.reading){ $('readBack').href='#reading'; $('readBack').querySelector('span').textContent='Read music'; }
+  $(c.bodyEl).innerHTML=`<p class="eyebrow">Lesson ${n} of ${N} · ${L.tag}</p><h2 class="ltitle">${L.title}</h2><p class="lede">${L.lede}</p>
     <div class="lsec">${L.idea}</div>
     <div class="inst"><div class="instcol"><h4>On guitar</h4>${L.guitar}</div><div class="instcol"><h4>On piano</h4>${L.piano}</div></div>
-    <div class="widget"></div>
-    <div class="tipbox"><span class="pill home">Ear player tip</span><p>${L.tip}</p></div>
-    <div class="lfoot">${n>1?`<a class="btn" href="#lesson-${n-1}">← ${LESSONS[n-2].title}</a>`:'<span></span>'}<button class="btn" type="button" data-act="done" aria-pressed="${lessonDone.has(n)}">${lessonDone.has(n)?'✓ Done':'Mark as done'}</button>${n<LESSONS.length?`<a class="btn gold" href="#lesson-${n+1}">Next: ${LESSONS[n].title} →</a>`:`<a class="btn gold" href="#keybook">Back to Keys &amp; chords</a>`}</div>`;
-  W[L.w]($('lessonBody').querySelector('.widget'));
-  renderLessonNav();
+    ${L.w?'<div class="widget"></div>':''}
+    <div class="tipbox"><span class="pill home">${c.tip}</span><p>${L.tip}</p></div>
+    <div class="lfoot">${n>1?`<a class="btn" href="#${c.prefix}${n-1}">← ${c.lessons[n-2].title}</a>`:'<span></span>'}<button class="btn" type="button" data-act="done" aria-pressed="${c.done.has(n)}">${c.done.has(n)?'✓ Done':'Mark as done'}</button>${n<N?`<a class="btn gold" href="#${c.prefix}${n+1}">Next: ${c.lessons[n].title} →</a>`:`<a class="btn gold" href="${c.end[0]}">${c.end[1]} →</a>`}</div>`;
+  mountScores($(c.bodyEl));
+  if(L.w){ const [w,arg]=L.w.split(':'); W[w]($(c.bodyEl).querySelector('.widget'),arg); }
 }
-$('lessonSel').addEventListener('change',e=>{ location.hash='lesson-'+e.target.value; });
+
+/* Practice screens */
+const TOOLS={'practice-notes':['Note trainer','noteTrainer','treble-staff'],'practice-rhythm':['Rhythm tap-along','rhythmTap','2'],'practice-keys':['Key signatures','keyQuiz','']};
+function openTool(id){
+  curCourse=null; $('readHome').hidden=true; $('readDetail').hidden=false;
+  const back=$('readBack'), body=$('readBody');
+  if(id==='songbook'){
+    back.href='#reading'; back.querySelector('span').textContent='Read music';
+    body.innerHTML=`<p class="eyebrow">Practice</p><h2 class="ltitle">Songbook</h2><p class="lede">Familiar melodies to read along with. Start slow with note names on, then switch them off. Guitar players can turn on tab.</p>
+      <ol class="lcards">${SONGS.map((s,i)=>`<li><a class="lcard" href="#song-${s.id}"><span class="num">${i+1}</span><span><b>${s.title}</b><small>${s.level}</small></span>${CHEV}</a></li>`).join('')}</ol>`;
+    return;
+  }
+  const song=id.startsWith('song-')?SONGS.find(s=>'song-'+s.id===id):null;
+  if(song){ back.href='#songbook'; back.querySelector('span').textContent='Songbook';
+    body.innerHTML='<div class="widget"></div>'; W.songPlayer(body.querySelector('.widget'),song.id); return; }
+  const t=TOOLS[id]; back.href='#reading'; back.querySelector('span').textContent='Read music';
+  body.innerHTML=`<p class="eyebrow">Practice</p><h2 class="ltitle">${t[0]}</h2><div class="widget"></div>`;
+  W[t[1]](body.querySelector('.widget'),t[2]);
+}
+
+/* =========================== Sheets and settings =========================== */
+let openSheetEl=null,lastFocus=null;
+function openSheet(id){
+  closeSheet(); const el=$(id); el.hidden=false; openSheetEl=el; lastFocus=document.activeElement; document.body.classList.add('locked');
+  if(id==='keySheet'){ pushRecent(); renderRecent(); } else renderSettings();
+  const f=el.querySelector('.sheet-head .iconbtn'); if(f) f.focus({preventScroll:true});
+}
+function closeSheet(){
+  if(!openSheetEl) return; if(openSheetEl.id==='keySheet') pushRecent();
+  openSheetEl.hidden=true; openSheetEl=null; document.body.classList.remove('locked'); if(lastFocus&&lastFocus.focus) lastFocus.focus({preventScroll:true});
+}
+document.querySelectorAll('.sheet-wrap').forEach(w=>w.addEventListener('click',e=>{ if(e.target===w) closeSheet(); }));
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&openSheetEl) closeSheet(); });
+function pushRecent(){
+  const cur={l:state.root.l,a:state.root.a,s:state.scale};
+  state.recent=[cur].concat((state.recent||[]).filter(r=>!(r.l===cur.l&&r.a===cur.a&&r.s===cur.s))).slice(0,6); save();
+}
+function renderRecent(){
+  const list=(state.recent||[]).filter(r=>!(r.l===state.root.l&&r.a===state.root.a&&r.s===state.scale)&&SCALES[r.s]);
+  $('recentWrap').hidden=!list.length;
+  $('recentKeys').innerHTML=list.map(r=>`<button type="button" class="chip" data-act="rel" data-l="${r.l}" data-a="${r.a}" data-s="${r.s}">${LETTERS[r.l]+accStr(r.a)} ${SCALES[r.s].short}</button>`).join('');
+}
+let theme='system'; try{ theme=localStorage.getItem('sdb-keybook-theme')||'system'; }catch(e){}
+let themeSet=false;
+function applyTheme(){ const r=document.documentElement;
+  if(theme==='light'||theme==='dark'){ r.setAttribute('data-theme',theme); themeSet=true; }
+  else if(themeSet){ r.removeAttribute('data-theme'); themeSet=false; } }
+function setTheme(v){ theme=v; try{ localStorage.setItem('sdb-keybook-theme',v); }catch(e){} applyTheme(); renderSettings();
+  LIVE_SCORES.forEach(el=>{ if(el.isConnected&&el.offsetParent!==null) drawScore(el,el.__spec); }); }
+function renderSettings(){
+  pressed('[data-act="sound"]',b=>b.dataset.v===sound);
+  pressed('[data-act="labels"]',b=>b.dataset.v===state.labels);
+  pressed('[data-act="theme"]',b=>b.dataset.v===theme);
+  const T=COURSES.theory,R=COURSES.reading;
+  $('progSummary').textContent=`Theory ${T.done.size} of ${T.lessons.length} · Reading ${R.done.size} of ${R.lessons.length}`;
+}
 
 /* =========================== Routing =========================== */
-function showView(v){
-  metroStop();
-  $('toolView').hidden=v!=='tool'; $('lessonView').hidden=v!=='lessons';
-  document.querySelectorAll('.viewtabs a').forEach(a=>{ if(a.dataset.view===v) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
+const SCREEN_TITLES={scales:'Scales',chords:'Chords',harmony:'Harmony',lessons:'Lessons',reading:'Read music'};
+let curScreen=null;
+function showScreen(s){
+  const changed=s!==curScreen;
+  if(changed){ metroStop(); stopAll(); activeTap=null; }
+  document.querySelectorAll('.screen').forEach(el=>{ el.hidden=el.dataset.screen!==s; });
+  document.querySelectorAll('.tabbar a[data-tab]').forEach(a=>{ if(a.dataset.tab===s) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
+  const tool=['scales','chords','harmony'].includes(s);
+  $('appTitle').textContent=SCREEN_TITLES[s]; $('appTitle').classList.toggle('tool',tool);
+  $('keyBtn').hidden=!tool; $('playScaleBtn').hidden=!tool; $('kbFocus').hidden=!tool;
+  document.title=s==='scales'?'Key Book':`${SCREEN_TITLES[s]} · Key Book`;
+  curScreen=s; return changed;
 }
-let firstRoute=true;
+const toTop=()=>window.scrollTo({top:0});
 function route(){
-  const h=decodeURIComponent(location.hash.slice(1)), m=h.match(/^lesson-(\d+)$/);
-  if(h==='lessons'||m){
-    const n=m?Math.min(LESSONS.length,Math.max(1,+m[1])):curLesson;
-    const wasHidden=$('lessonView').hidden; showView('lessons'); openLesson(n);
-    if(!firstRoute){ const top=(wasHidden?0:$('lessonView').getBoundingClientRect().top+window.scrollY-8); window.scrollTo({top}); }
-  } else {
-    const wasHidden=$('toolView').hidden; showView('tool');
-    const el=h&&h!=='keybook'?document.getElementById(h):null;
-    if(el) el.scrollIntoView(); else if(wasHidden&&!firstRoute) window.scrollTo({top:0});
+  const h=decodeURIComponent(location.hash.slice(1)); let m;
+  if((m=h.match(/^lesson-(\d+)$/))){ showScreen('lessons'); metroStop(); stopAll(); openCourseLesson(COURSES.theory,+m[1]); toTop(); }
+  else if(h==='lessons'){ showScreen('lessons'); metroStop(); showCourseHome(COURSES.theory); toTop(); }
+  else if((m=h.match(/^read-(\d+)$/))){ showScreen('reading'); metroStop(); stopAll(); openCourseLesson(COURSES.reading,+m[1]); toTop(); }
+  else if(h==='reading'){ showScreen('reading'); metroStop(); stopAll(); showCourseHome(COURSES.reading); toTop(); }
+  else if(TOOLS[h]||h==='songbook'||/^song-/.test(h)){ showScreen('reading'); metroStop(); stopAll(); activeTap=null; openTool(h); toTop(); }
+  else if(h==='chords'){ if(showScreen('chords')) toTop(); }
+  else if(h==='harmony'||h==='together'){ if(showScreen('harmony')) toTop(); }
+  else {
+    const changed=showScreen('scales');
+    if(h==='guitar'||h==='piano'){ state.inst=h; applyInst(); save(); }
+    const el=['guitar','piano','overview'].includes(h)?$(h):null;
+    if(el) el.scrollIntoView(); else if(changed) toTop();
   }
-  firstRoute=false;
 }
 
-/* Install prompt (only fires where the page is installable, e.g. Chrome on Android or desktop). */
+/* Install prompt (fires where the app is installable, e.g. Chrome on Android or desktop). */
 let installEvt=null;
-window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); installEvt=e; $('installBtn').hidden=false; });
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); installEvt=e; $('installBtn').hidden=false; $('installRow').hidden=false; });
 $('installBtn').addEventListener('click',async()=>{ if(!installEvt) return; installEvt.prompt(); try{ await installEvt.userChoice; }catch(e){} installEvt=null; $('installBtn').hidden=true; });
 window.addEventListener('appinstalled',()=>{ $('installBtn').hidden=true; });
 
+applyTheme();
 render();
+Object.values(COURSES).forEach(renderCourseList);
 route();
 window.addEventListener('hashchange',route);
 })();
