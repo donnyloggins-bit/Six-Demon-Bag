@@ -1,0 +1,1609 @@
+<meta charset="utf-8">
+<title>Bontoni Order Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cinzel:wght@500&family=Cormorant+Garamond:ital,wght@1,500&family=Instrument+Sans:wght@400;500;600&family=Marcellus+SC&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* Layout: workshop tool. Top bar with sections; each section is a working surface
+   (library grid, or a three-pane editor: details | stage | zones & materials). */
+:root{
+  --bg:#F2F1EC; --panel:#FFFFFF; --sunk:#E9E8E2; --ink:#1B1C19; --muted:#6A6C65; --line:#D9D8D0;
+  --accent:#1E5B3A; --accent-ink:#FFFFFF; --accent-soft:#DCEBE1; --brass:#9C6F24; --danger:#A52A21;
+  --stage:#ECEBE6; --focus:#2F7D52;
+  --f-ui:"Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  --f-sc:"Marcellus SC", "Copperplate", "Times New Roman", serif;
+  --f-word:"Archivo Black", "Arial Black", Impact, sans-serif;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#131512; --panel:#1C1E1B; --sunk:#252823; --ink:#ECEBE5; --muted:#9C9F96; --line:#343831;
+  --accent:#62AE80; --accent-ink:#0D1A12; --accent-soft:#1F3428; --brass:#D2A65C; --danger:#F0877D;
+  --stage:#2A2C28; --focus:#7CC79A; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#131512; --panel:#1C1E1B; --sunk:#252823; --ink:#ECEBE5; --muted:#9C9F96; --line:#343831;
+  --accent:#62AE80; --accent-ink:#0D1A12; --accent-soft:#1F3428; --brass:#D2A65C; --danger:#F0877D;
+  --stage:#2A2C28; --focus:#7CC79A; color-scheme:dark }
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.45 var(--f-ui);margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* top bar */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--panel)}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:20px;min-height:58px;flex-wrap:wrap;padding-block:6px}
+.brand{display:flex;align-items:baseline;gap:10px;margin-right:6px}
+.brand b{font-family:var(--f-sc);font-weight:400;font-size:20px;letter-spacing:.14em}
+.brand span{color:var(--muted);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+nav.tabs{display:flex;gap:2px;flex-wrap:wrap}
+nav.tabs a{padding:8px 12px;border-radius:var(--r);text-decoration:none;color:var(--muted);font-weight:500}
+nav.tabs a:hover{color:var(--ink);background:var(--sunk)}
+nav.tabs a[aria-current="page"]{color:var(--ink);background:var(--sunk)}
+.mode{margin-left:auto;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.mode i{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block}
+.mode.cloud i{background:var(--accent)}
+
+main.wrap{padding-block:22px 60px}
+.notice{background:var(--accent-soft);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px;margin-bottom:16px;font-size:13px}
+.notice.warn{background:var(--sunk)}
+
+/* headings */
+.head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.head h1{font-family:var(--f-sc);font-weight:400;font-size:28px;letter-spacing:.06em;margin:0;text-wrap:balance}
+.head p{margin:2px 0 0;color:var(--muted);max-width:62ch}
+.head .grow{flex:1;min-width:0}
+.head .acts{display:flex;gap:8px;flex-wrap:wrap}
+
+/* controls */
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);padding:8px 13px;border-radius:var(--r);cursor:pointer;font-weight:500;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.danger{color:var(--danger)}
+.btn.danger.armed{background:var(--danger);color:var(--panel);border-color:var(--danger)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.sm{padding:5px 9px;font-size:12px}
+label.f{display:grid;gap:4px;font-size:12px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+input[type=text],input[type=date],input[type=number],input[type=search],select,textarea{width:100%;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:7px 9px;font-size:14px;text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink)}
+textarea{resize:vertical;min-height:64px}
+input::placeholder,textarea::placeholder{color:var(--muted);opacity:.8}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.check{display:flex;gap:7px;align-items:center;font-size:13px;cursor:pointer}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;flex-wrap:wrap}
+.seg button{border:0;background:var(--panel);padding:6px 11px;cursor:pointer;font-weight:500;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;background:var(--sunk);color:var(--muted)}
+.chip.s-draft{background:var(--sunk)}
+.chip.s-sent{background:#E7D9B8;color:#5B4210}
+.chip.s-production{background:var(--accent-soft);color:var(--accent)}
+.chip.s-delivered{background:var(--ink);color:var(--panel)}
+
+/* library grids */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;cursor:pointer;display:flex;flex-direction:column;text-align:left;padding:0}
+.card:hover{border-color:var(--muted)}
+.card .ph{aspect-ratio:4/3;background:var(--stage);display:grid;place-items:center;overflow:hidden;max-width:100%}
+.card .ph img{width:100%;height:100%;object-fit:contain;filter:grayscale(1) contrast(1.05)}
+.card .ph.sw img{object-fit:cover;filter:none}
+.card .meta{padding:10px 12px;display:grid;gap:3px;min-width:0}
+.card .meta b{font-weight:600;overflow-wrap:anywhere}
+.card .meta span{color:var(--muted);font-size:12px}
+.empty{border:1.5px dashed var(--line);border-radius:var(--r);padding:34px 20px;text-align:center;color:var(--muted);background:var(--panel)}
+.empty b{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
+.drop{border:1.5px dashed var(--line);border-radius:var(--r);padding:16px;background:var(--panel);display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop .grow{flex:1;min-width:200px}
+.drop .opts{display:flex;gap:10px;flex-wrap:wrap}
+.drop .opts label.f{min-width:150px}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.filters .chipbtn{border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:4px 11px;cursor:pointer;font-size:12px;font-weight:500}
+.filters .chipbtn[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.progress{font-size:13px;color:var(--muted)}
+
+/* orders list */
+.olist{display:grid;gap:8px}
+.orow{display:grid;grid-template-columns:auto 1fr auto auto;gap:14px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px}
+.orow:hover{border-color:var(--muted)}
+.orow .who{min-width:0;cursor:pointer}
+.orow .who b{display:block;overflow-wrap:anywhere}
+.orow .who span{color:var(--muted);font-size:12px}
+.dots{display:flex;gap:3px}
+.dots i{width:14px;height:14px;border-radius:50%;border:1px solid var(--line);display:inline-block;background-size:cover}
+.date{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12px}
+
+/* editor layout */
+.ed{display:grid;grid-template-columns:300px minmax(0,1fr) 320px;gap:16px;align-items:start}
+.pane{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:12px;min-width:0}
+.pane h3{margin:0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.pane hr{border:0;border-top:1px solid var(--line);margin:2px 0;width:100%}
+.stagewrap{display:grid;gap:10px;min-width:0}
+.stagebar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.stage{background:var(--stage);border:1px solid var(--line);border-radius:var(--r);position:relative;overflow:auto;max-height:72vh;touch-action:none}
+.stage .inner{position:relative;margin:0 auto}
+.stage canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
+.stage .tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--panel);font-size:12px;padding:3px 7px;border-radius:4px;white-space:nowrap;transform:translate(10px,10px)}
+.stage .ph{padding:60px 20px;text-align:center;color:var(--muted)}
+.sheetbox{background:var(--stage);border:1px solid var(--line);border-radius:var(--r);padding:10px;overflow:hidden}
+.sheetbox canvas{width:100%;height:auto;display:block;box-shadow:0 1px 3px rgba(0,0,0,.18);background:#fff}
+.zl{display:grid;gap:4px}
+.zi{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;padding:6px 8px;border-radius:var(--r);border:1px solid transparent;cursor:pointer;background:none;text-align:left;width:100%}
+.zi:hover{background:var(--sunk)}
+.zi[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.zi .sw{width:22px;height:22px;border-radius:4px;border:1px solid var(--line);background-size:cover;background-position:center}
+.zi b{font-weight:500;overflow-wrap:break-word;min-width:0}
+.zi.oz{grid-template-columns:22px minmax(0,1fr) minmax(0,1.1fr)}
+.zi span{font-size:12px;color:var(--muted);overflow-wrap:anywhere;text-align:right}
+.zi input{padding:3px 6px}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:8px;max-height:340px;overflow:auto;padding:2px}
+.mt{border:1px solid var(--line);background:var(--panel);border-radius:var(--r);padding:0;cursor:pointer;display:grid;text-align:center;overflow:hidden}
+.mt:hover{border-color:var(--muted)}
+.mt[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:1px}
+.mt .sq{aspect-ratio:1;background-size:cover;background-position:center;max-width:100%}
+.mt span{font-size:10px;line-height:1.2;padding:4px 3px;overflow-wrap:anywhere}
+.tools{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.slider{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted)}
+.slider input{width:110px}
+.presets{display:flex;flex-wrap:wrap;gap:4px}
+.presets button{border:1px dashed var(--line);background:none;border-radius:99px;padding:2px 9px;font-size:12px;cursor:pointer;color:var(--muted)}
+.presets button:hover{color:var(--ink);border-color:var(--muted)}
+.refs{display:grid;gap:8px}
+.ref{display:grid;grid-template-columns:52px 1fr auto;gap:8px;align-items:center}
+.ref img{width:52px;height:52px;object-fit:cover;border-radius:4px;border:1px solid var(--line)}
+.co{display:grid;grid-template-columns:1fr 110px auto;gap:6px}
+.xr{display:grid;grid-template-columns:110px 1fr auto;gap:6px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--panel);padding:10px 16px;border-radius:var(--r);z-index:50;max-width:min(560px,calc(100vw - 32px));font-size:13px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.toast.err{background:var(--danger)}
+.modal{position:fixed;inset:0;background:rgba(10,12,10,.45);display:grid;place-items:center;z-index:40;padding:16px}
+.modal .box{background:var(--panel);border-radius:10px;border:1px solid var(--line);width:min(560px,100%);max-height:90vh;overflow:auto;padding:18px;display:grid;gap:12px}
+.modal h2{margin:0;font-family:var(--f-sc);font-weight:400;letter-spacing:.06em}
+.texprev{height:120px;border-radius:var(--r);border:1px solid var(--line);background-repeat:repeat}
+.kbd{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:var(--sunk);padding:1px 5px;border-radius:3px}
+.how{display:grid;gap:6px;font-size:13px;color:var(--muted)}
+.how b{color:var(--ink);font-weight:600}
+
+@media (max-width:1180px){.ed{grid-template-columns:280px minmax(0,1fr)}.ed > .pane.right{grid-column:1 / -1}}
+@media (max-width:760px){.ed{grid-template-columns:1fr}.ed > .stagewrap{order:-1}.orow{grid-template-columns:auto 1fr;}.orow .date,.orow .dots{display:none}.grid2{grid-template-columns:1fr}.stage{max-height:60vh}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="top"><div class="wrap">
+  <div class="brand"><b>BONTONI</b><span>Order studio</span></div>
+  <nav class="tabs" id="tabs">
+    <a href="#orders">Orders</a><a href="#styles">Styles</a><a href="#materials">Materials</a><a href="#settings">Settings</a>
+  </nav>
+  <div class="mode" id="mode"><i></i><span>Connecting…</span></div>
+</div></header>
+<main class="wrap" id="main"><div class="empty"><b>Opening the studio…</b>Loading your styles, materials and orders.</div></main>
+
+<script>
+"use strict";
+/* ============================================================
+   Utilities
+   ============================================================ */
+const $ = (s, r = document) => r.querySelector(s);
+function h(tag, props, ...kids) {
+  const el = document.createElement(tag);
+  let val;
+  for (const [k, v] of Object.entries(props || {})) {
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k === 'style' && typeof v === 'object') Object.assign(el.style, v);
+    else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2).toLowerCase(), v);
+    else if (k === 'value') val = v;
+    else if (k === 'checked' || k === 'disabled' || k === 'multiple' || k === 'selected') el[k] = !!v;
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  for (const kid of kids.flat(Infinity)) {
+    if (kid == null || kid === false) continue;
+    el.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+  }
+  if (val !== undefined) el.value = val;
+  return el;
+}
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now()).replace(/-/g, '').slice(0, 20);
+const clone = o => JSON.parse(JSON.stringify(o ?? null));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const titleCase = s => s.toLowerCase().replace(/\b([a-zà-ú])/g, m => m.toUpperCase());
+const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
+const todayISO = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+function hexToRgb(hex) { const m = /^#?([0-9a-f]{6})$/i.exec(hex || ''); if (!m) return [128, 128, 128]; const n = parseInt(m[1], 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+const rgbToHex = (r, g, b) => '#' + [r, g, b].map(v => Math.round(clamp(v, 0, 255)).toString(16).padStart(2, '0')).join('');
+function mkCanvas(w, hgt) { const c = document.createElement('canvas'); c.width = w; c.height = hgt; return c; }
+const ctx2d = c => c.getContext('2d', { willReadFrequently: true });
+function toast(msg, err) {
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  const t = h('div', { class: 'toast' + (err ? ' err' : ''), role: 'status' }, msg);
+  document.body.append(t); setTimeout(() => t.remove(), err ? 6000 : 2800);
+}
+function confirmBtn(label, onConfirm, cls = 'btn danger') {
+  const b = h('button', { class: cls, type: 'button' }, label);
+  let armed = false, timer;
+  b.addEventListener('click', () => {
+    if (!armed) { armed = true; b.classList.add('armed'); b.textContent = 'Click again to ' + label.toLowerCase(); timer = setTimeout(() => { armed = false; b.classList.remove('armed'); b.textContent = label; }, 3500); return; }
+    clearTimeout(timer); onConfirm();
+  });
+  return b;
+}
+function errMsg(e) { return (e && (e.message || e.code)) || String(e); }
+
+/* ============================================================
+   Storage: shared library (artifact db + assets) or this device (IndexedDB)
+   ============================================================ */
+const COLLS = ['styles', 'materials', 'orders', 'settings'];
+const Store = {
+  mode: 'local', db: null, assets: null, user: null, downloads: null,
+  data: { styles: new Map(), materials: new Map(), orders: new Map(), settings: new Map() },
+  loaded: false, canWrite: true, canUpload: true,
+  listeners: new Set(),
+  on(fn) { this.listeners.add(fn); return () => this.listeners.delete(fn); },
+  emit(c) { for (const fn of [...this.listeners]) { try { fn(c); } catch (e) { console.error(e); } } },
+};
+const writeChains = new Map();
+
+const IDB = {
+  db: null,
+  open() {
+    return new Promise((res, rej) => {
+      const r = indexedDB.open('bontoni-order-studio', 1);
+      r.onupgradeneeded = () => { r.result.createObjectStore('docs'); r.result.createObjectStore('blobs'); };
+      r.onsuccess = () => { this.db = r.result; res(r.result); };
+      r.onerror = () => rej(r.error);
+    });
+  },
+  run(store, mode, fn) {
+    return new Promise((res, rej) => {
+      const t = this.db.transaction(store, mode); const req = fn(t.objectStore(store));
+      t.oncomplete = () => res(req && req.result); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error);
+    });
+  },
+};
+
+async function initCloud() {
+  let tries = 0;
+  while (!(window.claude && typeof window.claude.use === 'function') && tries < 15) { await new Promise(r => setTimeout(r, 100)); tries++; }
+  if (!(window.claude && typeof window.claude.use === 'function')) return false;
+  const db = await window.claude.use('db');
+  if (!db) return false;
+  Store.db = db; Store.mode = 'cloud';
+  const [assets, user, downloads] = await Promise.all([
+    window.claude.use('assets').catch(() => null), window.claude.use('user').catch(() => null), window.claude.use('downloads').catch(() => null)]);
+  Store.assets = assets; Store.user = user; Store.downloads = downloads;
+  Store.canUpload = !!assets;
+  try { const w = user && user.can ? await user.can('data.write') : null; Store.canWrite = w !== false; } catch { Store.canWrite = true; }
+  let pending = new Set(COLLS);
+  const slow = setTimeout(() => { if (pending.size) setMode('The shared library is slow to answer. What you see may be out of date.'); }, 10000);
+  for (const c of COLLS) {
+    db.collection(c).onSnapshot(snap => {
+      const m = new Map(); snap.docs.forEach(d => m.set(d.id, Object.assign({}, d.data(), { id: d.id })));
+      Store.data[c] = m;
+      if (!snap.metadata.fromCache && pending.delete(c) && !pending.size) { clearTimeout(slow); setMode(); }
+      Store.emit(c);
+    }, err => { console.warn(c, err); toast('Lost the connection to the shared ' + c + ' list (' + err.code + '). Reload the page to reconnect.', true); });
+  }
+  return true;
+}
+async function initLocal() {
+  Store.mode = 'local';
+  try {
+    await IDB.open();
+    const [keys, vals] = await Promise.all([IDB.run('docs', 'readonly', s => s.getAllKeys()), IDB.run('docs', 'readonly', s => s.getAll())]);
+    keys.forEach((k, i) => { const [c, id] = String(k).split('/'); if (Store.data[c]) Store.data[c].set(id, Object.assign({}, vals[i], { id })); });
+  } catch (e) { console.warn('IndexedDB unavailable', e); IDB.db = null; }
+  COLLS.forEach(c => Store.emit(c));
+}
+function put(coll, id, body) {
+  const doc = clone(body); delete doc.id; doc.updatedAt = Date.now();
+  Store.data[coll].set(id, Object.assign({}, doc, { id }));
+  Store.emit(coll);
+  const key = coll + '/' + id;
+  const prev = writeChains.get(key) || Promise.resolve();
+  const next = prev.then(async () => {
+    if (Store.mode === 'cloud') {
+      try { await Store.db.collection(coll).doc(id).set(doc); }
+      catch (e) {
+        if (e && e.code === 'unavailable') { await new Promise(r => setTimeout(r, 600 + Math.random() * 600)); await Store.db.collection(coll).doc(id).set(doc); }
+        else throw e;
+      }
+    } else if (IDB.db) await IDB.run('docs', 'readwrite', s => s.put(doc, key));
+  }).catch(e => {
+    if (e && e.code === 'invalid_argument') { Store.canWrite = false; toast('You can view this library but not change it. Ask the owner for Contributor or Editor access.', true); }
+    else if (e && e.code === 'quota_exceeded') toast('The shared library is full. Delete old orders to make room.', true);
+    else toast('Could not save: ' + errMsg(e), true);
+  });
+  writeChains.set(key, next);
+  return next;
+}
+function del(coll, id) {
+  Store.data[coll].delete(id); Store.emit(coll);
+  const key = coll + '/' + id;
+  const next = (writeChains.get(key) || Promise.resolve()).then(async () => {
+    if (Store.mode === 'cloud') await Store.db.collection(coll).doc(id).delete();
+    else if (IDB.db) await IDB.run('docs', 'readwrite', s => s.delete(key));
+  }).catch(e => toast('Could not delete: ' + errMsg(e), true));
+  writeChains.set(key, next); return next;
+}
+const localBlobUrls = new Map();
+async function putBlob(blob, type) {
+  if (Store.mode === 'cloud') {
+    if (!Store.assets) throw new Error('Uploading needs Editor access to this studio.');
+    try { const r = await Store.assets.upload(blob, type ? { type } : undefined); return r.id; }
+    catch (e) {
+      if (e && e.code === 'store_unavailable') { await new Promise(r => setTimeout(r, 800)); const r = await Store.assets.upload(blob, type ? { type } : undefined); return r.id; }
+      if (e && e.code === 'too_large') throw new Error('That file is over the 20 MB limit.');
+      if (e && e.code === 'quota_or_state') throw new Error('The studio has run out of file storage. Delete unused materials or styles.');
+      if (e && e.code === 'unsupported_type') throw new Error('Use JPEG, PNG or WebP images.');
+      throw e;
+    }
+  }
+  const id = 'local:' + uid();
+  if (IDB.db) await IDB.run('blobs', 'readwrite', s => s.put(blob, id));
+  localBlobUrls.set(id, URL.createObjectURL(blob));
+  return id;
+}
+async function delBlob(id) {
+  if (!id) return;
+  try {
+    if (id.startsWith('local:')) { if (IDB.db) await IDB.run('blobs', 'readwrite', s => s.delete(id)); }
+    else if (Store.assets) await Store.assets.delete(id);
+  } catch (e) { console.warn('blob delete', e); }
+}
+async function blobUrl(id) {
+  if (!id) return null;
+  if (!id.startsWith('local:')) return '/_blob/' + id;
+  if (localBlobUrls.has(id)) return localBlobUrls.get(id);
+  if (!IDB.db) return null;
+  const b = await IDB.run('blobs', 'readonly', s => s.get(id));
+  if (!b) return null;
+  const u = URL.createObjectURL(b); localBlobUrls.set(id, u); return u;
+}
+const imgCache = new Map();
+function loadImg(id) {
+  if (!id) return Promise.reject(new Error('no image'));
+  if (imgCache.has(id)) return imgCache.get(id);
+  const p = blobUrl(id).then(url => new Promise((res, rej) => {
+    if (!url) return rej(new Error('Image missing'));
+    const im = new Image(); im.decoding = 'async';
+    im.onload = () => res(im); im.onerror = () => rej(new Error('Image could not load'));
+    im.src = url;
+  }));
+  p.catch(() => imgCache.delete(id));
+  imgCache.set(id, p); return p;
+}
+function setImg(el, id) { blobUrl(id).then(u => { if (u) el.src = u; }); return el; }
+function setBg(el, id) { blobUrl(id).then(u => { if (u) el.style.backgroundImage = 'url("' + u + '")'; }); return el; }
+
+async function saveFile(filename, blob) {
+  if (Store.downloads) {
+    try { await Store.downloads.save({ filename, data: blob }); toast('Saved ' + filename); }
+    catch (e) { if (e && e.code !== 'declined') toast('Could not save the file: ' + errMsg(e), true); }
+    return;
+  }
+  if (Store.mode === 'cloud') { toast('Downloads are not available in this view. Open the studio in claude.ai to save files.', true); return; }
+  const a = h('a', { href: URL.createObjectURL(blob), download: filename }); document.body.append(a); a.click(); a.remove();
+}
+
+/* ============================================================
+   Image processing: templates (zone maps) and material rendering
+   ============================================================ */
+const BG = 255;            // label value for background
+const MAX_ZONES = 30;
+const ZONE_COLORS = ['#E4572E', '#29B6F6', '#F2C14E', '#7BC67B', '#B46AE0', '#FF8FB1', '#2EC4B6', '#F28C28', '#5C7AEA', '#C0CA33', '#8D6E63', '#EF5350', '#26A69A', '#AB47BC', '#FFA726'];
+const zoneColor = z => ZONE_COLORS[(z - 1) % ZONE_COLORS.length];
+
+async function fileToCanvas(file, maxSide) {
+  let src;
+  try { src = await createImageBitmap(file); }
+  catch { throw new Error(file.name + ' is not an image this browser can read. Use JPEG or PNG (iPhone HEIC photos: export as JPEG).'); }
+  const s = Math.min(1, maxSide / Math.max(src.width, src.height));
+  const c = mkCanvas(Math.round(src.width * s), Math.round(src.height * s));
+  const x = ctx2d(c); x.imageSmoothingQuality = 'high'; x.drawImage(src, 0, 0, c.width, c.height);
+  return c;
+}
+const canvasBlob = (c, type = 'image/jpeg', q = 0.9) => new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error('encode failed')), type, q));
+function hasTransparency(c) { const d = ctx2d(c).getImageData(0, 0, c.width, c.height).data; for (let i = 3; i < d.length; i += 64) if (d[i] < 250) return true; return false; }
+
+function buildPrep(src) {
+  const w = src.width || src.naturalWidth, hh = src.height || src.naturalHeight;
+  const c = mkCanvas(w, hh); const x = ctx2d(c); x.drawImage(src, 0, 0, w, hh);
+  const d = x.getImageData(0, 0, w, hh).data; const n = w * hh;
+  const lum = new Float32Array(n), labels = new Uint8Array(n);
+  for (let i = 0, j = 0; i < n; i++, j += 4) {
+    const a = d[j + 3] / 255;
+    if (a < 0.5) labels[i] = BG;
+    const r = d[j] * a + 255 * (1 - a), g = d[j + 1] * a + 255 * (1 - a), b = d[j + 2] * a + 255 * (1 - a);
+    d[j] = r; d[j + 1] = g; d[j + 2] = b; d[j + 3] = 255;
+    lum[i] = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  }
+  x.putImageData(new ImageData(d, w, hh), 0, 0);
+  return { w, h: hh, rgb: d, lum, labels, ver: 1, photo: c };
+}
+async function decodeMask(id, w, hh) {
+  let bmp = null;
+  try {
+    const url = await blobUrl(id);
+    const blob = await (await fetch(url)).blob();
+    bmp = await createImageBitmap(blob, { colorSpaceConversion: 'none', premultiplyAlpha: 'none' });
+  } catch { bmp = await loadImg(id); }
+  const c = mkCanvas(w, hh); const x = ctx2d(c); x.imageSmoothingEnabled = false; x.drawImage(bmp, 0, 0, w, hh);
+  const d = x.getImageData(0, 0, w, hh).data; const out = new Uint8Array(w * hh);
+  for (let i = 0, j = 0; i < out.length; i++, j += 4) { const v = d[j]; out[i] = v >= 250 ? BG : Math.min(MAX_ZONES, Math.round(v / 8)); }
+  return out;
+}
+function encodeMask(prep) {
+  const c = mkCanvas(prep.w, prep.h); const x = ctx2d(c); const im = x.createImageData(prep.w, prep.h); const d = im.data;
+  for (let i = 0, j = 0; i < prep.labels.length; i++, j += 4) { const l = prep.labels[i]; const v = l === BG ? 255 : l * 8; d[j] = d[j + 1] = d[j + 2] = v; d[j + 3] = 255; }
+  x.putImageData(im, 0, 0); return canvasBlob(c, 'image/png');
+}
+const prepCache = new Map();
+function getPrep(view) {
+  const key = view.photoId + '|' + (view.maskId || '');
+  if (prepCache.has(key)) return prepCache.get(key);
+  const p = (async () => {
+    const im = await loadImg(view.photoId);
+    const prep = buildPrep(im);
+    if (view.maskId) { try { prep.labels = await decodeMask(view.maskId, prep.w, prep.h); } catch (e) { console.warn('mask', e); } }
+    return prep;
+  })();
+  p.catch(() => prepCache.delete(key));
+  prepCache.set(key, p); return p;
+}
+function zoneStats(prep) {
+  if (prep._st && prep._st.ver === prep.ver) return prep._st;
+  const { w, labels, lum } = prep, n = labels.length;
+  const hist = new Uint32Array(32 * 64), cnt = new Uint32Array(32), sx = new Float64Array(32), sy = new Float64Array(32);
+  for (let i = 0; i < n; i++) {
+    const l = labels[i]; if (l === BG || l === 0) continue;
+    hist[l * 64 + Math.min(63, (lum[i] * 64) | 0)]++; cnt[l]++; sx[l] += i % w; sy[l] += (i / w) | 0;
+  }
+  const med = new Float32Array(32), cx = new Float32Array(32), cy = new Float32Array(32);
+  for (let l = 1; l < 32; l++) {
+    if (!cnt[l]) continue;
+    let acc = 0, half = cnt[l] / 2, b = 0;
+    for (; b < 64; b++) { acc += hist[l * 64 + b]; if (acc >= half) break; }
+    med[l] = Math.max(0.06, (b + 0.5) / 64); cx[l] = sx[l] / cnt[l]; cy[l] = sy[l] / cnt[l];
+  }
+  const best = new Float64Array(32).fill(Infinity), ax = new Float32Array(32), ay = new Float32Array(32);
+  for (let i = 0; i < n; i += 3) {
+    const l = labels[i]; if (l === BG || l === 0) continue;
+    const x = i % w, y = (i / w) | 0, dd = (x - cx[l]) ** 2 + (y - cy[l]) ** 2;
+    if (dd < best[l]) { best[l] = dd; ax[l] = x; ay[l] = y; }
+  }
+  prep._st = { ver: prep.ver, med, cnt, ax, ay };
+  return prep._st;
+}
+const texCache = new Map();
+async function getTex(mat, tileW) {
+  const grain = mat.grain ?? 0.7;
+  const base = hexToRgb(mat.color);
+  const tw = Math.max(16, Math.round(tileW));
+  const key = mat.id + '|' + (mat.imageId || '') + '|' + mat.color + '|' + grain + '|' + tw;
+  if (texCache.has(key)) return texCache.get(key);
+  const p = (async () => {
+    if (!mat.imageId) return { w: 1, h: 1, d: new Uint8ClampedArray(base) };
+    const im = await loadImg(mat.imageId);
+    const th = Math.max(16, Math.round(tw * im.naturalHeight / im.naturalWidth));
+    const c = mkCanvas(tw, th); const x = ctx2d(c); x.imageSmoothingQuality = 'high'; x.drawImage(im, 0, 0, tw, th);
+    const s = x.getImageData(0, 0, tw, th).data; const n = tw * th;
+    let mr = 0, mg = 0, mb = 0; for (let j = 0; j < s.length; j += 4) { mr += s[j]; mg += s[j + 1]; mb += s[j + 2]; }
+    mr /= n; mg /= n; mb /= n;
+    const d = new Uint8ClampedArray(n * 3);
+    for (let i = 0, j = 0; i < n; i++, j += 4) {
+      d[i * 3] = base[0] + (s[j] - mr) * grain; d[i * 3 + 1] = base[1] + (s[j + 1] - mg) * grain; d[i * 3 + 2] = base[2] + (s[j + 2] - mb) * grain;
+    }
+    return { w: tw, h: th, d };
+  })();
+  texCache.set(key, p); if (texCache.size > 120) texCache.delete(texCache.keys().next().value);
+  return p;
+}
+async function meanColor(canvasOrImg) {
+  const c = mkCanvas(48, 48); const x = ctx2d(c); x.drawImage(canvasOrImg, 0, 0, 48, 48);
+  const d = x.getImageData(0, 0, 48, 48).data; let r = 0, g = 0, b = 0; const n = d.length / 4;
+  for (let j = 0; j < d.length; j += 4) { r += d[j]; g += d[j + 1]; b += d[j + 2]; }
+  return rgbToHex(r / n, g / n, b / n);
+}
+/* Recolor: every pixel in a zone takes the material's color and grain, carrying the
+   photo's own light and shadow (pixel brightness relative to the zone's median). */
+async function renderView(prep, assign, opts = {}) {
+  const { w, h: hh, lum, labels } = prep, st = zoneStats(prep);
+  const shading = opts.shading ?? 1;
+  const tex = new Array(32).fill(null);
+  for (const [z, mid] of Object.entries(assign || {})) {
+    const m = Store.data.materials.get(mid); const zi = +z;
+    if (!m || !(zi >= 1 && zi < 32)) continue;
+    tex[zi] = await getTex(m, w * (m.scale ?? 0.22));
+  }
+  const c = mkCanvas(w, hh); const x = ctx2d(c); const out = x.createImageData(w, hh); const o = out.data;
+  for (let y = 0, i = 0; y < hh; y++) {
+    for (let xx = 0; xx < w; xx++, i++) {
+      const l = labels[i], j = i * 4;
+      if (l === BG) continue;
+      const L = lum[i]; const t = tex[l];
+      if (!t) { const g = 34 + L * 214; o[j] = o[j + 1] = o[j + 2] = g; o[j + 3] = 255; continue; }
+      let s = L / st.med[l]; s = 1 + (s - 1) * shading; if (s < 0) s = 0;
+      let tx = xx % (t.w * 2); if (tx >= t.w) tx = t.w * 2 - 1 - tx;
+      let ty = y % (t.h * 2); if (ty >= t.h) ty = t.h * 2 - 1 - ty;
+      const k = t.w === 1 ? 0 : (ty * t.w + tx) * 3;
+      const R = t.d[k], G = t.d[k + 1], B = t.d[k + 2];
+      if (s <= 1) { o[j] = R * s; o[j + 1] = G * s; o[j + 2] = B * s; }
+      else { const q = Math.min(1, (1 - 1 / s) * 0.85); o[j] = R + (255 - R) * q; o[j + 1] = G + (255 - G) * q; o[j + 2] = B + (255 - B) * q; }
+      o[j + 3] = 255;
+    }
+  }
+  x.putImageData(out, 0, 0);
+  return c;
+}
+function cropBox(prep) {
+  const { w, h: hh, labels } = prep; let x0 = w, y0 = hh, x1 = -1, y1 = -1;
+  for (let y = 0, i = 0; y < hh; y++) for (let x = 0; x < w; x++, i++) if (labels[i] !== BG) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  if (x1 < 0) return { x: 0, y: 0, w, h: hh };
+  const p = Math.round(Math.max(w, hh) * 0.015);
+  x0 = Math.max(0, x0 - p); y0 = Math.max(0, y0 - p); x1 = Math.min(w - 1, x1 + p); y1 = Math.min(hh - 1, y1 + p);
+  return { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 };
+}
+function zoneOutline(prep, z, color) {
+  const { w, h: hh, labels } = prep; const c = mkCanvas(w, hh); const x = ctx2d(c); const im = x.createImageData(w, hh); const d = im.data;
+  const [r, g, b] = hexToRgb(color); const rad = Math.max(1, Math.round(Math.max(w, hh) / 500));
+  for (let y = 1; y < hh - 1; y++) for (let xx = 1; xx < w - 1; xx++) {
+    const i = y * w + xx; if (labels[i] !== z) continue;
+    if (labels[i - 1] === z && labels[i + 1] === z && labels[i - w] === z && labels[i + w] === z) continue;
+    for (let dy = -rad; dy <= rad; dy++) for (let dx = -rad; dx <= rad; dx++) {
+      const yy = y + dy, xq = xx + dx; if (yy < 0 || yy >= hh || xq < 0 || xq >= w) continue;
+      const j = (yy * w + xq) * 4; d[j] = r; d[j + 1] = g; d[j + 2] = b; d[j + 3] = 255;
+    }
+  }
+  x.putImageData(im, 0, 0); return c;
+}
+/* selection tools */
+function autoBackground(prep, tol) {
+  const { w, h: hh, rgb, labels } = prep; const n = w * hh;
+  const border = []; for (let x = 0; x < w; x++) border.push(x, (hh - 1) * w + x); for (let y = 0; y < hh; y++) border.push(y * w, y * w + w - 1);
+  const ch = [[], [], []]; for (const i of border) for (let k = 0; k < 3; k++) ch[k].push(rgb[i * 4 + k]);
+  const bc = ch.map(a => a.sort((p, q) => p - q)[a.length >> 1]);
+  const t2 = tol * tol; const ok = i => { const j = i * 4; const dr = rgb[j] - bc[0], dg = rgb[j + 1] - bc[1], db = rgb[j + 2] - bc[2]; return dr * dr + dg * dg + db * db <= t2; };
+  const seen = new Uint8Array(n); const stack = new Int32Array(n); let sp = 0;
+  for (const i of border) if (!seen[i] && (ok(i) || labels[i] === BG)) { seen[i] = 1; stack[sp++] = i; }
+  const mask = new Uint8Array(n);
+  while (sp) {
+    const i = stack[--sp]; mask[i] = 1; const x = i % w;
+    const nb = [x > 0 ? i - 1 : -1, x < w - 1 ? i + 1 : -1, i - w, i + w];
+    for (const q of nb) if (q >= 0 && q < n && !seen[q]) { seen[q] = 1; if (ok(q) || labels[q] === BG) stack[sp++] = q; }
+  }
+  return mask;
+}
+function wand(prep, x0, y0, tol) {
+  const { w, h: hh, rgb } = prep; const n = w * hh; const s = (y0 * w + x0) * 4;
+  const c0 = [rgb[s], rgb[s + 1], rgb[s + 2]]; const t2 = tol * tol;
+  const ok = i => { const j = i * 4; const dr = rgb[j] - c0[0], dg = rgb[j + 1] - c0[1], db = rgb[j + 2] - c0[2]; return dr * dr + dg * dg + db * db <= t2; };
+  const mask = new Uint8Array(n), seen = new Uint8Array(n), stack = new Int32Array(n); let sp = 0;
+  const start = y0 * w + x0; seen[start] = 1; stack[sp++] = start;
+  while (sp) {
+    const i = stack[--sp]; mask[i] = 1; const x = i % w;
+    const nb = [x > 0 ? i - 1 : -1, x < w - 1 ? i + 1 : -1, i - w, i + w];
+    for (const q of nb) if (q >= 0 && q < n && !seen[q]) { seen[q] = 1; if (ok(q)) stack[sp++] = q; }
+  }
+  return mask;
+}
+function polyMask(prep, pts, outside) {
+  const c = mkCanvas(prep.w, prep.h); const x = ctx2d(c); x.fillStyle = '#fff'; x.beginPath();
+  pts.forEach((p, i) => i ? x.lineTo(p[0], p[1]) : x.moveTo(p[0], p[1])); x.closePath(); x.fill();
+  const d = x.getImageData(0, 0, prep.w, prep.h).data; const m = new Uint8Array(prep.w * prep.h);
+  for (let i = 0; i < m.length; i++) { const inside = d[i * 4 + 3] > 127; m[i] = outside ? (inside ? 0 : 1) : (inside ? 1 : 0); }
+  return m;
+}
+function applyMask(prep, mask, T, opt) {
+  const L = prep.labels;
+  for (let i = 0; i < L.length; i++) {
+    if (!mask[i]) continue; const cur = L[i];
+    if (T !== BG && opt.protectBg && cur === BG) continue;
+    if (T !== 0 && opt.protectZones && cur !== 0 && cur !== BG && cur !== T) continue;
+    L[i] = T;
+  }
+  prep.ver++;
+}
+
+/* ============================================================
+   Router + shell
+   ============================================================ */
+const VIEWS = ['orders', 'styles', 'materials', 'settings'];
+let cleanupView = null;
+let editorOpen = null; // {kind,id} when an editor is open
+function currentView() { const v = (location.hash || '').slice(1); return VIEWS.includes(v) ? v : 'orders'; }
+function route() {
+  editorOpen = null;
+  if (cleanupView) { cleanupView(); cleanupView = null; }
+  const v = currentView();
+  document.querySelectorAll('#tabs a').forEach(a => { if (a.getAttribute('href') === '#' + v) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  const main = $('#main'); main.replaceChildren();
+  ({ orders: viewOrders, styles: viewStyles, materials: viewMaterials, settings: viewSettings })[v](main);
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', route);
+function setMode(note) {
+  const m = $('#mode'); m.className = 'mode' + (Store.mode === 'cloud' ? ' cloud' : '');
+  m.replaceChildren(h('i'), h('span', null, Store.mode === 'cloud' ? 'Shared library' : 'This device only'));
+  if (note) toast(note);
+}
+function banner() {
+  if (Store.mode === 'local') return h('div', { class: 'notice warn' }, 'This copy saves to this browser only. Open the shared studio link to work in the same library as Bontoni.');
+  if (!Store.canWrite) return h('div', { class: 'notice warn' }, 'You can view this studio but not change it. Ask the owner for Contributor access to edit orders, or Editor access to upload photos.');
+  if (!Store.canUpload) return h('div', { class: 'notice warn' }, 'You can edit orders, but uploading photos needs Editor access. Ask the studio owner to make you an Editor.');
+  return null;
+}
+function rerenderOn(colls, fn) { const off = Store.on(c => { if (colls.includes(c)) fn(); }); return off; }
+
+/* ============================================================
+   Settings
+   ============================================================ */
+const ACCENTS = [['Bottle green', '#1E5B3A'], ['Olive', '#5B5A10'], ['Navy', '#1F2E55'], ['Oxblood', '#5E1B1F'], ['Charcoal', '#333333']];
+const DEFAULT_SETTINGS = { storeName: 'BOYDS', storeCity: 'PHILADELPHIA', makerName: 'BONTONI', makerTag: 'calzoleria italiana', accent: '#1E5B3A' };
+const settings = () => Object.assign({}, DEFAULT_SETTINGS, Store.data.settings.get('main') || {});
+const CATEGORIES = ['Calf', 'Grain', 'Suede', 'Exotic', 'Patina', 'Sole', 'Lining', 'Other'];
+const CONSTRUCTIONS = ['Goodyear', 'Hand-welted', 'Norwegian (tonal)', 'Norwegian (contrast)', 'Sacchetto', 'Blake', 'Blake-Rapid', 'Bologna', 'Bentivegna'];
+const STATUSES = [['draft', 'Draft'], ['sent', 'Sent to Bontoni'], ['production', 'In production'], ['delivered', 'Delivered']];
+const PRESET_ZONES = ['Vamp', 'Quarters', 'Apron', 'Toe cap', 'Heel counter', 'Tongue', 'Keeper / strap', 'Tassels', 'Laces', 'Stitching', 'Sole edge', 'Heel stack', 'Lining', 'Collar', 'Eyelet facing'];
+
+function viewSettings(main) {
+  const s = settings();
+  const f = {};
+  const field = (k, label) => (f[k] = h('input', { type: 'text', id: 'set-' + k, value: s[k] || '' }), h('label', { class: 'f' }, label, f[k]));
+  const acc = h('select', { id: 'set-accent' }, ACCENTS.map(([n, c]) => h('option', { value: c }, n)));
+  acc.value = s.accent;
+  const save = () => { const next = Object.assign({}, s); for (const k in f) next[k] = f[k].value.trim(); next.accent = acc.value; put('settings', 'main', next); toast('Settings saved'); };
+  const usage = h('p', { class: 'muted small' });
+  if (Store.mode === 'cloud' && Store.assets) Store.assets.list().then(r => { const u = r.usage; usage.textContent = `File storage: ${u.files} files, ${(u.bytes / 1048576).toFixed(1)} MB of ${(u.maxBytes / 1048576).toFixed(0)} MB.`; }).catch(() => { });
+  main.append(
+    banner() || '',
+    h('div', { class: 'head' }, h('div', { class: 'grow' }, h('h1', null, 'Settings'), h('p', null, 'What prints in the header of every order sheet.'))),
+    h('div', { class: 'pane', style: { maxWidth: '640px' } },
+      h('h3', null, 'Order sheet header'),
+      h('div', { class: 'grid2' }, field('storeName', 'Store name'), field('storeCity', 'Store city')),
+      h('div', { class: 'grid2' }, field('makerName', 'Maker name'), field('makerTag', 'Maker tagline')),
+      h('label', { class: 'f' }, 'Default label color', acc),
+      h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', onclick: save, disabled: !Store.canWrite }, 'Save settings')),
+      h('hr'),
+      h('h3', null, 'Working with Bontoni'),
+      h('div', { class: 'how' },
+        h('div', null, h('b', null, 'Share: '), 'Use the Share menu on this page and invite Bontoni by email as an Editor so they can upload styles and swatches into the same library. Editors invited from outside your organization keep upload access only while the page is not also shared by public link.'),
+        h('div', null, h('b', null, 'Styles: '), 'Name photos like "desert-3-eyelet side.jpg" and "desert-3-eyelet top.jpg" and drop them together. They pair into one style automatically.'),
+        h('div', null, h('b', null, 'Swatches: '), 'Drop a batch of swatch photos, pick the category and the leather article once, and each file becomes a material named after the file.')),
+      usage,
+      Store.mode === 'local' ? localBackup() : ''
+    ));
+}
+function localBackup() {
+  const exp = async () => {
+    const out = { v: 1, docs: {}, blobs: {} };
+    for (const c of COLLS) out.docs[c] = [...Store.data[c].values()];
+    const ids = new Set();
+    for (const s of Store.data.styles.values()) for (const v of Object.values(s.views || {})) { if (v.photoId) ids.add(v.photoId); if (v.maskId) ids.add(v.maskId); }
+    for (const m of Store.data.materials.values()) if (m.imageId) ids.add(m.imageId);
+    for (const o of Store.data.orders.values()) for (const r of o.refs || []) ids.add(r.imageId);
+    for (const id of ids) {
+      if (!IDB.db) break; const b = await IDB.run('blobs', 'readonly', s => s.get(id)); if (!b) continue;
+      out.blobs[id] = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(b); });
+    }
+    saveFile('bontoni-library-' + todayISO() + '.json', new Blob([JSON.stringify(out)], { type: 'application/json' }));
+  };
+  const inp = h('input', { type: 'file', accept: '.json,application/json', hidden: true, id: 'imp' });
+  inp.addEventListener('change', async () => {
+    const f = inp.files[0]; if (!f) return;
+    try {
+      const data = JSON.parse(await f.text());
+      for (const [id, url] of Object.entries(data.blobs || {})) { const b = await (await fetch(url)).blob(); if (IDB.db) await IDB.run('blobs', 'readwrite', s => s.put(b, id)); localBlobUrls.set(id, URL.createObjectURL(b)); }
+      for (const c of COLLS) for (const d of data.docs?.[c] || []) await put(c, d.id, d);
+      toast('Library imported');
+    } catch (e) { toast('That file is not a studio backup: ' + errMsg(e), true); }
+  });
+  return h('div', { class: 'row' }, h('button', { class: 'btn', type: 'button', onclick: exp }, 'Export library backup'), h('button', { class: 'btn', type: 'button', onclick: () => inp.click() }, 'Import backup'), inp);
+}
+
+/* ============================================================
+   Materials (swatches + soles)
+   ============================================================ */
+const matName = m => m ? [m.colorName, m.leather].filter(Boolean).join(' ') || 'Untitled material' : '';
+function matSwatch(el, m) { if (!m) return el; el.style.backgroundColor = m.color || '#999'; if (m.imageId) setBg(el, m.imageId); return el; }
+let matFilter = 'All';
+
+function dropZone({ title, hint, accept, onFiles, extra }) {
+  const inp = h('input', { type: 'file', accept, multiple: true, hidden: true });
+  const prog = h('div', { class: 'progress', 'aria-live': 'polite' });
+  const btn = h('button', { class: 'btn primary', type: 'button', onclick: () => inp.click(), disabled: !Store.canUpload }, 'Choose files');
+  const box = h('div', { class: 'drop' },
+    h('div', { class: 'grow' }, h('b', null, title), h('div', { class: 'muted small' }, Store.canUpload ? hint : 'Uploading needs Editor access.'), prog),
+    extra || '', btn, inp);
+  const run = async files => {
+    files = [...files].filter(f => /^image\//.test(f.type) || /\.(jpe?g|png|webp)$/i.test(f.name));
+    if (!files.length) return;
+    if (!Store.canUpload) return toast('Uploading needs Editor access.', true);
+    btn.disabled = true;
+    try { await onFiles(files, (i, n) => prog.textContent = `Uploading ${i} of ${n}…`); prog.textContent = `Added ${files.length} file${files.length > 1 ? 's' : ''}.`; }
+    catch (e) { prog.textContent = ''; toast(errMsg(e), true); }
+    btn.disabled = false; inp.value = '';
+  };
+  inp.addEventListener('change', () => run(inp.files));
+  box.addEventListener('dragover', e => { e.preventDefault(); box.classList.add('over'); });
+  box.addEventListener('dragleave', () => box.classList.remove('over'));
+  box.addEventListener('drop', e => { e.preventDefault(); box.classList.remove('over'); run(e.dataTransfer.files); });
+  return box;
+}
+
+function viewMaterials(main) {
+  const cat = h('select', { id: 'mat-batch-cat' }, CATEGORIES.map(c => h('option', null, c)));
+  const leather = h('input', { type: 'text', id: 'mat-batch-leather', placeholder: 'e.g. Vintage Grain' });
+  const zone = dropZone({
+    title: 'Add swatches', accept: 'image/*',
+    hint: 'Drop swatch photos here or choose files. Each file becomes a material named after the file, e.g. "white.jpg" becomes White.',
+    extra: h('div', { class: 'opts' }, h('label', { class: 'f' }, 'Category', cat), h('label', { class: 'f' }, 'Leather / article', leather)),
+    onFiles: async (files, tick) => {
+      let i = 0;
+      for (const f of files) {
+        tick(++i, files.length);
+        const c = await fileToCanvas(f, 1000);
+        const id = await putBlob(await canvasBlob(c, 'image/jpeg', 0.9), 'image/jpeg');
+        const name = titleCase(f.name.replace(/\.[^.]+$/, '').replace(/[_\-.]+/g, ' ').trim());
+        await put('materials', uid(), { colorName: name, leather: leather.value.trim(), category: cat.value, color: await meanColor(c), imageId: id, grain: 0.7, scale: cat.value === 'Sole' ? 0.4 : 0.22, note: '' });
+      }
+    }
+  });
+  const filters = h('div', { class: 'filters' });
+  const search = h('input', { type: 'search', id: 'mat-search', placeholder: 'Search materials', style: { maxWidth: '240px' } });
+  const grid = h('div');
+  const draw = () => {
+    const all = [...Store.data.materials.values()].sort((a, b) => matName(a).localeCompare(matName(b)));
+    const cats = ['All', ...CATEGORIES.filter(c => all.some(m => m.category === c))];
+    filters.replaceChildren(...cats.map(c => h('button', { class: 'chipbtn', type: 'button', 'aria-pressed': String(c === matFilter), onclick: () => { matFilter = c; draw(); } }, c)), search);
+    const q = search.value.trim().toLowerCase();
+    const list = all.filter(m => (matFilter === 'All' || m.category === matFilter) && (!q || (matName(m) + ' ' + m.category).toLowerCase().includes(q)));
+    if (!all.length) { grid.replaceChildren(h('div', { class: 'empty' }, h('b', null, 'No materials yet'), 'Drop your swatch photos in the box above. Calf, grain, suede, exotics and soles all live here.')); return; }
+    grid.replaceChildren(h('div', { class: 'cards' }, list.map(m => h('button', { class: 'card', type: 'button', onclick: () => editMaterial(m.id) },
+      matSwatch(h('div', { class: 'ph sw', style: { backgroundSize: 'cover', backgroundPosition: 'center' } }), m),
+      h('div', { class: 'meta' }, h('b', null, matName(m)), h('span', null, m.category + (m.note ? ' · ' + m.note : '')))))));
+  };
+  search.addEventListener('input', draw);
+  main.append(banner() || '', h('div', { class: 'head' }, h('div', { class: 'grow' }, h('h1', null, 'Materials'), h('p', null, 'Leathers, suedes, exotics and soles. Swatches carry their own grain onto the shoe.')),
+    h('div', { class: 'acts' }, h('button', { class: 'btn', type: 'button', disabled: !Store.canWrite, onclick: () => { const id = uid(); put('materials', id, { colorName: 'New color', leather: '', category: 'Calf', color: '#6B4226', imageId: null, grain: 0.7, scale: 0.22, note: '' }).then(() => editMaterial(id)); } }, 'Add a solid color'))),
+    zone, filters, grid);
+  draw();
+  cleanupView = rerenderOn(['materials'], draw);
+}
+function editMaterial(id) {
+  const m = clone(Store.data.materials.get(id)); if (!m) return;
+  const name = h('input', { type: 'text', id: 'm-name', value: m.colorName || '' });
+  const leather = h('input', { type: 'text', id: 'm-leather', value: m.leather || '' });
+  const cat = h('select', { id: 'm-cat' }, CATEGORIES.map(c => h('option', null, c))); cat.value = m.category || 'Calf';
+  const color = h('input', { type: 'color', id: 'm-color', value: m.color || '#6B4226', style: { width: '56px', height: '34px', padding: 0, border: 0, background: 'none' } });
+  const grain = h('input', { type: 'range', id: 'm-grain', min: 0, max: 1.5, step: 0.05, value: m.grain ?? 0.7 });
+  const scale = h('input', { type: 'range', id: 'm-scale', min: 0.06, max: 0.8, step: 0.01, value: m.scale ?? 0.22 });
+  const note = h('input', { type: 'text', id: 'm-note', value: m.note || '', placeholder: 'Supplier code, price note…' });
+  const prev = h('div', { class: 'texprev' });
+  const paintPrev = async () => {
+    const mm = Object.assign({}, m, { color: color.value, grain: +grain.value, id: m.id + '-prev' });
+    const t = await getTex(mm, 520 * +scale.value * 2);
+    const c = mkCanvas(t.w, t.h); const x = ctx2d(c); const im = x.createImageData(t.w, t.h);
+    for (let i = 0; i < t.w * t.h; i++) { const k = t.w === 1 ? 0 : i * 3; im.data[i * 4] = t.d[k]; im.data[i * 4 + 1] = t.d[k + 1]; im.data[i * 4 + 2] = t.d[k + 2]; im.data[i * 4 + 3] = 255; }
+    x.putImageData(im, 0, 0); prev.style.backgroundImage = `url(${c.toDataURL()})`; prev.style.backgroundSize = t.w === 1 ? 'auto' : `${t.w / 2}px auto`;
+  };
+  [color, grain, scale].forEach(e => e.addEventListener('input', debounce(paintPrev, 120)));
+  const replace = h('input', { type: 'file', accept: 'image/*', hidden: true });
+  replace.addEventListener('change', async () => {
+    const f = replace.files[0]; if (!f) return;
+    try { const c = await fileToCanvas(f, 1000); const old = m.imageId; m.imageId = await putBlob(await canvasBlob(c), 'image/jpeg'); color.value = await meanColor(c); paintPrev(); m._old = old; }
+    catch (e) { toast(errMsg(e), true); }
+  });
+  const close = () => box.remove();
+  const save = () => {
+    Object.assign(m, { colorName: name.value.trim(), leather: leather.value.trim(), category: cat.value, color: color.value, grain: +grain.value, scale: +scale.value, note: note.value.trim() });
+    const old = m._old; delete m._old; put('materials', id, m); if (old && old !== m.imageId) delBlob(old); close(); toast('Material saved');
+  };
+  const box = h('div', { class: 'modal', onclick: e => { if (e.target === box) close(); } },
+    h('div', { class: 'box', role: 'dialog', 'aria-label': 'Edit material' },
+      h('h2', null, 'Material'),
+      prev,
+      h('div', { class: 'grid2' }, h('label', { class: 'f' }, 'Color name', name), h('label', { class: 'f' }, 'Leather / article', leather)),
+      h('div', { class: 'grid2' }, h('label', { class: 'f' }, 'Category', cat), h('label', { class: 'f' }, 'Base color', color)),
+      h('label', { class: 'f' }, 'Grain strength (how much of the swatch texture shows)', grain),
+      h('label', { class: 'f' }, 'Grain size on the shoe', scale),
+      h('label', { class: 'f' }, 'Note', note),
+      h('div', { class: 'row' },
+        h('button', { class: 'btn primary', type: 'button', onclick: save, disabled: !Store.canWrite }, 'Save'),
+        h('button', { class: 'btn', type: 'button', onclick: () => replace.click(), disabled: !Store.canUpload }, m.imageId ? 'Replace swatch photo' : 'Add swatch photo'), replace,
+        h('button', { class: 'btn ghost', type: 'button', onclick: close }, 'Cancel'),
+        h('span', { style: { flex: 1 } }),
+        Store.canWrite ? confirmBtn('Delete', () => { del('materials', id); if (m.imageId) delBlob(m.imageId); close(); }) : '')));
+  document.body.append(box); paintPrev(); name.focus();
+}
+
+/* ============================================================
+   Styles (templates)
+   ============================================================ */
+function viewStyles(main) {
+  const grid = h('div');
+  const zone = dropZone({
+    title: 'Add style photos', accept: 'image/*',
+    hint: 'Drop side and top photos. Files named "… side" and "… top" pair into one style. Plain white or clean backgrounds give the best outline.',
+    onFiles: async (files, tick) => {
+      const groups = new Map();
+      for (const f of files) {
+        let base = f.name.replace(/\.[^.]+$/, '');
+        let view = 'side';
+        const re = /(^|[\s_\-.])(top|above|overhead|plan|sopra|dall?alto|birdseye)(?=[\s_\-.]|$)/i;
+        const re2 = /(^|[\s_\-.])(side|lateral|profile|profilo|lato)(?=[\s_\-.]|$)/i;
+        if (re.test(base)) { view = 'top'; base = base.replace(re, ' '); } else base = base.replace(re2, ' ');
+        base = titleCase(base.replace(/[_\-.]+/g, ' ').replace(/\s+/g, ' ').trim()) || 'New style';
+        if (!groups.has(base)) groups.set(base, {}); groups.get(base)[view] = f;
+      }
+      let i = 0; const total = files.length;
+      for (const [name, views] of groups) {
+        const existing = [...Store.data.styles.values()].find(s => (s.name || '').toLowerCase() === name.toLowerCase());
+        const style = existing ? clone(existing) : { name, last: '', construction: '', notes: '', zones: [], views: {} };
+        const sid = existing ? existing.id : uid();
+        for (const [vk, f] of Object.entries(views)) {
+          tick(++i, total);
+          style.views[vk] = await uploadStylePhoto(f, style.views[vk]);
+        }
+        if (!style.zones.length) style.zones = [{ id: 1, name: 'Upper' }];
+        await put('styles', sid, style);
+      }
+    }
+  });
+  const draw = () => {
+    const all = [...Store.data.styles.values()].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    if (!all.length) { grid.replaceChildren(h('div', { class: 'empty' }, h('b', null, 'No styles yet'), 'Drop a side photo and a top photo of a model above. Then mark its panels (vamp, apron, quarters…) so each can take a different leather.')); return; }
+    grid.replaceChildren(h('div', { class: 'cards' }, all.map(s => {
+      const v = s.views?.side || s.views?.top;
+      const missing = ['side', 'top'].filter(k => !s.views?.[k]);
+      return h('button', { class: 'card', type: 'button', onclick: () => openStyleEditor(main, s.id) },
+        h('div', { class: 'ph' }, v ? setImg(h('img', { alt: '' }), v.photoId) : h('span', { class: 'muted small' }, 'No photo')),
+        h('div', { class: 'meta' }, h('b', null, s.name || 'Untitled style'),
+          h('span', null, `${(s.zones || []).length} zone${(s.zones || []).length === 1 ? '' : 's'}` + (missing.length ? ` · needs ${missing.join(' & ')} photo` : ' · side & top') + (s.last ? ` · last ${s.last}` : ''))));
+    })));
+  };
+  main.append(banner() || '', h('div', { class: 'head' }, h('div', { class: 'grow' }, h('h1', null, 'Styles'), h('p', null, 'Each model, photographed from the side and from above, with its panels marked once. Orders recolor these panels.'))), zone, grid);
+  draw();
+  cleanupView = rerenderOn(['styles'], () => { if (!editorOpen) draw(); });
+}
+async function uploadStylePhoto(file, prevView) {
+  const c = await fileToCanvas(file, 1600);
+  const transparent = hasTransparency(c);
+  const photoId = await putBlob(await canvasBlob(c, transparent ? 'image/png' : 'image/jpeg', 0.92), transparent ? 'image/png' : 'image/jpeg');
+  const prep = buildPrep(c);
+  const bg = autoBackground(prep, 38); applyMask(prep, bg, BG, {});
+  const maskId = await putBlob(await encodeMask(prep), 'image/png');
+  prepCache.set(photoId + '|' + maskId, Promise.resolve(prep));
+  if (prevView) { delBlob(prevView.photoId); delBlob(prevView.maskId); }
+  return { photoId, maskId, w: prep.w, h: prep.h };
+}
+
+function openStyleEditor(main, id) {
+  const orig = Store.data.styles.get(id); if (!orig) return;
+  editorOpen = { kind: 'style', id };
+  const style = clone(orig); style.zones = style.zones || []; style.views = style.views || {};
+  const st = { view: style.views.side ? 'side' : (style.views.top ? 'top' : 'side'), tool: 'polygon', zone: style.zones[0]?.id ?? 0, tol: 30, brush: 14, protectBg: true, protectZones: true, outside: false, zoom: 1, preview: false, poly: [], cursor: null, dirty: new Set(), undo: [] };
+  const preps = {};
+  main.replaceChildren();
+  const nameIn = h('input', { type: 'text', id: 'st-name', value: style.name || '' });
+  const lastIn = h('input', { type: 'text', id: 'st-last', value: style.last || '' });
+  const consIn = h('input', { type: 'text', id: 'st-cons', value: style.construction || '', list: 'cons-list' });
+  const notesIn = h('textarea', { id: 'st-notes', value: style.notes || '' });
+  const zlist = h('div', { class: 'zl' });
+  const stage = h('div', { class: 'stage' }); const inner = h('div', { class: 'inner' });
+  const base = mkCanvas(10, 10), over = mkCanvas(10, 10), zoneLayer = mkCanvas(10, 10);
+  inner.append(base, over); stage.append(inner);
+  const viewSeg = h('div', { class: 'seg' }); const toolSeg = h('div', { class: 'seg' });
+  const photoIn = h('input', { type: 'file', accept: 'image/*', hidden: true });
+  const hint = h('div', { class: 'small muted' });
+  const tolOut = h('span'); const brushOut = h('span');
+
+  const back = () => { if (st.dirty.size) { toast('Save or discard your zone changes first.', true); return; } location.hash = '#styles'; route(); };
+  const zoneById = z => style.zones.find(q => q.id === z);
+  const drawZones = () => {
+    zlist.replaceChildren(
+      h('button', { class: 'zi', type: 'button', 'data-z': BG, 'aria-pressed': String(st.zone === BG), onclick: () => selectZone(BG) },
+        h('i', { class: 'sw', style: { background: 'repeating-linear-gradient(45deg,#888 0 3px,transparent 3px 6px)' } }), h('b', null, 'Background'), h('span', null, 'not shoe')),
+      ...style.zones.map(z => {
+        const inp = h('input', { type: 'text', value: z.name, 'aria-label': 'Zone name', id: 'zn-' + z.id });
+        inp.addEventListener('change', () => { z.name = inp.value.trim() || z.name; st.dirty.add('meta'); });
+        inp.addEventListener('focus', () => selectZone(z.id));
+        const rm = h('button', { class: 'btn ghost sm', type: 'button', title: 'Remove zone', 'aria-label': 'Remove zone ' + z.name, onclick: e => { e.stopPropagation(); removeZone(z.id); } }, '×');
+        return h('div', { class: 'zi', role: 'button', tabindex: 0, 'data-z': z.id, 'aria-pressed': String(st.zone === z.id), onclick: () => selectZone(z.id), onkeydown: e => { if (e.key === 'Enter' && e.target === e.currentTarget) selectZone(z.id); } },
+          h('i', { class: 'sw', style: { background: zoneColor(z.id) } }), inp, rm);
+      }));
+  };
+  const selectZone = z => { st.zone = z; zlist.querySelectorAll('.zi').forEach(el => el.setAttribute('aria-pressed', String(+el.dataset.z === z))); };
+  const addZone = name => {
+    const used = new Set(style.zones.map(z => z.id)); let nid = 1; while (used.has(nid)) nid++;
+    if (nid > MAX_ZONES) return toast('A style can have up to 30 zones.', true);
+    style.zones.push({ id: nid, name }); st.zone = nid; st.dirty.add('meta'); drawZones();
+  };
+  const removeZone = zid => {
+    style.zones = style.zones.filter(z => z.id !== zid);
+    for (const [k, p] of Object.entries(preps)) { if (!p) continue; let ch = false; for (let i = 0; i < p.labels.length; i++) if (p.labels[i] === zid) { p.labels[i] = 0; ch = true; } if (ch) { p.ver++; st.dirty.add(k); } }
+    st.dirty.add('meta'); if (st.zone === zid) st.zone = style.zones[0]?.id ?? BG; drawZones(); refreshLayer();
+  };
+  const fit = () => {
+    const p = preps[st.view]; if (!p) return;
+    const avail = Math.max(200, stage.clientWidth - 2);
+    const dispW = avail * st.zoom; inner.style.width = dispW + 'px'; inner.style.height = (dispW * p.h / p.w) + 'px';
+  };
+  const refreshLayer = async () => {
+    const p = preps[st.view]; if (!p) return;
+    if (st.preview) {
+      const c = await renderView(p, {}, {});
+      const x = ctx2d(base); x.fillStyle = '#fff'; x.fillRect(0, 0, p.w, p.h); x.drawImage(c, 0, 0);
+      ctx2d(zoneLayer).clearRect(0, 0, p.w, p.h);
+    } else {
+      ctx2d(base).drawImage(p.photo, 0, 0);
+      const x = ctx2d(zoneLayer); const im = x.createImageData(p.w, p.h); const d = im.data;
+      const cols = new Array(256).fill(null); style.zones.forEach(z => cols[z.id] = hexToRgb(zoneColor(z.id)));
+      for (let i = 0, j = 0; i < p.labels.length; i++, j += 4) {
+        const l = p.labels[i];
+        if (l === BG) { const xx = i % p.w, yy = (i / p.w) | 0; const on = ((xx + yy) >> 3) & 1; d[j] = d[j + 1] = d[j + 2] = on ? 70 : 150; d[j + 3] = 150; }
+        else if (l && cols[l]) { const c = cols[l]; d[j] = c[0]; d[j + 1] = c[1]; d[j + 2] = c[2]; d[j + 3] = 120; }
+      }
+      x.putImageData(im, 0, 0);
+    }
+    drawOverlay();
+  };
+  const drawOverlay = () => {
+    const p = preps[st.view]; if (!p) return;
+    const x = over.getContext('2d'); x.clearRect(0, 0, p.w, p.h); x.drawImage(zoneLayer, 0, 0);
+    const k = p.w / (inner.clientWidth || p.w);
+    if (st.poly.length) {
+      x.strokeStyle = '#111'; x.lineWidth = 3 * k; x.setLineDash([]); x.beginPath(); st.poly.forEach((q, i) => i ? x.lineTo(q[0], q[1]) : x.moveTo(q[0], q[1]));
+      if (st.cursor) x.lineTo(st.cursor[0], st.cursor[1]); x.stroke();
+      x.strokeStyle = '#fff'; x.lineWidth = 1.2 * k; x.stroke();
+      x.fillStyle = '#fff'; st.poly.forEach(q => { x.beginPath(); x.arc(q[0], q[1], 4 * k, 0, 7); x.fill(); x.strokeStyle = '#111'; x.lineWidth = k; x.stroke(); });
+    }
+    if (st.cursor && (st.tool === 'brush' || st.tool === 'erase')) {
+      x.strokeStyle = '#111'; x.lineWidth = 1.5 * k; x.beginPath(); x.arc(st.cursor[0], st.cursor[1], st.brush * (p.w / 800), 0, 7); x.stroke();
+    }
+  };
+  let rafPending = false; const scheduleLayer = () => { if (rafPending) return; rafPending = true; requestAnimationFrame(() => { rafPending = false; refreshLayer(); }); };
+  const pushUndo = () => { const p = preps[st.view]; st.undo.push({ view: st.view, labels: p.labels.slice() }); if (st.undo.length > 25) st.undo.shift(); };
+  const undo = () => { const u = st.undo.pop(); if (!u) return toast('Nothing to undo'); const p = preps[u.view]; p.labels = u.labels; p.ver++; st.dirty.add(u.view); if (u.view !== st.view) { st.view = u.view; loadView(); } else refreshLayer(); };
+  const opts = () => ({ protectBg: st.protectBg, protectZones: st.protectZones });
+  const target = () => st.tool === 'erase' ? 0 : st.zone;
+  const pt = e => { const p = preps[st.view]; const r = over.getBoundingClientRect(); return [clamp((e.clientX - r.left) / r.width * p.w, 0, p.w - 1), clamp((e.clientY - r.top) / r.height * p.h, 0, p.h - 1)]; };
+  const needZone = () => { if (st.tool !== 'erase' && st.zone !== BG && !zoneById(st.zone)) { toast('Add a zone first (left panel), then paint it.', true); return false; } return true; };
+  const closePoly = () => {
+    const p = preps[st.view]; if (st.poly.length < 3) { st.poly = []; drawOverlay(); return; }
+    if (!needZone()) return;
+    pushUndo(); applyMask(p, polyMask(p, st.poly, st.outside), target(), opts()); st.poly = []; st.dirty.add(st.view); refreshLayer();
+  };
+  let painting = false;
+  const paintAt = q => {
+    const p = preps[st.view]; const r = st.brush * (p.w / 800); const T = target(); const o = opts();
+    const x0 = Math.max(0, Math.floor(q[0] - r)), x1 = Math.min(p.w - 1, Math.ceil(q[0] + r)), y0 = Math.max(0, Math.floor(q[1] - r)), y1 = Math.min(p.h - 1, Math.ceil(q[1] + r));
+    for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+      if ((x - q[0]) ** 2 + (y - q[1]) ** 2 > r * r) continue; const i = y * p.w + x; const cur = p.labels[i];
+      if (T !== BG && o.protectBg && cur === BG) continue; if (T !== 0 && o.protectZones && cur !== 0 && cur !== BG && cur !== T) continue;
+      p.labels[i] = T;
+    }
+    p.ver++; st.dirty.add(st.view);
+  };
+  let lastPaint = null;
+  over.addEventListener('pointerdown', e => {
+    const p = preps[st.view]; if (!p || st.preview) return; const q = pt(e);
+    if (st.tool === 'polygon') {
+      if (st.poly.length >= 3) { const f = st.poly[0]; const k = p.w / inner.clientWidth; if (Math.hypot(f[0] - q[0], f[1] - q[1]) < 10 * k) return closePoly(); }
+      st.poly.push(q); drawOverlay();
+    } else if (st.tool === 'wand') {
+      if (!needZone()) return; pushUndo(); applyMask(p, wand(p, Math.round(q[0]), Math.round(q[1]), st.tol), target(), opts()); st.dirty.add(st.view); refreshLayer();
+    } else {
+      if (!needZone()) return; pushUndo(); painting = true; over.setPointerCapture(e.pointerId); paintAt(q); lastPaint = q; scheduleLayer();
+    }
+  });
+  over.addEventListener('pointermove', e => {
+    const p = preps[st.view]; if (!p) return; const q = pt(e); st.cursor = q;
+    if (painting) {
+      const steps = Math.ceil(Math.hypot(q[0] - lastPaint[0], q[1] - lastPaint[1]) / Math.max(1, st.brush * (p.w / 800) / 2));
+      for (let s = 1; s <= steps; s++) paintAt([lastPaint[0] + (q[0] - lastPaint[0]) * s / steps, lastPaint[1] + (q[1] - lastPaint[1]) * s / steps]);
+      lastPaint = q; scheduleLayer();
+    } else drawOverlay();
+  });
+  const endPaint = () => { painting = false; };
+  over.addEventListener('pointerup', endPaint); over.addEventListener('pointercancel', endPaint);
+  over.addEventListener('pointerleave', () => { st.cursor = null; drawOverlay(); });
+  over.addEventListener('dblclick', e => { if (st.tool === 'polygon') { e.preventDefault(); st.poly.pop(); closePoly(); } });
+  const onKey = e => {
+    if (e.target.matches('input,textarea,select')) return;
+    if (e.key === 'Enter' && st.tool === 'polygon') closePoly();
+    else if (e.key === 'Escape') { st.poly = []; drawOverlay(); }
+    else if ((e.key === 'z' || e.key === 'Z') && (e.metaKey || e.ctrlKey)) { e.preventDefault(); undo(); }
+    else if (e.key === 'Backspace' && st.poly.length) { st.poly.pop(); drawOverlay(); }
+  };
+  document.addEventListener('keydown', onKey);
+  const ro = new ResizeObserver(() => { fit(); drawOverlay(); }); ro.observe(stage);
+  cleanupView = () => { document.removeEventListener('keydown', onKey); ro.disconnect(); };
+
+  const loadView = async () => {
+    drawSegs(); st.poly = [];
+    const v = style.views[st.view];
+    if (!v) { inner.hidden = true; stage.querySelector('.ph')?.remove(); stage.append(h('div', { class: 'ph' }, h('b', null, `No ${st.view} photo yet. `), Store.canUpload ? 'Use "Upload photo" above.' : 'Ask an Editor to upload one.')); return; }
+    stage.querySelector('.ph')?.remove(); inner.hidden = false;
+    if (!preps[st.view]) {
+      try { const p = await getPrep(v); preps[st.view] = Object.assign({}, p, { labels: p.labels.slice(), rgb: p.rgb, ver: p.ver + 1 }); }
+      catch (e) { toast('Could not load the photo: ' + errMsg(e), true); return; }
+    }
+    const p = preps[st.view];
+    [base, over, zoneLayer].forEach(c => { c.width = p.w; c.height = p.h; });
+    fit(); refreshLayer();
+  };
+  const tools = [['polygon', 'Outline'], ['wand', 'Magic wand'], ['brush', 'Brush'], ['erase', 'Eraser']];
+  const tips = {
+    polygon: 'Click around a panel to outline it. Click the first point, double-click, or press Enter to fill. Backspace removes the last point, Esc cancels.',
+    wand: 'Click a panel to select everything connected of a similar color. Raise the tolerance to grab more.',
+    brush: 'Paint the selected zone. Good for stitching, small details and touch-ups.',
+    erase: 'Paint to clear zones back to plain shoe.',
+  };
+  const drawSegs = () => {
+    viewSeg.replaceChildren(...['side', 'top'].map(k => h('button', { type: 'button', 'aria-pressed': String(st.view === k), onclick: () => { st.view = k; loadView(); } }, k === 'side' ? 'Side view' : 'Top view')));
+    toolSeg.replaceChildren(...tools.map(([k, n]) => h('button', { type: 'button', 'aria-pressed': String(st.tool === k), onclick: () => { st.tool = k; st.poly = []; drawSegs(); drawOverlay(); } }, n)));
+    hint.textContent = st.preview ? 'Template preview: this is the colorless shoe that orders start from.' : tips[st.tool];
+  };
+  photoIn.addEventListener('change', async () => {
+    const f = photoIn.files[0]; if (!f) return; photoIn.value = '';
+    try {
+      toast('Uploading photo…');
+      const old = style.views[st.view];
+      style.views[st.view] = await uploadStylePhoto(f, null);
+      st.replaced = st.replaced || []; if (old) st.replaced.push(old.photoId, old.maskId);
+      preps[st.view] = null; st.dirty.add('meta'); st.undo = st.undo.filter(u => u.view !== st.view); loadView();
+    } catch (e) { toast(errMsg(e), true); }
+  });
+  const tol = h('input', { type: 'range', min: 4, max: 120, value: st.tol, id: 'st-tol' }); tol.addEventListener('input', () => { st.tol = +tol.value; tolOut.textContent = tol.value; }); tolOut.textContent = st.tol;
+  const br = h('input', { type: 'range', min: 2, max: 80, value: st.brush, id: 'st-brush' }); br.addEventListener('input', () => { st.brush = +br.value; brushOut.textContent = br.value; }); brushOut.textContent = st.brush;
+  const chk = (key, label) => { const c = h('input', { type: 'checkbox', checked: st[key], id: 'st-' + key }); c.addEventListener('change', () => { st[key] = c.checked; }); return h('label', { class: 'check' }, c, label); };
+  const prevChk = h('input', { type: 'checkbox', id: 'st-preview' }); prevChk.addEventListener('change', () => { st.preview = prevChk.checked; drawSegs(); refreshLayer(); });
+
+  const redetect = () => {
+    const p = preps[st.view]; if (!p) return; pushUndo();
+    for (let i = 0; i < p.labels.length; i++) if (p.labels[i] === BG) p.labels[i] = 0;
+    applyMask(p, autoBackground(p, st.tol), BG, { protectZones: true }); st.dirty.add(st.view); refreshLayer();
+  };
+  const fillShoe = () => {
+    const p = preps[st.view]; if (!p || !needZone() || st.zone === BG) return; pushUndo();
+    for (let i = 0; i < p.labels.length; i++) if (p.labels[i] === 0) p.labels[i] = st.zone; p.ver++; st.dirty.add(st.view); refreshLayer();
+  };
+  const save = async () => {
+    if (!Store.canWrite) return toast('You do not have edit access.', true);
+    style.name = nameIn.value.trim() || 'Untitled style'; style.last = lastIn.value.trim(); style.construction = consIn.value.trim(); style.notes = notesIn.value.trim();
+    try {
+      const toDelete = [...(st.replaced || [])];
+      for (const k of ['side', 'top']) {
+        if (!st.dirty.has(k) || !preps[k] || !style.views[k]) continue;
+        if (!Store.canUpload) { toast('Saving zone outlines needs Editor access.', true); return; }
+        const old = style.views[k].maskId;
+        const nid = await putBlob(await encodeMask(preps[k]), 'image/png');
+        style.views[k] = Object.assign({}, style.views[k], { maskId: nid });
+        const cachePrep = Object.assign({}, preps[k], { labels: preps[k].labels.slice(), ver: preps[k].ver + 1, _st: null });
+        prepCache.set(style.views[k].photoId + '|' + nid, Promise.resolve(cachePrep));
+        if (old) toDelete.push(old);
+      }
+      await put('styles', id, style);
+      st.dirty.clear(); st.replaced = [];
+      toDelete.forEach(delBlob);
+      toast('Style saved');
+    } catch (e) { toast('Could not save: ' + errMsg(e), true); }
+  };
+  const discard = () => { st.dirty.clear(); route(); };
+
+  const header = h('div', { class: 'head' },
+    h('button', { class: 'btn ghost', type: 'button', onclick: back }, '← Styles'),
+    h('div', { class: 'grow' }, h('h1', null, style.name || 'Untitled style')),
+    h('div', { class: 'acts' },
+      h('button', { class: 'btn', type: 'button', onclick: discard }, 'Discard changes'),
+      h('button', { class: 'btn primary', type: 'button', onclick: save, disabled: !Store.canWrite }, 'Save style')));
+  const left = h('div', { class: 'pane' },
+    h('h3', null, 'Model'),
+    h('label', { class: 'f' }, 'Style name', nameIn),
+    h('div', { class: 'grid2' }, h('label', { class: 'f' }, 'Default last', lastIn), h('label', { class: 'f' }, 'Default construction', consIn)),
+    h('label', { class: 'f' }, 'Notes', notesIn),
+    h('hr'),
+    h('h3', null, 'Zones'),
+    h('p', { class: 'small muted', style: { margin: 0 } }, 'Each zone can take its own leather on an order. Zones are shared by the side and top photos.'),
+    zlist,
+    h('div', { class: 'presets' }, PRESET_ZONES.map(n => h('button', { type: 'button', onclick: () => addZone(n) }, '+ ' + n))),
+    h('button', { class: 'btn sm', type: 'button', onclick: () => addZone('Zone ' + (style.zones.length + 1)) }, 'Add custom zone'),
+    Store.canWrite ? h('div', null, h('hr'), confirmBtn('Delete style', () => {
+      const s = Store.data.styles.get(id); del('styles', id);
+      for (const v of Object.values(s?.views || {})) { delBlob(v.photoId); delBlob(v.maskId); }
+      st.dirty.clear(); location.hash = '#styles'; route();
+    })) : '');
+  const center = h('div', { class: 'stagewrap' },
+    h('div', { class: 'stagebar' }, viewSeg,
+      h('button', { class: 'btn sm', type: 'button', onclick: () => photoIn.click(), disabled: !Store.canUpload }, 'Upload photo'), photoIn,
+      h('span', { style: { flex: 1 } }),
+      h('div', { class: 'seg' }, [1, 2, 3].map(z => h('button', { type: 'button', 'aria-pressed': 'false', onclick: e => { st.zoom = z; e.currentTarget.parentNode.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === e.currentTarget))); fit(); drawOverlay(); } }, z + '×')))),
+    h('div', { class: 'stagebar' }, toolSeg,
+      h('button', { class: 'btn sm', type: 'button', onclick: undo }, 'Undo'),
+      h('label', { class: 'check' }, prevChk, 'Template preview')),
+    stage, hint);
+  const right = h('div', { class: 'pane right' },
+    h('h3', null, 'Tool settings'),
+    h('div', { class: 'slider' }, 'Wand / background tolerance', tol, tolOut),
+    h('div', { class: 'slider' }, 'Brush size', br, brushOut),
+    chk('protectBg', 'Never paint over the background'),
+    chk('protectZones', 'Don’t paint over other zones'),
+    chk('outside', 'Outline fills outside the line'),
+    h('p', { class: 'small muted', style: { margin: 0 } }, 'Tip: pick Background, turn on "fills outside the line" and outline the shoe to cut out a busy backdrop.'),
+    h('hr'),
+    h('h3', null, 'Quick actions'),
+    h('button', { class: 'btn sm', type: 'button', onclick: redetect }, 'Re-detect background'),
+    h('button', { class: 'btn sm', type: 'button', onclick: fillShoe }, 'Fill unmarked shoe with selected zone'),
+    h('hr'),
+    h('h3', null, 'How to mark a style'),
+    h('div', { class: 'how' },
+      h('div', null, h('b', null, '1. '), 'Check the background is hatched. If not, adjust tolerance and re-detect, or outline it.'),
+      h('div', null, h('b', null, '2. '), 'Add zones, e.g. Vamp, Apron, Quarters, Sole edge.'),
+      h('div', null, h('b', null, '3. '), 'Select a zone and outline its panel. With "Don’t paint over other zones" on, rough outlines are fine.'),
+      h('div', null, h('b', null, '4. '), 'Repeat for the top view, then Save.')));
+  main.append(header, h('div', { class: 'ed' }, left, center, right), h('datalist', { id: 'cons-list' }, CONSTRUCTIONS.map(c => h('option', { value: c }))));
+  drawZones(); loadView();
+}
+
+/* ============================================================
+   Orders
+   ============================================================ */
+function newOrder() {
+  if (!Store.canWrite) return toast('You do not have edit access.', true);
+  const id = uid(); const s = settings();
+  put('orders', id, { client: '', date: todayISO(), styleId: [...Store.data.styles.keys()][0] || null, modelText: '', last: '', size: '', construction: '', colorText: '', materialText: '', soleId: null, soleText: '', firstCost: '', status: 'draft', accent: s.accent, assign: {}, notes: 'ADD INSOLES IN BOX', callouts: [], refs: [], extraRows: [], leaders: true, shading: 1 });
+  openOrderEditor($('#main'), id);
+}
+let selectedOrders = new Set();
+function viewOrders(main) {
+  const list = h('div');
+  const search = h('input', { type: 'search', id: 'ord-search', placeholder: 'Search client or model', style: { maxWidth: '260px' } });
+  const statusSel = h('select', { id: 'ord-status', style: { maxWidth: '180px' } }, h('option', { value: '' }, 'All statuses'), STATUSES.map(([k, n]) => h('option', { value: k }, n)));
+  const batchBtn = h('button', { class: 'btn', type: 'button', onclick: () => exportPdf([...selectedOrders]) }, 'Export PDF');
+  const draw = () => {
+    const q = search.value.trim().toLowerCase();
+    const all = [...Store.data.orders.values()].sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.updatedAt || 0) - (a.updatedAt || 0));
+    selectedOrders = new Set([...selectedOrders].filter(id => Store.data.orders.has(id)));
+    batchBtn.disabled = !selectedOrders.size; batchBtn.textContent = selectedOrders.size ? `Export PDF (${selectedOrders.size})` : 'Export PDF';
+    const rows = all.filter(o => (!statusSel.value || o.status === statusSel.value) && (!q || (o.client + ' ' + styleLabel(o)).toLowerCase().includes(q)));
+    if (!all.length) {
+      list.replaceChildren(h('div', { class: 'empty' }, h('b', null, 'No orders yet'),
+        Store.data.styles.size ? 'Start an order, pick a style, and assign a leather to each zone.' : 'First add a style (side and top photos) and some swatches, then start an order.',
+        h('div', { style: { marginTop: '12px' } }, Store.data.styles.size ? h('button', { class: 'btn primary', type: 'button', onclick: newOrder, disabled: !Store.canWrite }, 'New order') : h('a', { class: 'btn primary', href: '#styles' }, 'Add a style'))));
+      return;
+    }
+    list.replaceChildren(h('div', { class: 'olist' }, rows.map(o => {
+      const cb = h('input', { type: 'checkbox', checked: selectedOrders.has(o.id), 'aria-label': 'Select order for ' + (o.client || 'client') });
+      cb.addEventListener('change', () => { cb.checked ? selectedOrders.add(o.id) : selectedOrders.delete(o.id); draw(); });
+      const mats = [...new Set(Object.values(o.assign || {}))].map(id => Store.data.materials.get(id)).filter(Boolean).slice(0, 5);
+      const stl = STATUSES.find(s => s[0] === o.status) || STATUSES[0];
+      return h('div', { class: 'orow' }, cb,
+        h('div', { class: 'who', role: 'button', tabindex: 0, onclick: () => openOrderEditor(main, o.id), onkeydown: e => { if (e.key === 'Enter') openOrderEditor(main, o.id); } },
+          h('b', null, (o.client || 'Unnamed client') + ' — ' + (styleLabel(o) || 'No style')),
+          h('span', null, [o.size && 'Size ' + o.size, o.construction || Store.data.styles.get(o.styleId)?.construction].filter(Boolean).join(' · ') || ' ')),
+        h('div', { class: 'row' }, h('div', { class: 'dots' }, mats.map(m => matSwatch(h('i', { title: matName(m) }), m))), h('span', { class: 'date' }, o.date || '')),
+        h('span', { class: 'chip s-' + stl[0] }, stl[1]));
+    })), rows.length ? '' : h('p', { class: 'muted' }, 'No orders match.'));
+  };
+  search.addEventListener('input', draw); statusSel.addEventListener('change', draw);
+  main.append(banner() || '',
+    h('div', { class: 'head' }, h('div', { class: 'grow' }, h('h1', null, 'Orders'), h('p', null, 'Each order becomes a sheet for Bontoni: the shoe in the chosen leathers, every detail in the table, and your notes in red.')),
+      h('div', { class: 'acts' }, batchBtn, h('button', { class: 'btn primary', type: 'button', onclick: newOrder, disabled: !Store.canWrite || !Store.data.styles.size }, 'New order'))),
+    h('div', { class: 'filters' }, search, statusSel), list);
+  draw();
+  cleanupView = rerenderOn(['orders', 'styles', 'materials'], () => { if (!editorOpen) draw(); });
+}
+const styleLabel = o => o.modelText || Store.data.styles.get(o.styleId)?.name || '';
+
+function autoTexts(o, style) {
+  const zones = style?.zones || [];
+  const byMat = new Map();
+  for (const z of zones) { const mid = o.assign?.[z.id]; const m = Store.data.materials.get(mid); if (!m || m.category === 'Sole') continue; if (!byMat.has(mid)) byMat.set(mid, []); byMat.get(mid).push(z.name); }
+  const multi = byMat.size > 1;
+  const color = [...byMat].map(([mid, zn]) => { const m = Store.data.materials.get(mid); return (m.colorName || '') + (m.leather ? ` (${m.leather})` : '') + (multi ? ' ' + zn.join(', ') : ''); }).join(' / ');
+  const material = [...new Set([...byMat.keys()].map(mid => Store.data.materials.get(mid).leather || Store.data.materials.get(mid).category))].join(' / ');
+  const sole = Store.data.materials.get(o.soleId);
+  const soleText = sole ? [sole.leather, sole.colorName && `(${sole.colorName})`].filter(Boolean).join(' ') : '';
+  return { color, material, sole: soleText, model: style?.name || '', last: style?.last || '', construction: style?.construction || '' };
+}
+
+function openOrderEditor(main, id) {
+  if (cleanupView) { cleanupView(); cleanupView = null; }
+  const o = clone(Store.data.orders.get(id)); if (!o) return;
+  editorOpen = { kind: 'order', id };
+  o.assign = o.assign || {}; o.callouts = o.callouts || []; o.refs = o.refs || []; o.extraRows = o.extraRows || [];
+  const st = { view: 'side', zone: null, tab: 'customize', cat: 'All', q: '' };
+  main.replaceChildren();
+  const style = () => Store.data.styles.get(o.styleId);
+  const save = debounce(() => { if (Store.canWrite) put('orders', id, o); }, 700);
+  const changed = () => { save(); refreshAuto(); scheduleSheet(); };
+
+  // ---- form
+  const inputs = {};
+  const tf = (k, label, attrs = {}) => {
+    const el = h('input', Object.assign({ type: 'text', id: 'o-' + k, value: o[k] || '' }, attrs));
+    el.addEventListener('input', () => { o[k] = el.value; changed(); }); inputs[k] = el;
+    return h('label', { class: 'f' }, label, el);
+  };
+  const styleSel = h('select', { id: 'o-style' });
+  const fillStyles = () => { styleSel.replaceChildren(h('option', { value: '' }, 'Choose a style…'), ...[...Store.data.styles.values()].sort((a, b) => (a.name || '').localeCompare(b.name || '')).map(s => h('option', { value: s.id }, s.name || 'Untitled'))); styleSel.value = o.styleId || ''; };
+  fillStyles();
+  styleSel.addEventListener('change', () => { o.styleId = styleSel.value || null; o.assign = {}; st.zone = null; loadStage(); drawZones(); changed(); });
+  const soleSel = h('select', { id: 'o-sole' });
+  const fillSoles = () => { soleSel.replaceChildren(h('option', { value: '' }, 'No sole swatch'), ...[...Store.data.materials.values()].filter(m => m.category === 'Sole').map(m => h('option', { value: m.id }, matName(m)))); soleSel.value = o.soleId || ''; };
+  fillSoles();
+  soleSel.addEventListener('change', () => { o.soleId = soleSel.value || null; changed(); });
+  const statusSel = h('select', { id: 'o-status' }, STATUSES.map(([k, n]) => h('option', { value: k }, n))); statusSel.value = o.status || 'draft';
+  statusSel.addEventListener('change', () => { o.status = statusSel.value; save(); });
+  const accentSel = h('select', { id: 'o-accent' }, ACCENTS.map(([n, c]) => h('option', { value: c }, n))); accentSel.value = o.accent || settings().accent;
+  accentSel.addEventListener('change', () => { o.accent = accentSel.value; changed(); });
+  const notes = h('textarea', { id: 'o-notes', value: o.notes || '', placeholder: 'One note per line. Prints in red.' });
+  notes.addEventListener('input', () => { o.notes = notes.value; changed(); });
+  const leaders = h('input', { type: 'checkbox', id: 'o-leaders', checked: o.leaders !== false }); leaders.addEventListener('change', () => { o.leaders = leaders.checked; changed(); });
+  const shading = h('input', { type: 'range', id: 'o-shading', min: 0.3, max: 1.6, step: 0.05, value: o.shading ?? 1 });
+  shading.addEventListener('input', debounce(() => { o.shading = +shading.value; changed(); paintStage(); }, 150));
+  const refreshAuto = () => {
+    const a = autoTexts(o, style());
+    const ph = { modelText: a.model, last: a.last, construction: a.construction, colorText: a.color || 'Fills in from the zones', materialText: a.material || 'Fills in from the zones', soleText: a.sole };
+    for (const [k, v] of Object.entries(ph)) if (inputs[k]) inputs[k].placeholder = v;
+  };
+  // callouts
+  const coBox = h('div', { class: 'refs' });
+  const drawCallouts = () => {
+    const zones = style()?.zones || [];
+    coBox.replaceChildren(...o.callouts.map((c, i) => {
+      const t = h('input', { type: 'text', value: c.text, id: 'co-t-' + i, placeholder: 'e.g. Contrast stitch' }); t.addEventListener('input', () => { c.text = t.value; changed(); });
+      const z = h('select', { id: 'co-z-' + i }, h('option', { value: '' }, 'Point to…'), zones.map(q => h('option', { value: q.id }, q.name))); z.value = c.zoneId || '';
+      z.addEventListener('change', () => { c.zoneId = z.value ? +z.value : null; changed(); });
+      return h('div', { class: 'co' }, t, z, h('button', { class: 'btn ghost sm', type: 'button', 'aria-label': 'Remove callout', onclick: () => { o.callouts.splice(i, 1); drawCallouts(); changed(); } }, '×'));
+    }), h('button', { class: 'btn sm', type: 'button', onclick: () => { o.callouts.push({ text: '', zoneId: st.zone || null }); drawCallouts(); } }, 'Add red callout'));
+  };
+  const xrBox = h('div', { class: 'refs' });
+  const drawXr = () => {
+    xrBox.replaceChildren(...o.extraRows.map((r, i) => {
+      const a = h('input', { type: 'text', value: r.label, id: 'xr-l-' + i, placeholder: 'Label' }); a.addEventListener('input', () => { r.label = a.value; changed(); });
+      const b = h('input', { type: 'text', value: r.value, id: 'xr-v-' + i, placeholder: 'Value' }); b.addEventListener('input', () => { r.value = b.value; changed(); });
+      return h('div', { class: 'xr' }, a, b, h('button', { class: 'btn ghost sm', type: 'button', 'aria-label': 'Remove row', onclick: () => { o.extraRows.splice(i, 1); drawXr(); changed(); } }, '×'));
+    }), h('button', { class: 'btn sm', type: 'button', onclick: () => { o.extraRows.push({ label: '', value: '' }); drawXr(); } }, 'Add table row'));
+  };
+  const refBox = h('div', { class: 'refs' });
+  const refIn = h('input', { type: 'file', accept: 'image/*', multiple: true, hidden: true });
+  refIn.addEventListener('change', async () => {
+    for (const f of refIn.files) {
+      try { const c = await fileToCanvas(f, 1400); const iid = await putBlob(await canvasBlob(c), 'image/jpeg'); o.refs.push({ imageId: iid, caption: titleCase(f.name.replace(/\.[^.]+$/, '').replace(/[_\-.]+/g, ' ')) }); }
+      catch (e) { toast(errMsg(e), true); }
+    }
+    refIn.value = ''; drawRefs(); changed();
+  });
+  const drawRefs = () => {
+    refBox.replaceChildren(...o.refs.map((r, i) => {
+      const cap = h('input', { type: 'text', value: r.caption || '', id: 'ref-' + i, placeholder: 'Caption, e.g. Color' }); cap.addEventListener('input', () => { r.caption = cap.value; changed(); });
+      return h('div', { class: 'ref' }, setImg(h('img', { alt: '' }), r.imageId), cap, h('button', { class: 'btn ghost sm', type: 'button', 'aria-label': 'Remove photo', onclick: () => { const [x] = o.refs.splice(i, 1); delBlob(x.imageId); drawRefs(); changed(); } }, '×'));
+    }), h('button', { class: 'btn sm', type: 'button', disabled: !Store.canUpload, onclick: () => refIn.click() }, 'Add reference photos'), refIn);
+  };
+
+  // ---- stage (Nike-style: click a panel, pick a leather)
+  const stage = h('div', { class: 'stage', style: { cursor: 'pointer' } }); const inner = h('div', { class: 'inner' });
+  const cv = mkCanvas(10, 10), ov = mkCanvas(10, 10); const tip = h('div', { class: 'tip', hidden: true });
+  inner.append(cv, ov); stage.append(inner, tip);
+  let prep = null, rendered = null;
+  const fitStage = () => {
+    if (!prep) return; const box = rendered?._crop || { w: prep.w, h: prep.h };
+    const avail = Math.max(200, stage.clientWidth - 2); const maxH = window.innerHeight * 0.66;
+    let w = avail, hh = w * box.h / box.w; if (hh > maxH) { hh = maxH; w = hh * box.w / box.h; }
+    inner.style.width = w + 'px'; inner.style.height = hh + 'px';
+  };
+  const loadStage = async () => {
+    const s = style(); const v = s?.views?.[st.view];
+    stage.querySelector('.ph')?.remove();
+    if (!s || !v) { prep = null; inner.hidden = true; stage.append(h('div', { class: 'ph' }, !s ? 'Choose a style to start.' : `This style has no ${st.view} photo yet.`)); return; }
+    inner.hidden = false;
+    try { prep = await getPrep(v); } catch (e) { toast('Could not load the style photo: ' + errMsg(e), true); return; }
+    paintStage();
+  };
+  const paintStage = async () => {
+    if (!prep) return; const p = prep;
+    const c = await renderView(p, o.assign, { shading: o.shading ?? 1 });
+    const box = cropBox(p); c._crop = box; rendered = c;
+    cv.width = ov.width = box.w; cv.height = ov.height = box.h;
+    const x = ctx2d(cv); x.clearRect(0, 0, box.w, box.h); x.drawImage(c, box.x, box.y, box.w, box.h, 0, 0, box.w, box.h);
+    fitStage(); paintSel();
+  };
+  const paintSel = () => {
+    const x = ov.getContext('2d'); x.clearRect(0, 0, ov.width, ov.height);
+    if (!prep || !st.zone || !rendered) return; const box = rendered._crop;
+    x.drawImage(zoneOutline(prep, st.zone, '#FFD23F'), box.x, box.y, box.w, box.h, 0, 0, box.w, box.h);
+  };
+  const zoneAt = e => {
+    if (!prep || !rendered) return 0; const r = ov.getBoundingClientRect(); const box = rendered._crop;
+    const x = Math.floor(box.x + (e.clientX - r.left) / r.width * box.w), y = Math.floor(box.y + (e.clientY - r.top) / r.height * box.h);
+    if (x < 0 || y < 0 || x >= prep.w || y >= prep.h) return 0; const l = prep.labels[y * prep.w + x]; return l === BG ? 0 : l;
+  };
+  ov.addEventListener('click', e => { const z = zoneAt(e); if (z && style()?.zones.some(q => q.id === z)) { st.zone = z; drawZones(); paintSel(); drawPicker(); } });
+  ov.addEventListener('pointermove', e => {
+    const z = zoneAt(e); const zn = style()?.zones.find(q => q.id === z);
+    if (!zn) { tip.hidden = true; return; }
+    const m = Store.data.materials.get(o.assign[z]); const r = stage.getBoundingClientRect();
+    tip.hidden = false; tip.textContent = zn.name + (m ? ' · ' + matName(m) : ''); tip.style.left = (e.clientX - r.left + stage.scrollLeft) + 'px'; tip.style.top = (e.clientY - r.top + stage.scrollTop) + 'px';
+  });
+  ov.addEventListener('pointerleave', () => tip.hidden = true);
+  const ro = new ResizeObserver(() => fitStage()); ro.observe(stage);
+
+  // ---- zones + material picker
+  const zl = h('div', { class: 'zl' });
+  const drawZones = () => {
+    const s = style(); if (!s) { zl.replaceChildren(h('p', { class: 'muted small' }, 'Choose a style first.')); return; }
+    if (!s.zones?.length) { zl.replaceChildren(h('p', { class: 'muted small' }, 'This style has no zones yet. Mark its panels in Styles.')); return; }
+    zl.replaceChildren(...s.zones.map(z => {
+      const m = Store.data.materials.get(o.assign[z.id]);
+      return h('button', { class: 'zi oz', type: 'button', 'aria-pressed': String(st.zone === z.id), onclick: () => { st.zone = z.id; drawZones(); paintSel(); drawPicker(); } },
+        matSwatch(h('i', { class: 'sw', style: m ? {} : { background: `linear-gradient(135deg, transparent 45%, var(--line) 45% 55%, transparent 55%)` } }), m),
+        h('b', null, z.name), h('span', null, m ? matName(m) : 'Not set'));
+    }));
+  };
+  const pickerHead = h('div', { class: 'filters', style: { marginBottom: 0 } });
+  const pickSearch = h('input', { type: 'search', id: 'pick-q', placeholder: 'Search leathers' }); pickSearch.addEventListener('input', () => { st.q = pickSearch.value.toLowerCase(); drawPicker(); });
+  const mgrid = h('div', { class: 'mgrid' }); const pickTitle = h('h3');
+  const drawPicker = () => {
+    const zn = style()?.zones?.find(z => z.id === st.zone);
+    pickTitle.textContent = zn ? 'Leather for ' + zn.name : 'Select a zone, then a leather';
+    const all = [...Store.data.materials.values()].filter(m => m.category !== 'Sole');
+    const cats = ['All', ...CATEGORIES.filter(c => c !== 'Sole' && all.some(m => m.category === c))];
+    pickerHead.replaceChildren(...cats.map(c => h('button', { class: 'chipbtn', type: 'button', 'aria-pressed': String(st.cat === c), onclick: () => { st.cat = c; drawPicker(); } }, c)));
+    const list = all.filter(m => (st.cat === 'All' || m.category === st.cat) && (!st.q || matName(m).toLowerCase().includes(st.q))).sort((a, b) => matName(a).localeCompare(matName(b)));
+    if (!all.length) { mgrid.replaceChildren(h('p', { class: 'muted small' }, 'No materials yet. Add swatches in Materials.')); return; }
+    const cur = o.assign[st.zone];
+    mgrid.replaceChildren(...list.map(m => h('button', { class: 'mt', type: 'button', 'aria-pressed': String(cur === m.id), title: matName(m), onclick: () => assign(m.id) }, matSwatch(h('div', { class: 'sq' }), m), h('span', null, matName(m)))));
+  };
+  const assign = mid => {
+    if (!st.zone) return toast('Click a part of the shoe or a zone first.', true);
+    o.assign[st.zone] = mid; drawZones(); drawPicker(); paintStage(); changed();
+  };
+  const applyAll = () => { const mid = o.assign[st.zone]; if (!mid) return toast('Set a leather on the selected zone first.', true); for (const z of style()?.zones || []) { const m = Store.data.materials.get(o.assign[z.id]); if (!o.assign[z.id] || m?.category !== 'Sole') o.assign[z.id] = mid; } drawZones(); drawPicker(); paintStage(); changed(); };
+  const clearZone = () => { if (!st.zone) return; delete o.assign[st.zone]; drawZones(); drawPicker(); paintStage(); changed(); };
+
+  // ---- sheet
+  const sheetCanvas = mkCanvas(SHEET_W, SHEET_H); const sheetBox = h('div', { class: 'sheetbox' }, sheetCanvas);
+  let sheetBusy = false, sheetAgain = false;
+  const drawSheetNow = async () => { if (sheetBusy) { sheetAgain = true; return; } sheetBusy = true; try { const c = await drawSheet(o); ctx2d(sheetCanvas).drawImage(c, 0, 0); } catch (e) { console.error(e); } sheetBusy = false; if (sheetAgain) { sheetAgain = false; drawSheetNow(); } };
+  const scheduleSheet = debounce(() => { if (st.tab === 'sheet') drawSheetNow(); }, 300);
+
+  const viewSeg = h('div', { class: 'seg' });
+  const tabSeg = h('div', { class: 'seg' });
+  const custWrap = h('div', { class: 'stagewrap' });
+  const drawSegs = () => {
+    viewSeg.replaceChildren(...['side', 'top'].map(k => h('button', { type: 'button', 'aria-pressed': String(st.view === k), onclick: () => { st.view = k; drawSegs(); loadStage(); } }, k === 'side' ? 'Side' : 'Top')));
+    tabSeg.replaceChildren(...[['customize', 'Customize'], ['sheet', 'Order sheet']].map(([k, n]) => h('button', { type: 'button', 'aria-pressed': String(st.tab === k), onclick: () => { st.tab = k; drawSegs(); showTab(); } }, n)));
+  };
+  const showTab = () => {
+    stage.hidden = st.tab !== 'customize'; viewSeg.hidden = st.tab !== 'customize'; sheetBox.hidden = st.tab !== 'sheet'; hintP.hidden = st.tab !== 'customize';
+    if (st.tab === 'sheet') drawSheetNow(); else fitStage();
+  };
+  const hintP = h('div', { class: 'small muted' }, 'Click any part of the shoe to select it, then pick a leather on the right. Hover to see what each part is.');
+  const fileBase = () => [(o.client || 'client').replace(/\s+/g, '-'), (styleLabel(o) || 'order').replace(/\s+/g, '-'), o.date || ''].filter(Boolean).join('_').replace(/[^\w\-]+/g, '');
+  const dlPng = async () => { const c = await drawSheet(o); saveFile(fileBase() + '.png', await canvasBlob(c, 'image/png')); };
+  const dlPdf = () => exportPdf([id], o);
+  const flushSave = () => { if (Store.canWrite) put('orders', id, o); };
+  const back = () => { flushSave(); location.hash = '#orders'; route(); };
+  const dup = () => { flushSave(); const nid = uid(); const copy = clone(o); delete copy.id; copy.client = ''; copy.status = 'draft'; copy.date = todayISO(); copy.refs = []; put('orders', nid, copy); openOrderEditor(main, nid); toast('Copied the order. Fill in the new client.'); };
+
+  const header = h('div', { class: 'head' },
+    h('button', { class: 'btn ghost', type: 'button', onclick: back }, '← Orders'),
+    h('div', { class: 'grow' }, h('h1', null, (o.client || 'New order'))),
+    h('div', { class: 'acts' },
+      h('button', { class: 'btn', type: 'button', onclick: dup, disabled: !Store.canWrite }, 'Duplicate'),
+      h('button', { class: 'btn', type: 'button', onclick: dlPng }, 'Download PNG'),
+      h('button', { class: 'btn primary', type: 'button', onclick: dlPdf }, 'Download PDF')));
+  inputs.client = null;
+  const clientField = tf('client', 'Client');
+  inputs.client.addEventListener('input', () => { header.querySelector('h1').textContent = o.client || 'New order'; });
+  const left = h('div', { class: 'pane' },
+    h('h3', null, 'Order details'),
+    clientField,
+    h('div', { class: 'grid2' }, h('label', { class: 'f' }, 'Date', (() => { const d = h('input', { type: 'date', id: 'o-date', value: o.date || '' }); d.addEventListener('input', () => { o.date = d.value; changed(); }); return d; })()), h('label', { class: 'f' }, 'Status', statusSel)),
+    h('label', { class: 'f' }, 'Style', styleSel),
+    tf('modelText', 'Model (as printed)'),
+    h('div', { class: 'grid2' }, tf('last', 'Last'), tf('size', 'Size')),
+    tf('construction', 'Construction', { list: 'cons-list' }),
+    tf('colorText', 'Color'),
+    tf('materialText', 'Material'),
+    h('label', { class: 'f' }, 'Sole swatch', soleSel),
+    tf('soleText', 'Sole (as printed)'),
+    tf('firstCost', 'First cost'),
+    h('label', { class: 'f' }, 'Extra table rows', xrBox),
+    h('hr'),
+    h('h3', null, 'Notes for Bontoni'),
+    h('label', { class: 'f' }, 'Red notes', notes),
+    h('label', { class: 'f' }, 'Callouts on the shoe', coBox),
+    h('label', { class: 'f' }, 'Reference photos', refBox),
+    h('hr'),
+    h('h3', null, 'Sheet'),
+    h('label', { class: 'f' }, 'Label color', accentSel),
+    h('label', { class: 'check' }, leaders, 'Draw lines from swatches to the shoe'),
+    h('label', { class: 'f' }, 'Shading depth', shading),
+    Store.canWrite ? confirmBtn('Delete order', () => { del('orders', id); o.refs.forEach(r => delBlob(r.imageId)); editorOpen = null; location.hash = '#orders'; route(); }) : '');
+  const right = h('div', { class: 'pane right' },
+    h('h3', null, 'Zones'), zl,
+    h('div', { class: 'row' }, h('button', { class: 'btn sm', type: 'button', onclick: applyAll }, 'Use this leather everywhere'), h('button', { class: 'btn sm ghost', type: 'button', onclick: clearZone }, 'Clear zone')),
+    h('hr'), pickTitle, pickerHead, pickSearch, mgrid);
+  custWrap.append(h('div', { class: 'stagebar' }, tabSeg, viewSeg), stage, sheetBox, hintP);
+  main.append(header, h('div', { class: 'ed' }, left, custWrap, right), h('datalist', { id: 'cons-list' }, CONSTRUCTIONS.map(c => h('option', { value: c }))));
+  drawSegs(); drawCallouts(); drawXr(); drawRefs(); drawZones(); drawPicker(); refreshAuto(); showTab(); loadStage();
+  const off = Store.on(c => { if (c === 'materials') { fillSoles(); drawPicker(); drawZones(); } if (c === 'styles') { fillStyles(); drawZones(); drawCallouts(); } });
+  cleanupView = () => { off(); ro.disconnect(); flushSave(); };
+}
+
+/* ============================================================
+   Order sheet (canvas, 16:10, matches the store's existing sheet layout)
+   ============================================================ */
+const SHEET_W = 2000, SHEET_H = 1250;
+const SF = { sc: '"Marcellus SC", "Copperplate", serif', word: '"Archivo Black", "Arial Black", sans-serif', maker: '"Cinzel", "Trajan Pro", serif', };
+let fontsReady = null;
+function loadFonts() {
+  if (!fontsReady) fontsReady = Promise.all(['30px "Marcellus SC"', '30px "Archivo Black"', '500 30px "Cinzel"', 'italic 500 30px "Cormorant Garamond"'].map(f => document.fonts.load(f).catch(() => { }))).then(() => { });
+  return fontsReady;
+}
+function spaced(x, text, px, py, sp, align = 'left') {
+  const chars = [...text]; const w = chars.reduce((a, c) => a + x.measureText(c).width, 0) + sp * (chars.length - 1);
+  let cx = align === 'center' ? px - w / 2 : align === 'right' ? px - w : px;
+  const prev = x.textAlign; x.textAlign = 'left';
+  for (const c of chars) { x.fillText(c, cx, py); cx += x.measureText(c).width + sp; }
+  x.textAlign = prev; return w;
+}
+function wrapText(x, text, maxW, sp = 0) {
+  const words = String(text || '').split(/\s+/).filter(Boolean); const lines = []; let line = '';
+  for (const w of words) { const t = line ? line + ' ' + w : w; if (x.measureText(t).width + sp * t.length > maxW && line) { lines.push(line); line = w; } else line = t; }
+  if (line) lines.push(line); return lines.length ? lines : [''];
+}
+function containRect(sw, sh, bx, by, bw, bh) { const s = Math.min(bw / sw, bh / sh); const w = sw * s, hh = sh * s; return { x: bx + (bw - w) / 2, y: by + (bh - hh) / 2, w, h: hh, s }; }
+function coverDraw(x, img, bx, by, bw, bh) { const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height; const s = Math.max(bw / iw, bh / ih); const sw = bw / s, sh = bh / s; x.drawImage(img, (iw - sw) / 2, (ih - sh) / 2, sw, sh, bx, by, bw, bh); }
+
+async function drawSheet(o) {
+  await loadFonts();
+  const W = SHEET_W, H = SHEET_H, M = 70;
+  const c = mkCanvas(W, H); const x = c.getContext('2d');
+  x.fillStyle = '#fff'; x.fillRect(0, 0, W, H); x.textBaseline = 'alphabetic';
+  const s = settings(); const style = Store.data.styles.get(o.styleId); const auto = autoTexts(o, style);
+  const accent = o.accent || s.accent; const INK = '#1A1A1A', RED = '#D42A2A';
+  const up = v => String(v || '').toUpperCase();
+  const date = o.date ? new Date(o.date + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).toUpperCase() : '';
+
+  // header (left)
+  x.fillStyle = INK; x.font = `92px ${SF.word}`; const nameW = spaced(x, up(s.storeName), M - 4, 128, 1);
+  x.font = `30px ${SF.sc}`; spaced(x, up(s.storeCity), M + 4, 168, 2);
+  x.font = `30px ${SF.sc}`; spaced(x, date, M + nameW + 70, 108, 3);
+  // maker (right)
+  const RX = 1020, RW = W - M - RX;
+  x.font = `500 42px ${SF.maker}`; spaced(x, up(s.makerName), W - M, 92, 9, 'right');
+  x.font = `italic 500 30px "Cormorant Garamond", Georgia, serif`; x.textAlign = 'right'; x.fillText(s.makerTag || '', W - M - 30, 128); x.textAlign = 'left';
+
+  // table
+  const rows = [['CLIENT', o.client], ['MODEL', o.modelText || auto.model], ['LAST', o.last || auto.last], ['SIZE', o.size], ['CONSTRUCTION', o.construction || auto.construction], ['COLOR', o.colorText || auto.color], ['MATERIAL', o.materialText || auto.material], ['SOLE', o.soleText || auto.sole], ['FIRST COST', o.firstCost]];
+  for (const r of o.extraRows || []) if (r.label || r.value) rows.push([up(r.label), r.value]);
+  let y = 205; const LW = 215, VX = M + LW + 2, VW = 960 - VX; const rowFont = rows.length > 11 ? 19 : 22;
+  rows.forEach(([label, val], i) => {
+    x.font = `${rowFont}px ${SF.sc}`; let lines = wrapText(x, up(val), VW - 24, 1); let fs = rowFont;
+    if (lines.length > 2) { fs = rowFont - 4; x.font = `${fs}px ${SF.sc}`; lines = wrapText(x, up(val), VW - 24, 1).slice(0, 3); }
+    const rh = Math.max(rows.length > 11 ? 42 : 50, lines.length * (fs + 6) + 18);
+    x.fillStyle = accent; x.fillRect(M, y, LW, rh);
+    x.fillStyle = i % 2 ? '#E8E8E5' : '#FFFFFF'; x.fillRect(VX, y, VW, rh);
+    x.fillStyle = '#fff'; x.font = `${rows.length > 11 ? 17 : 19}px ${SF.sc}`; spaced(x, label, M + 12, y + rh / 2 + 7, 1.5);
+    x.fillStyle = INK; x.font = `${fs}px ${SF.sc}`;
+    const ty = y + rh / 2 - (lines.length - 1) * (fs + 6) / 2 + fs * 0.36;
+    lines.forEach((ln, k) => spaced(x, ln, VX + 12, ty + k * (fs + 6), 1));
+    y += rh + 3;
+  });
+  const tableEnd = y;
+
+  // render views
+  const views = {};
+  for (const k of ['side', 'top']) {
+    const v = style?.views?.[k]; if (!v) continue;
+    try { const p = await getPrep(v); const r = await renderView(p, o.assign, { shading: o.shading ?? 1 }); views[k] = { prep: p, canvas: r, crop: cropBox(p) }; } catch (e) { console.warn(e); }
+  }
+  const drawView = (v, bx, by, bw, bh) => { const r = containRect(v.crop.w, v.crop.h, bx, by, bw, bh); x.drawImage(v.canvas, v.crop.x, v.crop.y, v.crop.w, v.crop.h, r.x, r.y, r.w, r.h); return r; };
+  const placeholder = (bx, by, bw, bh, text) => { x.fillStyle = '#F1F1EE'; x.fillRect(bx, by, bw, bh); x.fillStyle = '#9A9A95'; x.font = `22px ${SF.sc}`; spaced(x, text, bx + bw / 2, by + bh / 2 + 8, 2, 'center'); };
+
+  // left bottom: top view + sole
+  const noteLines = String(o.notes || '').split('\n').map(t => t.trim()).filter(Boolean);
+  const notesH = noteLines.length ? noteLines.length * 36 + 10 : 0;
+  const boxTop = tableEnd + 26, capH = 52, boxBottom = H - 50 - notesH - capH;
+  const bh = Math.max(120, boxBottom - boxTop);
+  const topBox = { x: M, y: boxTop, w: 540, h: bh }, soleBox = { x: M + 570, y: boxTop, w: 960 - M - 570, h: bh };
+  if (views.top) drawView(views.top, topBox.x, topBox.y, topBox.w, topBox.h); else placeholder(topBox.x, topBox.y, topBox.w, topBox.h, 'NO TOP VIEW');
+  const sole = Store.data.materials.get(o.soleId);
+  if (sole?.imageId) { try { const im = await loadImg(sole.imageId); const r = containRect(im.naturalWidth, im.naturalHeight, soleBox.x, soleBox.y, soleBox.w, soleBox.h); x.drawImage(im, r.x, r.y, r.w, r.h); } catch { placeholder(soleBox.x, soleBox.y, soleBox.w, soleBox.h, 'SOLE'); } }
+  else if (sole) { x.fillStyle = sole.color; x.fillRect(soleBox.x + 20, soleBox.y + soleBox.h * 0.2, soleBox.w - 40, soleBox.h * 0.6); }
+  else placeholder(soleBox.x, soleBox.y, soleBox.w, soleBox.h, 'NO SOLE SWATCH');
+  x.fillStyle = INK; x.font = `30px ${SF.sc}`;
+  spaced(x, 'TOP VIEW', topBox.x + topBox.w / 2, boxTop + bh + 38, 3, 'center');
+  spaced(x, 'SOLE', soleBox.x + soleBox.w / 2, boxTop + bh + 38, 3, 'center');
+  x.fillStyle = RED; x.font = `28px ${SF.sc}`;
+  noteLines.forEach((t, i) => spaced(x, up(t), M, H - 50 - notesH + 30 + i * 36, 2.5));
+
+  // right: side view
+  const callouts = (o.callouts || []).filter(cq => cq.text);
+  const sideBox = { x: RX, y: 150, w: RW, h: 540 };
+  let sideRect = null;
+  if (views.side) sideRect = drawView(views.side, sideBox.x, sideBox.y, sideBox.w, sideBox.h); else placeholder(sideBox.x, sideBox.y, sideBox.w, sideBox.h, 'NO SIDE VIEW');
+  x.fillStyle = INK; x.font = `30px ${SF.sc}`; spaced(x, 'MODEL', RX + RW / 2, sideBox.y + sideBox.h + 44, 3, 'center');
+  const anchor = z => {
+    if (!views.side || !sideRect) return null; const stt = zoneStats(views.side.prep); if (!stt.cnt[z]) return null;
+    const cr = views.side.crop; return [sideRect.x + (stt.ax[z] - cr.x) * sideRect.s, sideRect.y + (stt.ay[z] - cr.y) * sideRect.s];
+  };
+
+  // tiles: materials in use (with their zones) + reference photos
+  const tiles = [];
+  const byMat = new Map();
+  for (const z of style?.zones || []) { const mid = o.assign?.[z.id]; const m = Store.data.materials.get(mid); if (!m || m.category === 'Sole') continue; if (!byMat.has(mid)) byMat.set(mid, []); byMat.get(mid).push(z); }
+  for (const [mid, zs] of byMat) tiles.push({ mat: Store.data.materials.get(mid), zones: zs });
+  for (const r of o.refs || []) tiles.push({ ref: r });
+  const coTop = sideBox.y + sideBox.h + 78;
+  const tilesTop = coTop + Math.max(0, callouts.length - 1) * 34 + (callouts.length ? 26 : 0);
+  if (tiles.length) {
+    const gap = 26, n = tiles.length; const capSpace = 64;
+    const size = Math.min(250, (RW - gap * (n - 1)) / n, H - 40 - capSpace - tilesTop);
+    const rowW = n * size + (n - 1) * gap; let tx = RX + (RW - rowW) / 2;
+    for (const t of tiles) {
+      if (t.mat) {
+        if (t.mat.imageId) { try { coverDraw(x, await loadImg(t.mat.imageId), tx, tilesTop, size, size); } catch { x.fillStyle = t.mat.color; x.fillRect(tx, tilesTop, size, size); } }
+        else { x.fillStyle = t.mat.color; x.fillRect(tx, tilesTop, size, size); }
+        x.strokeStyle = '#D0D0CC'; x.lineWidth = 1; x.strokeRect(tx + .5, tilesTop + .5, size - 1, size - 1);
+        x.fillStyle = INK; x.font = `${size < 170 ? 16 : 19}px ${SF.sc}`;
+        const lines = wrapText(x, up(matName(t.mat)), size + gap - 6).slice(0, 2);
+        lines.forEach((ln, k) => spaced(x, ln, tx + size / 2, tilesTop + size + 28 + k * 22, 1, 'center'));
+        if (o.leaders !== false) {
+          x.strokeStyle = '#1A1A1A'; x.lineWidth = 2;
+          for (const z of t.zones) { const a = anchor(z.id); if (!a) continue; x.beginPath(); x.moveTo(tx + size / 2, tilesTop - 4); x.lineTo(a[0], a[1]); x.stroke(); x.fillStyle = '#1A1A1A'; x.beginPath(); x.arc(a[0], a[1], 4, 0, 7); x.fill(); }
+        }
+      } else {
+        try { coverDraw(x, await loadImg(t.ref.imageId), tx, tilesTop, size, size); } catch { placeholder(tx, tilesTop, size, size, 'PHOTO'); }
+        x.fillStyle = INK; x.font = `${size < 170 ? 16 : 19}px ${SF.sc}`;
+        wrapText(x, up(t.ref.caption), size + gap - 6).slice(0, 2).forEach((ln, k) => spaced(x, ln, tx + size / 2, tilesTop + size + 28 + k * 22, 1, 'center'));
+      }
+      tx += size + gap;
+    }
+  }
+  // red callouts
+  x.font = `24px ${SF.sc}`;
+  callouts.forEach((cq, i) => {
+    const ty = coTop + i * 34; x.fillStyle = RED; const w = spaced(x, up(cq.text), RX, ty, 2);
+    const a = cq.zoneId ? anchor(cq.zoneId) : null;
+    if (a) { x.strokeStyle = RED; x.lineWidth = 2.5; x.beginPath(); x.moveTo(RX + w + 10, ty - 8); x.lineTo(a[0], a[1]); x.stroke(); x.fillStyle = RED; x.beginPath(); x.arc(a[0], a[1], 4.5, 0, 7); x.fill(); }
+  });
+  return c;
+}
+
+async function exportPdf(ids, live) {
+  if (!ids.length) return;
+  if (!window.jspdf) return toast('The PDF tool did not load. Check your connection and reload.', true);
+  toast(ids.length > 1 ? `Building ${ids.length} sheets…` : 'Building the PDF…');
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: [1000, 625] });
+  let first = true;
+  const orders = ids.map(i => (live && live.id === i) ? live : Store.data.orders.get(i)).filter(Boolean)
+    .sort((a, b) => (a.date || '').localeCompare(b.date || '') || (a.client || '').localeCompare(b.client || ''));
+  for (const o of orders) {
+    const c = await drawSheet(o);
+    if (!first) pdf.addPage([1000, 625], 'landscape'); first = false;
+    pdf.addImage(c.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, 1000, 625);
+  }
+  const name = orders.length === 1 ? [(orders[0].client || 'client'), styleLabel(orders[0]) || 'order', orders[0].date].join('_').replace(/\s+/g, '-').replace(/[^\w\-]+/g, '') : 'bontoni-orders-' + todayISO();
+  saveFile(name + '.pdf', pdf.output('blob'));
+}
+
+/* ============================================================
+   Boot
+   ============================================================ */
+(async function boot() {
+  let cloud = false;
+  try { cloud = await initCloud(); } catch (e) { console.warn(e); }
+  if (!cloud) await initLocal();
+  Store.loaded = true; setMode(); route();
+})();
+</script>
